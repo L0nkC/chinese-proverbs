@@ -1850,18 +1850,33 @@ function setupFilters() {
             const filter = btn.dataset.filter;
             console.log('[AGGRESSIVE] Setting up button', index, ':', filter);
             
+            // Create handler that works for both click and touch
+            const handleClick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('[AGGRESSIVE] Event fired:', e.type, 'on', filter);
+                
+                // Call global handler with button element
+                window.handleFilterClick(btn);
+                
+                return false;
+            };
+            
             // Remove any existing handlers
             btn.onclick = null;
-            btn.removeEventListener('click', handleFilterClick);
             
-            // Add new handler
-            btn.addEventListener('click', handleFilterClick);
+            // Add both click and touch handlers for mobile compatibility
+            btn.addEventListener('click', handleClick, { passive: false });
+            btn.addEventListener('touchend', handleClick, { passive: false });
             
             // Also add direct onclick as backup
-            btn.onclick = handleFilterClick;
+            btn.onclick = function(e) {
+                return handleClick(e || window.event);
+            };
         });
         
-        console.log('[AGGRESSIVE] All buttons set up');
+        console.log('[AGGRESSIVE] All buttons set up with touch support');
     }, 100);
 }
 
