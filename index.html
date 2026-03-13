@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中华谚语 | Chinese Proverbs - Ancient Wisdom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Decorative Background Elements -->
+    <div class="bg-pattern"></div>
+    <div class="bamboo-left"></div>
+    <div class="bamboo-right"></div>
+    
+    <!-- Main Container -->
+    <div class="scroll-container">
+        <!-- Header Seal -->
+        <div class="header-seal">
+            <div class="seal-mark">智慧</div>
+        </div>
+        
+        <!-- Header -->
+        <header class="main-header">
+            <h1 class="site-title">
+                <span class="title-chinese">中华谚语</span>
+                <span class="title-divider">◆</span>
+                <span class="title-english">Chinese Proverbs</span>
+            </h1>
+            <p class="site-subtitle">Ancient Wisdom for Modern Times</p>
+            <p class="site-description">Discover over 200 timeless proverbs from Chinese culture, 
+                each carrying centuries of wisdom and insight.</p>
+        </header>
+
+        <!-- Controls -->
+        <div class="controls-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search proverbs..." autocomplete="off">
+                <span class="search-icon">⌕</span>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="wisdom">Wisdom</button>
+                <button class="filter-btn" data-filter="learning">Learning</button>
+                <button class="filter-btn" data-filter="perseverance">Perseverance</button>
+                <button class="filter-btn" data-filter="friendship">Friendship</button>
+                <button class="filter-btn" data-filter="life">Life</button>
+            </div>
+            <div class="view-toggle">
+                <button id="randomBtn" class="action-btn">🎲 Random</button>
+                <button id="copyBtn" class="action-btn">📋 Copy</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <span id="proverbCount">Showing 200+ proverbs</span>
+        </div>
+
+        <!-- Proverbs Grid -->
+        <main class="proverbs-container" id="proverbsContainer">
+            <!-- Proverbs will be loaded here by JavaScript -->
+        </main>
+
+        <!-- Daily Proverb Modal -->
+        <div id="proverbModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <div class="modal-proverb">
+                    <div class="daily-stamp">每日一句</div>
+                    <p class="proverb-chinese" id="modalChinese"></p>
+                    <p class="proverb-english" id="modalEnglish"></p>
+                    <div class="proverb-actions">
+                        <button id="shareBtn" class="share-btn">Share</button>
+                        <button id="newProverbBtn" class="share-btn">Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-decoration">❖ ❖ ❖</div>
+            <p class="footer-text">"学如不及，犹恐失之"</p>
+            <p class="footer-translation">"Learn as if you cannot catch up, fearing to lose what you have."</p>
+            <p class="footer-copy">&copy; 2026 Chinese Proverbs Collection</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="proverbs.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

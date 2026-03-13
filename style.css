@@ -1,0 +1,822 @@
+/* ========================================
+   CHINESE PROVERBS - Ancient Style CSS
+   Colors: Vermilion Red, Imperial Gold, 
+   Ink Black, Rice Paper Beige
+   ======================================== */
+
+/* CSS Variables for Ancient Chinese Theme */
+:root {
+    /* Primary Colors - Ancient Chinese Palette */
+    --vermilion: #C73E1D;
+    --vermilion-dark: #8B2500;
+    --vermilion-light: #E85D3E;
+    --imperial-gold: #C9A227;
+    --imperial-gold-light: #E8C547;
+    --imperial-gold-dark: #9A7B1A;
+    
+    /* Background Colors */
+    --rice-paper: #F5F0E6;
+    --rice-paper-dark: #E8E0D0;
+    --rice-paper-light: #FFFAF0;
+    --parchment: #E5DCC8;
+    
+    /* Text Colors */
+    --ink-black: #1A1A1A;
+    --ink-gray: #4A4A4A;
+    --ink-light: #6A6A6A;
+    
+    /* Accent Colors */
+    --jade-green: #2D6A4F;
+    --cinnabar: #E74C3C;
+    --indigo: #2C3E50;
+    
+    /* Typography */
+    --font-chinese: 'Noto Serif SC', 'SimSun', 'STSong', serif;
+    --font-english: 'Noto Serif', 'Georgia', serif;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+    --shadow-medium: 0 4px 20px rgba(0,0,0,0.12);
+    --shadow-strong: 0 8px 30px rgba(0,0,0,0.15);
+    
+    /* Borders */
+    --border-thin: 1px solid var(--imperial-gold);
+    --border-medium: 2px solid var(--imperial-gold);
+    --border-thick: 3px solid var(--vermilion);
+}
+
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-english);
+    background: var(--rice-paper);
+    color: var(--ink-black);
+    line-height: 1.8;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ========================================
+   BACKGROUND DECORATIONS
+   ======================================== */
+
+.bg-pattern {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(201, 162, 39, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(199, 62, 29, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(45, 106, 79, 0.02) 0%, transparent 30%);
+    pointer-events: none;
+    z-index: -2;
+}
+
+.bg-pattern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A227' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+}
+
+.bamboo-left, .bamboo-right {
+    position: fixed;
+    top: 0;
+    width: 80px;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        transparent 0%,
+        rgba(45, 106, 79, 0.03) 20%,
+        rgba(45, 106, 79, 0.05) 50%,
+        rgba(45, 106, 79, 0.03) 80%,
+        transparent 100%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.bamboo-left {
+    left: 0;
+    border-right: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.bamboo-right {
+    right: 0;
+    border-left: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+/* ========================================
+   SCROLL CONTAINER
+   ======================================== */
+
+.scroll-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    position: relative;
+}
+
+.scroll-container::before,
+.scroll-container::after {
+    content: '';
+    position: absolute;
+    top: 100px;
+    bottom: 100px;
+    width: 3px;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        var(--imperial-gold) 10%,
+        var(--vermilion) 50%,
+        var(--imperial-gold) 90%,
+        transparent 100%);
+}
+
+.scroll-container::before {
+    left: 10px;
+}
+
+.scroll-container::after {
+    right: 10px;
+}
+
+/* ========================================
+   HEADER SEAL
+   ======================================== */
+
+.header-seal {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.seal-mark {
+    width: 70px;
+    height: 70px;
+    background: var(--vermilion);
+    color: white;
+    font-family: var(--font-chinese);
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    box-shadow: 
+        inset 0 0 10px rgba(0,0,0,0.2),
+        0 4px 15px rgba(199, 62, 29, 0.3);
+    position: relative;
+    letter-spacing: 4px;
+    padding-left: 4px;
+}
+
+.seal-mark::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 2px;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.main-header {
+    text-align: center;
+    padding: var(--spacing-lg) 0;
+    border-bottom: 2px solid var(--imperial-gold);
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+}
+
+.main-header::after {
+    content: '❖';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--rice-paper);
+    padding: 0 var(--spacing-sm);
+    color: var(--imperial-gold);
+    font-size: 1.2rem;
+}
+
+.site-title {
+    font-family: var(--font-chinese);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--ink-black);
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.title-chinese {
+    color: var(--vermilion);
+    letter-spacing: 8px;
+}
+
+.title-divider {
+    color: var(--imperial-gold);
+    font-size: 1.5rem;
+}
+
+.title-english {
+    font-family: var(--font-english);
+    font-size: 1.8rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-gray);
+}
+
+.site-subtitle {
+    font-size: 1.1rem;
+    color: var(--imperial-gold-dark);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.site-description {
+    font-size: 1rem;
+    color: var(--ink-light);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ========================================
+   CONTROLS SECTION
+   ======================================== */
+
+.controls-section {
+    background: var(--rice-paper-light);
+    border: 1px solid var(--imperial-gold);
+    border-radius: 4px;
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-soft);
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: var(--spacing-md);
+}
+
+.search-box input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    padding-right: 50px;
+    font-family: var(--font-english);
+    font-size: 1rem;
+    border: 2px solid var(--parchment);
+    border-radius: 4px;
+    background: white;
+    color: var(--ink-black);
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--vermilion);
+    box-shadow: 0 0 0 3px rgba(199, 62, 29, 0.1);
+}
+
+.search-box input::placeholder {
+    color: var(--ink-light);
+}
+
+.search-icon {
+    position: absolute;
+    right: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--imperial-gold);
+    font-size: 1.5rem;
+    pointer-events: none;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-english);
+    font-size: 0.9rem;
+    background: transparent;
+    border: 1px solid var(--imperial-gold);
+    color: var(--ink-gray);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: var(--imperial-gold);
+    color: white;
+}
+
+.filter-btn.active {
+    background: var(--vermilion);
+    border-color: var(--vermilion);
+    color: white;
+}
+
+.view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.action-btn {
+    padding: 0.6rem 1.5rem;
+    font-family: var(--font-english);
+    font-size: 0.95rem;
+    background: var(--jade-green);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-btn:hover {
+    background: #235238;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+/* ========================================
+   STATS BAR
+   ======================================== */
+
+.stats-bar {
+    text-align: center;
+    padding: var(--spacing-sm) 0;
+    margin-bottom: var(--spacing-lg);
+    color: var(--ink-light);
+    font-size: 0.9rem;
+    border-bottom: 1px dashed var(--imperial-gold);
+}
+
+/* ========================================
+   PROVERBS GRID
+   ======================================== */
+
+.proverbs-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.proverb-card {
+    background: var(--rice-paper-light);
+    border: 1px solid var(--parchment);
+    border-radius: 4px;
+    padding: var(--spacing-lg);
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+}
+
+.proverb-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--vermilion), var(--imperial-gold));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.proverb-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-strong);
+    border-color: var(--imperial-gold);
+}
+
+.proverb-card:hover::before {
+    opacity: 1;
+}
+
+.proverb-number {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--imperial-gold);
+    font-weight: 600;
+    opacity: 0.6;
+}
+
+.proverb-chinese {
+    font-family: var(--font-chinese);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--ink-black);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+    letter-spacing: 2px;
+}
+
+.proverb-english {
+    font-family: var(--font-english);
+    font-size: 0.95rem;
+    color: var(--ink-gray);
+    font-style: italic;
+    line-height: 1.7;
+    padding-left: var(--spacing-sm);
+    border-left: 2px solid var(--parchment);
+}
+
+.proverb-actions-card {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-md);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.proverb-card:hover .proverb-actions-card {
+    opacity: 1;
+}
+
+.card-btn {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    background: transparent;
+    border: 1px solid var(--parchment);
+    color: var(--ink-light);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.card-btn:hover {
+    background: var(--vermilion);
+    border-color: var(--vermilion);
+    color: white;
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--rice-paper);
+    border: 3px solid var(--imperial-gold);
+    border-radius: 4px;
+    max-width: 500px;
+    width: 100%;
+    padding: var(--spacing-xl);
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 1px solid var(--imperial-gold);
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.close-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-md);
+    font-size: 2rem;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: var(--vermilion);
+}
+
+.daily-stamp {
+    display: inline-block;
+    background: var(--vermilion);
+    color: white;
+    font-family: var(--font-chinese);
+    font-size: 0.9rem;
+    padding: 0.3rem 1rem;
+    border-radius: 3px;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 3px;
+}
+
+.modal-proverb .proverb-chinese {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    color: var(--ink-black);
+}
+
+.modal-proverb .proverb-english {
+    font-size: 1.1rem;
+    text-align: center;
+    border-left: none;
+    padding-left: 0;
+    color: var(--ink-gray);
+}
+
+.proverb-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.share-btn {
+    padding: 0.7rem 2rem;
+    font-family: var(--font-english);
+    font-size: 1rem;
+    background: var(--imperial-gold);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+    background: var(--imperial-gold-dark);
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.main-footer {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+    border-top: 2px solid var(--imperial-gold);
+    margin-top: var(--spacing-xl);
+    position: relative;
+}
+
+.main-footer::before {
+    content: '❖';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--rice-paper);
+    padding: 0 var(--spacing-sm);
+    color: var(--imperial-gold);
+    font-size: 1.2rem;
+}
+
+.footer-decoration {
+    color: var(--imperial-gold);
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 10px;
+}
+
+.footer-text {
+    font-family: var(--font-chinese);
+    font-size: 1.3rem;
+    color: var(--vermilion);
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: 4px;
+}
+
+.footer-translation {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    font-style: italic;
+    margin-bottom: var(--spacing-md);
+}
+
+.footer-copy {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    opacity: 0.7;
+}
+
+/* ========================================
+   TOAST NOTIFICATION
+   ======================================== */
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink-black);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-strong);
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .scroll-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .scroll-container::before,
+    .scroll-container::after {
+        display: none;
+    }
+    
+    .site-title {
+        font-size: 1.8rem;
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+    
+    .title-chinese {
+        font-size: 2rem;
+    }
+    
+    .title-english {
+        font-size: 1.3rem;
+    }
+    
+    .title-divider {
+        display: none;
+    }
+    
+    .proverbs-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .proverb-card {
+        padding: var(--spacing-md);
+    }
+    
+    .proverb-chinese {
+        font-size: 1.2rem;
+    }
+    
+    .filter-buttons {
+        gap: 0.4rem;
+    }
+    
+    .filter-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .modal-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .modal-proverb .proverb-chinese {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-title {
+        font-size: 1.5rem;
+    }
+    
+    .title-chinese {
+        font-size: 1.7rem;
+    }
+    
+    .controls-section {
+        padding: var(--spacing-md);
+    }
+    
+    .proverb-actions-card {
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.proverb-card {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.proverb-card:nth-child(1) { animation-delay: 0.05s; }
+.proverb-card:nth-child(2) { animation-delay: 0.1s; }
+.proverb-card:nth-child(3) { animation-delay: 0.15s; }
+.proverb-card:nth-child(4) { animation-delay: 0.2s; }
+.proverb-card:nth-child(5) { animation-delay: 0.25s; }
+.proverb-card:nth-child(6) { animation-delay: 0.3s; }
+
+/* ========================================
+   SELECTION STYLES
+   ======================================== */
+
+::selection {
+    background: var(--vermilion);
+    color: white;
+}
+
+/* ========================================
+   SCROLLBAR STYLES
+   ======================================== */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--rice-paper-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--imperial-gold);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--imperial-gold-dark);
+}
