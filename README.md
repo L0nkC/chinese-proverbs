@@ -155,6 +155,46 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
+## 📝 Todo / Roadmap
+
+### Features to Add
+
+- [ ] **Audio Pronunciation** - Add audio playback for Mandarin and Cantonese pronunciations
+- [ ] **Favorites System** - Allow users to save and view their favorite proverbs
+- [ ] **Dark Mode** - Traditional "night mode" with ink-black background
+- [ ] **More Categories** - Add Love, Business, Family, Health categories
+- [ ] **Idiom Stories** - Expandable sections explaining the origin stories of famous proverbs
+- [ ] **Daily Email** - Subscribe to receive a daily proverb via email
+- [ ] **Social Sharing** - Generate beautiful image cards for sharing on social media
+- [ ] **Bookmark/History** - Track recently viewed proverbs
+
+### Content Expansion
+
+- [ ] Add 100+ more Mandarin proverbs
+- [ ] Add 50+ more Cantonese proverbs
+- [ ] Add Classical Chinese (文言文) versions where applicable
+- [ ] Add Simplified/Traditional Chinese toggle
+- [ ] Include regional variations of proverbs
+
+### Technical Improvements
+
+- [ ] Add service worker for offline support
+- [ ] Implement virtual scrolling for better performance
+- [ ] Add animations for card transitions
+- [ ] Improve accessibility (ARIA labels, keyboard navigation)
+- [ ] Add unit tests for JavaScript functions
+- [ ] SEO optimization with meta tags and structured data
+
+### Design Enhancements
+
+- [ ] Custom cursor inspired by calligraphy brush
+- [ ] Parallax scrolling effects on bamboo elements
+- [ ] Ink wash painting backgrounds
+- [ ] Animated seal stamp on click
+- [ ] Seasonal themes (Spring, Summer, Autumn, Winter)
+
+---
+
 <p align="center">
   <em>"学如不及，犹恐失之"</em><br>
   <em>Xué rú bù jí, yóu kǒng shī zhī</em><br>
