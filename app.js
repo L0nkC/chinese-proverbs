@@ -3,6 +3,45 @@
  * Enhanced with Pinyin, Cantonese support, and improved UI
  */
 
+// AGGRESSIVE GLOBAL BUTTON HANDLER
+window.handleFilterClick = function(btn) {
+    console.log('[AGGRESSIVE] CLICK:', btn.dataset.filter);
+    
+    const filter = btn.dataset.filter;
+    
+    // Update active state
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Apply filter
+    if (typeof currentFilter !== 'undefined') currentFilter = filter;
+    if (typeof displayedCount !== 'undefined') displayedCount = 24;
+    
+    // Clear search
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    
+    // Apply filter
+    if (filter === 'all') {
+        if (typeof currentProverbs !== 'undefined' && typeof allProverbs !== 'undefined') {
+            currentProverbs = [...allProverbs];
+        }
+    } else if (filter === 'favorites') {
+        // Handle favorites
+    } else {
+        if (typeof currentProverbs !== 'undefined' && typeof allProverbs !== 'undefined') {
+            currentProverbs = allProverbs.filter(p => {
+                if (p.cats && Array.isArray(p.cats)) return p.cats.includes(filter);
+                if (p.cat) return p.cat === filter;
+                return false;
+            });
+        }
+    }
+    
+    console.log('[AGGRESSIVE] Filter:', filter, 'Count:', currentProverbs ? currentProverbs.length : 0);
+    return false;
+};
+
 // ============================================
 // AUDIO PRONUNCIATION MANAGER (Web Speech API)
 // ============================================

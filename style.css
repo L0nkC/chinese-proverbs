@@ -2853,3 +2853,12 @@ body {
         animation: none;
     }
 }
+
+/* AGGRESSIVE BUTTON FIXES */
+.filter-btn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
