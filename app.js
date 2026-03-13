@@ -1103,6 +1103,10 @@ async function initializeApp() {
             console.warn('[App] Chinese converter failed:', err);
         });
 
+    } catch (error) {
+        console.error('[App] Initialization error:', error);
+    }
+
     // Initialize share card generator
     ShareCardGenerator.init();
     
