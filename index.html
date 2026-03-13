@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#C73E1D">
+    <meta name="description" content="Discover over 250 timeless proverbs from Chinese culture, featuring Mandarin and Cantonese sayings with Pinyin pronunciation.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Chinese Proverbs">
+    
     <title>中华谚语 | Chinese Proverbs - Ancient Wisdom</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
@@ -17,6 +33,14 @@
     <div class="floating-lantern lantern-1">🏮</div>
     <div class="floating-lantern lantern-2">🏮</div>
     
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle">
+        <button class="dark-mode-btn" id="darkModeToggle" data-tooltip="Toggle Dark Mode" aria-label="Toggle dark mode">
+            <span class="icon-sun">☀️</span>
+            <span class="icon-moon">🌙</span>
+        </button>
+    </div>
+    
     <!-- Main Container -->
     <div class="scroll-container">
         <!-- Header Seal -->
@@ -29,6 +53,16 @@
         <!-- Header -->
         <header class="main-header">
             <div class="header-decoration top">◈ ◆ ◈</div>
+            
+            <!-- Chinese Character Toggle -->
+            <div class="chinese-toggle-container">
+                <button id="chineseToggle" class="chinese-toggle" aria-label="Toggle between Simplified and Traditional Chinese">
+                    <span class="toggle-option" data-value="simplified">简体</span>
+                    <span class="toggle-divider">|</span>
+                    <span class="toggle-option" data-value="traditional">繁體</span>
+                </button>
+            </div>
+            
             <h1 class="site-title">
                 <span class="title-chinese">中华谚语</span>
                 <span class="title-divider">
@@ -99,6 +133,10 @@
                         <span class="btn-icon">粵</span>
                         <span class="btn-text">Cantonese</span>
                     </button>
+                    <button class="filter-btn favorites" data-filter="favorites">
+                        <span class="btn-icon">♥</span>
+                        <span class="btn-text">Favorites</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -118,6 +156,11 @@
             <div class="stat-item">
                 <span class="stat-number" id="showingCount">All</span>
                 <span class="stat-label">Showing</span>
+            </div>
+            <div class="stat-divider">|</div>
+            <div class="stat-item">
+                <span class="stat-number" id="favoritesCount">0</span>
+                <span class="stat-label">Favorites</span>
             </div>
         </div>
 
@@ -146,6 +189,9 @@
                     <div class="modal-divider"></div>
                     <p class="proverb-english" id="modalEnglish"></p>
                     <div class="proverb-actions">
+                        <button id="favoriteModalBtn" class="action-btn secondary">
+                            <span class="heart-icon">♡</span> Favorite
+                        </button>
                         <button id="copyBtn" class="action-btn secondary">
                             <span>📋</span> Copy
                         </button>
@@ -177,10 +223,22 @@
         </footer>
     </div>
 
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        <span class="offline-icon">📴</span>
+        <span class="offline-text">You're offline. Using cached content.</span>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast">
         <span class="toast-icon">✓</span>
         <span class="toast-message"></span>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        <span class="offline-icon">⚠</span>
+        <span>Offline Mode</span>
     </div>
 
     <!-- About Modal -->
@@ -206,7 +264,24 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.min.js"></script>
     <script src="proverbs.js"></script>
     <script src="app.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('[SW] Registered:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('[SW] Registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
