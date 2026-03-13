@@ -8,13 +8,17 @@ const ChineseConverter = {
      */
     async init() {
         // Check for saved preference
-        const savedMode = localStorage.getItem('chineseCharacterMode');
-        if (savedMode) {
-            this.currentMode = savedMode;
+        try {
+            const savedMode = localStorage.getItem('chineseCharacterMode');
+            if (savedMode) {
+                this.currentMode = savedMode;
+            }
+        } catch (e) {
+            console.warn('localStorage not available');
         }
 
         // Initialize OpenCC converter (Simplified to Traditional)
-        if (typeof OpenCC !== 'undefined') {
+        if (typeof OpenCC !== 'undefined' && OpenCC.Converter) {
             try {
                 // Use correct API with options object
                 this.converter = await OpenCC.Converter({ from: 'cn', to: 'tw' });
@@ -25,7 +29,7 @@ const ChineseConverter = {
                 this.converter = this.createFallbackConverter();
             }
         } else {
-            console.warn('OpenCC library not found');
+            console.warn('OpenCC library not found, using fallback');
             this.converter = this.createFallbackConverter();
         }
 
@@ -189,7 +193,11 @@ const ChineseConverter = {
      */
     toggle() {
         this.currentMode = this.currentMode === 'simplified' ? 'traditional' : 'simplified';
-        localStorage.setItem('chineseCharacterMode', this.currentMode);
+        try {
+            localStorage.setItem('chineseCharacterMode', this.currentMode);
+        } catch (e) {
+            console.warn('localStorage not available');
+        }
         this.updateToggleUI();
         return this.currentMode;
     },
@@ -200,7 +208,11 @@ const ChineseConverter = {
     setMode(mode) {
         if (mode === 'simplified' || mode === 'traditional') {
             this.currentMode = mode;
-            localStorage.setItem('chineseCharacterMode', this.currentMode);
+            try {
+                localStorage.setItem('chineseCharacterMode', this.currentMode);
+            } catch (e) {
+                console.warn('localStorage not available');
+            }
             this.updateToggleUI();
         }
     },
@@ -277,8 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 });
 
-// Global variables
-let allProverbs = proverbs; // proverbs loaded from proverbs.js
+// Global variables - use allProverbs from proverbs.js
 let currentProverbs = [...allProverbs];
 let currentFilter = 'all';
 let displayedCount = 24; // Initial number of proverbs to show
@@ -386,7 +397,7 @@ function updateFavoritesCount() {
  * Get all favorite proverbs
  */
 function getFavoriteProverbs() {
-    return allProverbs.filter(p => favoriteIds.has(String(getProverbId(p))));
+    return allProverbs ? allProverbs.filter(p => favoriteIds.has(String(getProverbId(p)))) : [];
 }
 
 /**
@@ -425,7 +436,10 @@ function setupChineseToggle() {
     const toggle = document.getElementById('chineseToggle');
     if (!toggle) return;
 
-    toggle.addEventListener('click', () => {
+    const handleToggle = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
         const newMode = ChineseConverter.toggle();
         ChineseConverter.applyToPage();
 
@@ -451,7 +465,10 @@ function setupChineseToggle() {
         }
 
         showToast(newMode === 'traditional' ? '已切换到繁体中文' : '已切换到简体中文');
-    });
+    };
+    
+    toggle.addEventListener('click', handleToggle);
+    toggle.addEventListener('touchend', handleToggle);
 }
 
 /**
@@ -461,12 +478,7 @@ async function initializeApp() {
     console.log('[App] Starting initialization...');
     
     try {
-        // Initialize Chinese converter first
-        console.log('[App] Initializing Chinese converter...');
-        await ChineseConverter.init();
-        console.log('[App] Chinese converter initialized');
-
-        // Store original Chinese text for conversion
+        // Store original Chinese text for conversion first (non-blocking)
         console.log('[App] Storing original text...');
         storeOriginalText();
 
@@ -474,6 +486,7 @@ async function initializeApp() {
         console.log('[App] Loading favorites...');
         loadFavorites();
 
+        // Render proverbs immediately (don't wait for converter)
         console.log('[App] Rendering proverbs...');
         renderProverbs(currentProverbs.slice(0, displayedCount));
         
@@ -495,12 +508,15 @@ async function initializeApp() {
         console.log('[App] Setting up load more...');
         setupLoadMore();
         
-        console.log('[App] Setting up Chinese toggle...');
-        setupChineseToggle();
-
-        // Apply saved preference
-        console.log('[App] Applying Chinese conversion...');
-        ChineseConverter.applyToPage();
+        // Initialize Chinese converter in background (non-blocking)
+        console.log('[App] Initializing Chinese converter (background)...');
+        ChineseConverter.init().then(() => {
+            console.log('[App] Chinese converter initialized');
+            setupChineseToggle();
+            ChineseConverter.applyToPage();
+        }).catch(err => {
+            console.warn('[App] Chinese converter failed:', err);
+        });
 
         // Setup offline detection
         console.log('[App] Setting up offline detection...');
@@ -516,6 +532,8 @@ async function initializeApp() {
  * Setup Daily Spotlight
  */
 function setupDailySpotlight() {
+    if (!allProverbs || allProverbs.length === 0) return;
+    
     const today = new Date().toDateString();
     const savedDate = localStorage.getItem('dailyProverbDate');
     const savedIndex = localStorage.getItem('dailyProverbIndex');
@@ -615,11 +633,19 @@ function renderProverbs(proverbsToRender, append = false) {
  * Setup Load More functionality
  */
 function setupLoadMore() {
-    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (!loadMoreBtn) return;
+    
+    const handleLoadMore = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const currentCount = document.querySelectorAll('.proverb-card').length;
         const nextBatch = currentProverbs.slice(currentCount, currentCount + PROVERBS_PER_LOAD);
         renderProverbs(nextBatch, true);
-    });
+    };
+    
+    loadMoreBtn.addEventListener('click', handleLoadMore);
+    loadMoreBtn.addEventListener('touchend', handleLoadMore);
 }
 
 /**
@@ -640,8 +666,10 @@ function setupEventListeners() {
 
     // New proverb button in modal
     document.getElementById('newProverbBtn').addEventListener('click', () => {
+        if (!allProverbs || allProverbs.length === 0) return;
         const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
-        showProverbInModal(random.cn, random.py, random.en, random.cat, random.id);
+        const cat = random.cats ? random.cats[0] : (random.cat || '');
+        showProverbInModal(random.cn, random.py, random.en, cat, getProverbId(random));
     });
 
     // Favorite button in modal
@@ -693,6 +721,8 @@ function performSearch(query) {
         return;
     }
 
+    if (!allProverbs) return;
+
     // Determine the base set to search from based on current filter
     let baseProverbs;
     if (currentFilter === 'all') {
@@ -728,8 +758,10 @@ function setupFilters() {
     filterButtons.forEach((btn, index) => {
         console.log('[Filters] Attaching listener to button', index, ':', btn.dataset.filter);
         
-        // Simple click handler
-        btn.onclick = function(e) {
+        // Handle both click and touch events for mobile
+        const handleFilterClick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             console.log('[Filters] Button CLICKED:', btn.dataset.filter);
             
             // Update active state
@@ -741,12 +773,13 @@ function setupFilters() {
             currentFilter = filter;
             displayedCount = 24;
             applyFilter(filter);
-            
-            return false; // Prevent default
         };
+        
+        btn.addEventListener('click', handleFilterClick);
+        btn.addEventListener('touchend', handleFilterClick);
     });
     
-    console.log('[Filters] onclick handlers attached to all buttons');
+    console.log('[Filters] Event handlers attached to all buttons');
 }
 
 /**
@@ -754,7 +787,8 @@ function setupFilters() {
  */
 function applyFilter(filter) {
     // Clear search
-    document.getElementById('searchInput').value = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
 
     if (filter === 'all') {
         currentProverbs = [...allProverbs];
@@ -847,14 +881,17 @@ function closeModal() {
  * Show random proverb in modal
  */
 function showRandomProverb() {
+    if (!allProverbs || allProverbs.length === 0) return;
     const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
-    showProverbInModal(random.cn, random.py, random.en, random.cat, getProverbId(random));
+    const cat = random.cats ? random.cats[0] : (random.cat || '');
+    showProverbInModal(random.cn, random.py, random.en, cat, getProverbId(random));
 }
 
 /**
  * Show random proverb in daily spotlight
  */
 function showRandomDailyProverb() {
+    if (!allProverbs || allProverbs.length === 0) return;
     const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
     updateDailySpotlight(random);
 }
