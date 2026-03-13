@@ -1056,92 +1056,57 @@ function initDarkMode() {
  * Initialize the application
  */
 async function initializeApp() {
-    // Initialize audio manager first
-    AudioManager.init();
-    
-    // Initialize dark mode first
-    initDarkMode();
+    console.log('[App] Starting initialization...');
     
     try {
-        // Store original Chinese text for conversion first (non-blocking)
-        console.log('[App] Storing original text...');
+        // Show loading skeleton first
+        showLoadingSkeletons();
+        
+        // Initialize audio manager
+        AudioManager.init();
+        
+        // Initialize share card generator
+        ShareCardGenerator.init();
+        
+        // Setup ripple effects
+        setupRippleEffects();
+        
+        // Store original Chinese text
         storeOriginalText();
-
-        // Load favorites from localStorage
-        console.log('[App] Loading favorites...');
+        
+        // Load favorites
         loadFavorites();
-
-        // Render proverbs immediately (don't wait for converter)
-        console.log('[App] Rendering proverbs...');
-        renderProverbs(currentProverbs.slice(0, displayedCount));
         
-        console.log('[App] Setting up daily spotlight...');
+        // Setup all UI components
         setupDailySpotlight();
-        
-        console.log('[App] Setting up event listeners...');
         setupEventListeners();
-        
-        console.log('[App] Setting up search...');
         setupSearch();
-        
-        console.log('[App] Setting up filters...');
         setupFilters();
-        
-        console.log('[App] Setting up modal...');
         setupModal();
-        
-        console.log('[App] Setting up load more...');
         setupLoadMore();
+        setupChineseToggle();
+        setupFeaturedCollection();
+        setupOfflineDetection();
+        KeyboardNavigation.init();
         
-        // Initialize Chinese converter in background (non-blocking)
-        console.log('[App] Initializing Chinese converter (background)...');
+        // Initialize Chinese converter in background
         ChineseConverter.init().then(() => {
-            console.log('[App] Chinese converter initialized');
             setupChineseToggle();
             ChineseConverter.applyToPage();
         }).catch(err => {
             console.warn('[App] Chinese converter failed:', err);
         });
-
+        
+        // Render proverbs after brief delay
+        setTimeout(() => {
+            renderProverbs(currentProverbs.slice(0, displayedCount));
+            hideLoadingSkeletons();
+            console.log('[App] Initialization complete!');
+        }, 400);
+        
     } catch (error) {
-        console.error('[App] Initialization error:', error);
+        console.error('[App] Initialization failed:', error);
     }
-
-    // Initialize share card generator
-    ShareCardGenerator.init();
-    
-    // Setup ripple effects for buttons
-    setupRippleEffects();
-
-    // Setup featured collection on homepage
-    setupFeaturedCollection();
-
-    // Show loading skeleton first
-    showLoadingSkeletons();
-    
-    // Simulate a brief loading delay for smoother experience
-    setTimeout(() => {
-        renderProverbs(currentProverbs.slice(0, displayedCount));
-        hideLoadingSkeletons();
-    }, 400);
-    
-    setupDailySpotlight();
-    setupEventListeners();
-    setupSearch();
-    setupFilters();
-    setupModal();
-    setupLoadMore();
-    setupChineseToggle();
-    setupFeaturedCollectionButton(); // Add this line
-
-    // Apply saved preference
-    ChineseConverter.applyToPage();
-
-    // Setup offline detection
-    setupOfflineDetection();
-    
-    // Initialize keyboard navigation
-    KeyboardNavigation.init();
 }
 
 /**
