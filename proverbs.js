@@ -1,7 +1,7 @@
 // Chinese Proverbs Collection - 200+ Proverbs with Pinyin
 // Categories: wisdom, learning, perseverance, friendship, life, love, business, family, health
 
-const proverbs = [
+var proverbs = [
     // WISDOM (+ other categories where applicable)
     { cn: "三思而后行", py: "sān sī ér hòu xíng", en: "Think three times before you act. / Look before you leap.", cats: ["wisdom", "business"] },
     { cn: "知之为知之，不知为不知", py: "zhī zhī wéi zhī zhī, bù zhī wéi bù zhī", en: "To know what you know and know what you do not know is true knowledge.", cats: ["wisdom", "learning"] },
@@ -423,7 +423,7 @@ This story mocks those who are fooled by superficial changes when the substance 
 ];
 
 // Cantonese Proverbs (粤语谚语)
-const cantoneseProverbs = [
+var cantoneseProverbs = [
     { cn: "十個茶壺九個蓋", py: "sahp go chàh wu gáu go goi", en: "Ten teapots but only nine lids. / Not enough to go around.", cats: ["cantonese", "business", "life"] },
     { cn: "牛唔飲水唔撳得牛低頭", py: "ngàuh mh yám séui mh gahm dāk ngàuh dài tàuh", en: "You can't force a cow to drink or bow its head. / You can't force someone to do what they don't want.", cats: ["cantonese", "wisdom", "family"] },
     { cn: "有早知，冇乞兒", py: "yáuh jóu jī, móuh hat yìh", en: "If we knew beforehand, there'd be no beggars. / Hindsight is 20/20.", cats: ["cantonese", "wisdom", "business"] },
@@ -458,7 +458,7 @@ const cantoneseProverbs = [
 ];
 
 // Combine all proverbs for display
-const allProverbs = [...proverbs, ...cantoneseProverbs];
+var allProverbs = [...proverbs, ...cantoneseProverbs];
 
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {

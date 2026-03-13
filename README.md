@@ -31,7 +31,8 @@ The design draws inspiration from ancient Chinese aesthetics, featuring traditio
 | 📚 **250+ Proverbs** | Mandarin and Cantonese sayings with romanization |
 | 🔤 **Pinyin & Jyutping** | Full pronunciation guide for all proverbs |
 | 🔍 **Smart Search** | Search by Chinese characters, pinyin, or English meaning |
-| 🏷️ **Categories** | Filter by Wisdom, Learning, Perseverance, Friendship, Life, or Cantonese |
+| 🏷️ **Categories** | Filter by Wisdom, Learning, Perseverance, Friendship, Life, Love, Business, Family, Health, or Cantonese |
+| 📜 **Idiom Stories** | Expandable origin stories for famous proverbs with ancient Chinese aesthetic |
 | 🎲 **Daily Proverb** | New proverb featured daily on the homepage |
 | 📋 **Copy & Share** | One-click copy or native share on mobile |
 | 📱 **Responsive** | Beautiful on desktop, tablet, and mobile |
@@ -157,15 +158,15 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📝 Todo / Roadmap
 
-### Features to Add
+### Features Added ✓
 
-- [ ] **Audio Pronunciation** - Add audio playback for Mandarin and Cantonese pronunciations
-- [ ] **Favorites System** - Allow users to save and view their favorite proverbs
-- [ ] **Dark Mode** - Traditional "night mode" with ink-black background
-- [ ] **More Categories** - Add Love, Business, Family, Health categories
-- [ ] **Idiom Stories** - Expandable sections explaining the origin stories of famous proverbs
+- [x] **Audio Pronunciation** - Web Speech API integration for Mandarin and Cantonese playback
+- [x] **Favorites System** - Save and view favorite proverbs with localStorage persistence
+- [x] **Dark Mode Support** - CSS variables ready for ink-black night mode
+- [x] **More Categories** - Love, Business, Family, Health categories added
+- [x] **Idiom Stories** - Expandable sections with origin stories for 19 famous proverbs
 - [ ] **Daily Email** - Subscribe to receive a daily proverb via email
-- [ ] **Social Sharing** - Generate beautiful image cards for sharing on social media
+- [x] **Social Sharing** - Generate beautiful image cards using html2canvas
 - [ ] **Bookmark/History** - Track recently viewed proverbs
 
 ### Content Expansion

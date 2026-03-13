@@ -514,7 +514,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global variables
-let allProverbs = typeof proverbs !== 'undefined' ? proverbs : []; // Load from proverbs.js
+// Use allProverbs from proverbs.js (combined Mandarin + Cantonese)
+if (typeof allProverbs === 'undefined') {
+    var allProverbs = typeof proverbs !== 'undefined' ? proverbs : [];
+}
 let currentProverbs = [...allProverbs];
 let currentFilter = 'all';
 let displayedCount = 24; // Initial number of proverbs to show
