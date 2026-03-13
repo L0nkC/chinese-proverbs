@@ -158,41 +158,64 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📝 Todo / Roadmap
 
-### Features Added ✓
+### ✅ Features Completed
 
 - [x] **Audio Pronunciation** - Web Speech API integration for Mandarin and Cantonese playback
 - [x] **Favorites System** - Save and view favorite proverbs with localStorage persistence
 - [x] **Dark Mode Support** - CSS variables ready for ink-black night mode
 - [x] **More Categories** - Love, Business, Family, Health categories added
-- [x] **Idiom Stories** - Expandable sections with origin stories for 19 famous proverbs
-- [ ] **Daily Email** - Subscribe to receive a daily proverb via email
+- [x] **Idiom Stories** - Expandable sections with origin stories for famous proverbs
 - [x] **Social Sharing** - Generate beautiful image cards using html2canvas
+- [x] **Related Proverbs** - "You might also like" suggestions based on meaning matching
+- [x] **Quiz Mode** - Interactive multiple-choice game with scoring
+- [x] **Collections/Themes** - Curated sets: Entrepreneurs, Students, Hard Times
+- [x] **Animations & Micro-interactions** - Card hover effects, modal transitions, stagger loading
+- [x] **Mobile Touch Support** - Proper touch event handling with 44px touch targets
+- [x] **Search History** - Recent searches with clear function
+- [x] **Keyboard Navigation** - Full keyboard accessibility support
+- [x] **Loading Skeletons** - Premium staggered animation during content load
+- [x] **Featured Collections** - Daily rotating featured collection on homepage
+- [x] **Copy as Image** - Share proverbs as beautiful image cards
+
+### 🚧 In Progress / Planned
+
+- [ ] **Daily Email** - Subscribe to receive a daily proverb via email
 - [ ] **Bookmark/History** - Track recently viewed proverbs
+- [ ] **User Accounts** - Personal collections and cross-device favorites sync
+- [ ] **Progressive Web App** - Install as native app with offline support
+- [ ] **API Endpoints** - REST API for programmatic access to proverbs
 
-### Content Expansion
+### 📚 Content Expansion
 
-- [ ] Add 100+ more Mandarin proverbs
+- [ ] Add 100+ more Mandarin proverbs (target: 500+)
 - [ ] Add 50+ more Cantonese proverbs
 - [ ] Add Classical Chinese (文言文) versions where applicable
 - [ ] Add Simplified/Traditional Chinese toggle
 - [ ] Include regional variations of proverbs
+- [ ] Add audio recordings by native speakers (replace TTS)
+- [ ] Add "Proverb of the Day" with push notifications
 
-### Technical Improvements
+### ⚡ Technical Improvements
 
-- [ ] Add service worker for offline support
-- [ ] Implement virtual scrolling for better performance
-- [ ] Add animations for card transitions
-- [ ] Improve accessibility (ARIA labels, keyboard navigation)
+- [x] Service Worker for offline support
+- [x] Virtual scrolling for better performance
+- [x] Animations for card transitions
+- [x] Accessibility improvements (ARIA labels, keyboard navigation)
 - [ ] Add unit tests for JavaScript functions
 - [ ] SEO optimization with meta tags and structured data
+- [ ] Image optimization and lazy loading
+- [ ] Bundle and minify assets for production
 
-### Design Enhancements
+### 🎨 Design Enhancements
 
-- [ ] Custom cursor inspired by calligraphy brush
+- [x] Custom cursor inspired by calligraphy brush
+- [x] Ink wash painting backgrounds
+- [x] Animated seal stamp on interactions
 - [ ] Parallax scrolling effects on bamboo elements
-- [ ] Ink wash painting backgrounds
-- [ ] Animated seal stamp on click
 - [ ] Seasonal themes (Spring, Summer, Autumn, Winter)
+- [ ] Dynamic background based on time of day
+- [ ] Custom scrollbars with Chinese motif
+- [ ] Sound effects for interactions (optional)
 
 ---
 

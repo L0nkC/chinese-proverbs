@@ -2730,18 +2730,22 @@ body {
     
     .filter-buttons {
         gap: var(--space-2);
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     .filter-btn {
         padding: var(--space-2) var(--space-3);
+        font-size: 0.8rem;
     }
     
     .btn-text {
-        display: none;
+        display: inline;
     }
     
     .filter-btn .btn-icon {
-        font-size: var(--text-base);
+        font-size: var(--text-sm);
+        margin-right: 4px;
     }
     
     .proverbs-container,
