@@ -514,6 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global variables
+let allProverbs = typeof proverbs !== 'undefined' ? proverbs : []; // Load from proverbs.js
 let currentProverbs = [...allProverbs];
 let currentFilter = 'all';
 let displayedCount = 24; // Initial number of proverbs to show
