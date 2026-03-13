@@ -8,13 +8,17 @@ const ChineseConverter = {
      */
     async init() {
         // Check for saved preference
-        const savedMode = localStorage.getItem('chineseCharacterMode');
-        if (savedMode) {
-            this.currentMode = savedMode;
+        try {
+            const savedMode = localStorage.getItem('chineseCharacterMode');
+            if (savedMode) {
+                this.currentMode = savedMode;
+            }
+        } catch (e) {
+            console.warn('localStorage not available');
         }
 
         // Initialize OpenCC converter (Simplified to Traditional)
-        if (typeof OpenCC !== 'undefined') {
+        if (typeof OpenCC !== 'undefined' && OpenCC.Converter) {
             try {
                 // Use correct API with options object
                 this.converter = await OpenCC.Converter({ from: 'cn', to: 'tw' });
@@ -25,7 +29,7 @@ const ChineseConverter = {
                 this.converter = this.createFallbackConverter();
             }
         } else {
-            console.warn('OpenCC library not found');
+            console.warn('OpenCC library not found, using fallback');
             this.converter = this.createFallbackConverter();
         }
 
@@ -189,7 +193,11 @@ const ChineseConverter = {
      */
     toggle() {
         this.currentMode = this.currentMode === 'simplified' ? 'traditional' : 'simplified';
-        localStorage.setItem('chineseCharacterMode', this.currentMode);
+        try {
+            localStorage.setItem('chineseCharacterMode', this.currentMode);
+        } catch (e) {
+            console.warn('localStorage not available');
+        }
         this.updateToggleUI();
         return this.currentMode;
     },
@@ -200,7 +208,11 @@ const ChineseConverter = {
     setMode(mode) {
         if (mode === 'simplified' || mode === 'traditional') {
             this.currentMode = mode;
-            localStorage.setItem('chineseCharacterMode', this.currentMode);
+            try {
+                localStorage.setItem('chineseCharacterMode', this.currentMode);
+            } catch (e) {
+                console.warn('localStorage not available');
+            }
             this.updateToggleUI();
         }
     },
@@ -520,6 +532,8 @@ async function initializeApp() {
  * Setup Daily Spotlight
  */
 function setupDailySpotlight() {
+    if (!allProverbs || allProverbs.length === 0) return;
+    
     const today = new Date().toDateString();
     const savedDate = localStorage.getItem('dailyProverbDate');
     const savedIndex = localStorage.getItem('dailyProverbIndex');
@@ -658,8 +672,10 @@ function setupEventListeners() {
 
     // New proverb button in modal
     document.getElementById('newProverbBtn').addEventListener('click', () => {
+        if (!allProverbs || allProverbs.length === 0) return;
         const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
-        showProverbInModal(random.cn, random.py, random.en, random.cat, random.id);
+        const cat = random.cats ? random.cats[0] : (random.cat || '');
+        showProverbInModal(random.cn, random.py, random.en, cat, getProverbId(random));
     });
 
     // Favorite button in modal
@@ -710,6 +726,8 @@ function performSearch(query) {
         applyFilter(currentFilter);
         return;
     }
+
+    if (!allProverbs) return;
 
     // Determine the base set to search from based on current filter
     let baseProverbs;
@@ -884,14 +902,17 @@ function closeModal() {
  * Show random proverb in modal
  */
 function showRandomProverb() {
+    if (!allProverbs || allProverbs.length === 0) return;
     const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
-    showProverbInModal(random.cn, random.py, random.en, random.cat, getProverbId(random));
+    const cat = random.cats ? random.cats[0] : (random.cat || '');
+    showProverbInModal(random.cn, random.py, random.en, cat, getProverbId(random));
 }
 
 /**
  * Show random proverb in daily spotlight
  */
 function showRandomDailyProverb() {
+    if (!allProverbs || allProverbs.length === 0) return;
     const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
     updateDailySpotlight(random);
 }
