@@ -1,12 +1,15 @@
 const CACHE_NAME = 'chinese-proverbs-v1';
 
-// Assets to cache for offline use
+// Get the base path for GitHub Pages subdirectory support
+const BASE_PATH = self.location.pathname.replace(/sw\.js$/, '');
+
+// Assets to cache for offline use (relative paths)
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/proverbs.js',
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './proverbs.js',
   // Google Fonts - these will be cached when loaded
   'https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Zhi+Mang+Xing&display=swap'
 ];
