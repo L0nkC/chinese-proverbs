@@ -1091,18 +1091,19 @@ async function initializeApp() {
 }
 
 /**
- * Show loading skeletons with elegant shimmer effect
+ * Show loading skeletons with premium staggered animation
  */
 function showLoadingSkeletons() {
     const container = document.getElementById('proverbsContainer');
     if (!container) return;
     
-    const skeletonCount = window.innerWidth < 768 ? 4 : 6;
-    let skeletonHTML = '<div class="skeleton-container">';
+    // Determine skeleton count based on viewport
+    const skeletonCount = window.innerWidth < 768 ? 4 : window.innerWidth < 1200 ? 6 : 9;
+    let skeletonHTML = '<div class="skeleton-container" aria-busy="true" aria-label="Loading proverbs">';
     
     for (let i = 0; i < skeletonCount; i++) {
         skeletonHTML += `
-            <div class="skeleton-card" style="animation-delay: ${i * 0.08}s">
+            <div class="skeleton-card" style="animation-delay: ${i * 0.06}s" aria-hidden="true">
                 <div class="skeleton-header">
                     <div class="skeleton-tag"></div>
                     <div class="skeleton-actions">
@@ -1119,10 +1120,18 @@ function showLoadingSkeletons() {
     
     skeletonHTML += '</div>';
     container.innerHTML = skeletonHTML;
+    
+    // Add premium loading text for screen readers
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('role', 'status');
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.className = 'sr-only';
+    liveRegion.textContent = 'Loading proverbs...';
+    container.appendChild(liveRegion);
 }
 
 /**
- * Hide loading skeletons with elegant fade-out transition
+ * Hide loading skeletons with premium fade-out transition
  */
 function hideLoadingSkeletons() {
     const container = document.getElementById('proverbsContainer');
@@ -1130,13 +1139,17 @@ function hideLoadingSkeletons() {
     
     const skeletonContainer = container.querySelector('.skeleton-container');
     if (skeletonContainer) {
+        // Premium exit animation
         skeletonContainer.style.opacity = '0';
-        skeletonContainer.style.transform = 'translateY(-15px) scale(0.98)';
-        skeletonContainer.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        skeletonContainer.style.transform = 'translateY(-20px) scale(0.98)';
+        skeletonContainer.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
         
         setTimeout(() => {
             skeletonContainer.remove();
-        }, 400);
+            // Remove any live regions
+            const liveRegion = container.querySelector('.sr-only[role="status"]');
+            if (liveRegion) liveRegion.remove();
+        }, 500);
     }
 }
 
@@ -1308,14 +1321,14 @@ function renderProverbs(proverbsToRender, append = false) {
 }
 
 /**
- * Setup Load More functionality with smooth loading animation
+ * Setup Load More functionality with premium loading animation
  */
 function setupLoadMore() {
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     if (!loadMoreBtn) return;
     
     loadMoreBtn.addEventListener('click', () => {
-        // Add loading state
+        // Add premium loading state
         loadMoreBtn.classList.add('loading');
         loadMoreBtn.innerHTML = `
             <span class="loading-dots">Loading<span>.</span><span>.</span><span>.</span></span>
@@ -1329,7 +1342,7 @@ function setupLoadMore() {
             const nextBatch = currentProverbs.slice(currentCount, currentCount + PROVERBS_PER_LOAD);
             renderProverbs(nextBatch, true);
             
-            // Reset button state
+            // Reset button state with premium animation
             loadMoreBtn.classList.remove('loading');
             loadMoreBtn.innerHTML = `
                 <span>Load More</span>
@@ -1342,9 +1355,20 @@ function setupLoadMore() {
             
             // Hide button if no more proverbs
             if (displayedCount >= currentProverbs.length) {
-                loadMoreBtn.style.display = 'none';
+                loadMoreBtn.style.opacity = '0';
+                loadMoreBtn.style.transform = 'translateY(10px)';
+                loadMoreBtn.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                setTimeout(() => {
+                    loadMoreBtn.style.display = 'none';
+                }, 300);
             }
-        }, 400);
+            
+            // Scroll smoothly to new content
+            const newCards = document.querySelectorAll('.proverb-card');
+            if (newCards[currentCount]) {
+                newCards[currentCount].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
     });
 }
 
