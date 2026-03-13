@@ -743,8 +743,8 @@ function setupFilters() {
     // Re-query after cloning
     const freshButtons = document.querySelectorAll('.filter-btn');
     freshButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            console.log('[Filters] Button clicked:', btn.dataset.filter);
+        const clickHandler = (e) => {
+            console.log('[Filters] Button clicked/touched:', btn.dataset.filter);
             e.preventDefault();
             e.stopPropagation();
             
@@ -757,7 +757,11 @@ function setupFilters() {
             currentFilter = filter;
             displayedCount = 24;
             applyFilter(filter);
-        });
+        };
+        
+        btn.addEventListener('click', clickHandler);
+        btn.addEventListener('touchstart', clickHandler, {passive: false});
+        btn.addEventListener('touchend', (e) => e.preventDefault());
     });
     
     console.log('[Filters] Listeners attached to all buttons');
