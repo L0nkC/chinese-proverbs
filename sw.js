@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chinese-proverbs-v1';
+const CACHE_NAME = 'chinese-proverbs-v2';
 
 // Assets to cache for offline use
 const ASSETS_TO_CACHE = [

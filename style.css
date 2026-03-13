@@ -2202,13 +2202,152 @@ body.offline-mode .scroll-container {
 }
 
 /* ========================================
-   ANIMATIONS
+   ANIMATIONS & MICRO-INTERACTIONS
    ======================================== */
 
-@keyframes fadeInUp {
+/* ----------------------------------------
+   1. LOADING SKELETONS
+   ---------------------------------------- */
+.skeleton-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.skeleton-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    overflow: hidden;
+    position: relative;
+}
+
+.skeleton-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(201, 162, 39, 0.08),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+.skeleton-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.skeleton-tag {
+    width: 70px;
+    height: 20px;
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--parchment) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    border-radius: 12px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.skeleton-action {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--parchment) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    border-radius: 50%;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    animation-delay: 0.1s;
+}
+
+.skeleton-chinese {
+    width: 80%;
+    height: 32px;
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--parchment) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-sm);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    animation-delay: 0.15s;
+}
+
+.skeleton-pinyin {
+    width: 60%;
+    height: 18px;
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--parchment) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-md);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    animation-delay: 0.2s;
+}
+
+.skeleton-english {
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--parchment) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    border-radius: var(--radius-sm);
+    border-left: 2px solid var(--border-color);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    animation-delay: 0.25s;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* ----------------------------------------
+   2. PAGE TRANSITION ANIMATIONS
+   ---------------------------------------- */
+.page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--vermilion-soft) 0%, var(--imperial-gold-soft) 100%);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.page-transition-overlay.active {
+    opacity: 1;
+    animation: page-fade-in 0.4s ease;
+}
+
+@keyframes page-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Content fade in on page load */
+.scroll-container {
+    animation: content-fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes content-fade-in {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -2216,16 +2355,549 @@ body.offline-mode .scroll-container {
     }
 }
 
-.proverb-card {
-    animation: fadeInUp 0.5s ease forwards;
+/* ----------------------------------------
+   3. CARD STAGGER ANIMATIONS
+   ---------------------------------------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.proverb-card:nth-child(1) { animation-delay: 0.05s; }
-.proverb-card:nth-child(2) { animation-delay: 0.1s; }
-.proverb-card:nth-child(3) { animation-delay: 0.15s; }
-.proverb-card:nth-child(4) { animation-delay: 0.2s; }
-.proverb-card:nth-child(5) { animation-delay: 0.25s; }
-.proverb-card:nth-child(6) { animation-delay: 0.3s; }
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.proverb-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity, box-shadow;
+}
+
+/* Staggered delays for up to 24 cards (2 batches of 12) */
+.proverb-card:nth-child(1) { animation-delay: 0.03s; }
+.proverb-card:nth-child(2) { animation-delay: 0.06s; }
+.proverb-card:nth-child(3) { animation-delay: 0.09s; }
+.proverb-card:nth-child(4) { animation-delay: 0.12s; }
+.proverb-card:nth-child(5) { animation-delay: 0.15s; }
+.proverb-card:nth-child(6) { animation-delay: 0.18s; }
+.proverb-card:nth-child(7) { animation-delay: 0.21s; }
+.proverb-card:nth-child(8) { animation-delay: 0.24s; }
+.proverb-card:nth-child(9) { animation-delay: 0.27s; }
+.proverb-card:nth-child(10) { animation-delay: 0.30s; }
+.proverb-card:nth-child(11) { animation-delay: 0.33s; }
+.proverb-card:nth-child(12) { animation-delay: 0.36s; }
+.proverb-card:nth-child(13) { animation-delay: 0.39s; }
+.proverb-card:nth-child(14) { animation-delay: 0.42s; }
+.proverb-card:nth-child(15) { animation-delay: 0.45s; }
+.proverb-card:nth-child(16) { animation-delay: 0.48s; }
+.proverb-card:nth-child(17) { animation-delay: 0.51s; }
+.proverb-card:nth-child(18) { animation-delay: 0.54s; }
+.proverb-card:nth-child(19) { animation-delay: 0.57s; }
+.proverb-card:nth-child(20) { animation-delay: 0.60s; }
+.proverb-card:nth-child(21) { animation-delay: 0.63s; }
+.proverb-card:nth-child(22) { animation-delay: 0.66s; }
+.proverb-card:nth-child(23) { animation-delay: 0.69s; }
+.proverb-card:nth-child(24) { animation-delay: 0.72s; }
+
+/* ----------------------------------------
+   4. SMOOTH CARD HOVER EFFECTS (Lift + Shadow)
+   ---------------------------------------- */
+.proverb-card {
+    transition: 
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease,
+        background-color 0.3s ease;
+}
+
+.proverb-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(201, 162, 39, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border-color: var(--imperial-gold);
+    background: linear-gradient(145deg, var(--card-bg) 0%, var(--rice-paper-light) 100%);
+}
+
+.proverb-card:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
+.proverb-card::before {
+    transform-origin: top;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Card content subtle shift on hover */
+.proverb-card .proverb-chinese {
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.proverb-card:hover .proverb-chinese {
+    color: var(--vermilion);
+    transform: translateX(2px);
+}
+
+/* ----------------------------------------
+   5. MODAL SCALE + FADE ANIMATIONS
+   ---------------------------------------- */
+.modal {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    transition: 
+        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.3s ease;
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: 
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.3s ease;
+}
+
+.modal.active .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Modal backdrop blur animation */
+.modal {
+    backdrop-filter: blur(0px);
+    transition: 
+        opacity 0.3s ease,
+        visibility 0.3s ease,
+        backdrop-filter 0.3s ease;
+}
+
+.modal.active {
+    backdrop-filter: blur(4px);
+}
+
+/* Modal close animation */
+.modal.closing {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.modal.closing .modal-content {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+}
+
+/* ----------------------------------------
+   6. BUTTON CLICK FEEDBACK (Ripple + Scale)
+   ---------------------------------------- */
+
+/* Ripple Effect Base */
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%);
+    transform: scale(0);
+    animation: ripple-effect 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-effect {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Button Scale Effects */
+.filter-btn,
+.action-btn,
+.card-btn,
+.spotlight-btn,
+.load-more-btn,
+.chinese-toggle,
+.audio-btn,
+.favorite-btn,
+.speaker-btn,
+.close-btn {
+    position: relative;
+    overflow: hidden;
+    transition: 
+        transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Primary button press */
+.filter-btn:active,
+.action-btn:active,
+.card-btn:active,
+.spotlight-btn:active,
+.load-more-btn:active,
+.chinese-toggle:active,
+.audio-btn:active,
+.favorite-btn:active,
+.speaker-btn:active {
+    transform: scale(0.96);
+}
+
+/* Enhanced hover effects for buttons */
+.filter-btn {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 162, 39, 0.2);
+}
+
+.filter-btn.active {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Action buttons enhanced */
+.action-btn {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn.primary:hover {
+    box-shadow: 0 6px 20px rgba(201, 162, 39, 0.3);
+}
+
+/* Favorite button heartbeat animation */
+.favorite-btn.is-favorite .heart-icon {
+    animation: heartbeat 0.3s ease;
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.favorite-btn:hover {
+    transform: scale(1.15);
+}
+
+.favorite-btn:active {
+    transform: scale(0.95);
+}
+
+/* Spotlight button enhanced */
+.spotlight-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.spotlight-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.spotlight-btn:active::before {
+    width: 200%;
+    height: 200%;
+}
+
+/* Load more button animation */
+.load-more-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.load-more-btn .load-icon {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.load-more-btn:hover .load-icon {
+    animation: bounce-down 0.6s ease infinite;
+}
+
+@keyframes bounce-down {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+}
+
+/* Close button enhanced */
+.close-btn {
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.close-btn:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: var(--vermilion-soft);
+    color: var(--vermilion);
+}
+
+.close-btn:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Audio button playing animation */
+.audio-btn.playing {
+    animation: pulse-ring 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(199, 62, 29, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(199, 62, 29, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(199, 62, 29, 0); }
+}
+
+/* ----------------------------------------
+   7. ADDITIONAL MICRO-INTERACTIONS
+   ---------------------------------------- */
+
+/* Search box focus animation */
+.search-box input {
+    transition: 
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+}
+
+.search-box input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(201, 162, 162, 0.15), 0 0 0 4px var(--imperial-gold-soft);
+}
+
+/* Daily spotlight enhanced */
+.daily-spotlight {
+    transition: transform 0.3s ease;
+}
+
+.spotlight-inner {
+    transition: 
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.4s ease;
+}
+
+.spotlight-inner:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 32px rgba(201, 162, 39, 0.2),
+        0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Header seal subtle float */
+.seal-outer {
+    animation: seal-float 4s ease-in-out infinite;
+}
+
+@keyframes seal-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+/* Category tag subtle animation */
+.category-tag {
+    transition: all 0.25s ease;
+}
+
+.proverb-card:hover .category-tag {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(201, 162, 39, 0.2);
+}
+
+/* Card actions fade in smoother */
+.proverb-actions-card {
+    opacity: 0;
+    transform: translateY(5px);
+    transition: 
+        opacity 0.3s ease,
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.proverb-card:hover .proverb-actions-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Card buttons stagger on hover */
+.proverb-actions-card .card-btn {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: 
+        opacity 0.25s ease,
+        transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.proverb-card:hover .proverb-actions-card .card-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.proverb-card:hover .proverb-actions-card .card-btn:nth-child(1) { transition-delay: 0.05s; }
+.proverb-card:hover .proverb-actions-card .card-btn:nth-child(2) { transition-delay: 0.1s; }
+.proverb-card:hover .proverb-actions-card .card-btn:nth-child(3) { transition-delay: 0.15s; }
+
+/* Toast notification enhanced */
+.toast {
+    transform: translateX(-50%) translateY(100px) scale(0.9);
+    transition: 
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* Stats bar counter animation */
+.stat-number {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.stat-number:hover {
+    transform: scale(1.1);
+    color: var(--vermilion);
+}
+
+/* Footer link underline animation */
+.footer-link {
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.footer-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--vermilion);
+    transition: width 0.3s ease;
+}
+
+.footer-link:hover::after {
+    width: 100%;
+}
+
+/* Scrollbar thumb hover */
+::-webkit-scrollbar-thumb {
+    transition: background 0.2s ease;
+}
+
+/* Search history item hover */
+.search-history-item {
+    transition: 
+        background-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.search-history-item:hover {
+    transform: translateX(4px);
+}
+
+/* Story section enhanced */
+.story-toggle {
+    transition: 
+        background 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.story-toggle:hover {
+    transform: translateY(-1px);
+}
+
+.story-toggle:active {
+    transform: translateY(0);
+}
+
+.story-content {
+    transition: 
+        max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.3s ease,
+        opacity 0.3s ease;
+}
+
+/* No results icon bounce */
+.no-results-icon {
+    animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Chinese toggle animation */
+.chinese-toggle {
+    transition: 
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.15s ease;
+}
+
+.chinese-toggle:active {
+    transform: scale(0.98);
+}
+
+.toggle-option {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-option.active {
+    animation: toggle-pop 0.3s ease;
+}
+
+@keyframes toggle-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
 
 /* ========================================
    SELECTION & SCROLLBAR
@@ -2400,6 +3072,11 @@ body.offline-mode .scroll-container {
 @media (max-width: 768px) {
     .keyboard-hint {
         display: none;
+    }
+    
+    .skeleton-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
     }
 }
 

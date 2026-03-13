@@ -508,9 +508,66 @@ const ChineseConverter = {
     }
 };
 
-// Initialize when DOM is loaded
+/**
+ * Page Transition Manager
+ * Handles elegant page transition animations
+ */
+const PageTransition = {
+    overlay: null,
+    
+    init() {
+        this.overlay = document.getElementById('pageTransition');
+    },
+    
+    /**
+     * Show page transition overlay
+     * @param {Function} callback - Function to execute during transition
+     * @param {number} duration - Duration in ms
+     */
+    async show(callback, duration = 400) {
+        if (!this.overlay) return;
+        
+        this.overlay.classList.add('active');
+        
+        if (callback) {
+            await new Promise(resolve => setTimeout(resolve, duration / 2));
+            await callback();
+            await new Promise(resolve => setTimeout(resolve, duration / 2));
+        } else {
+            await new Promise(resolve => setTimeout(resolve, duration));
+        }
+        
+        this.hide();
+    },
+    
+    /**
+     * Hide page transition overlay
+     */
+    hide() {
+        if (!this.overlay) return;
+        this.overlay.classList.remove('active');
+    },
+    
+    /**
+     * Navigate with transition
+     * @param {string} url - URL to navigate to
+     */
+    navigate(url) {
+        this.show(() => {
+            window.location.href = url;
+        }, 600);
+    }
+};
+
+// Initialize page transition on load
 document.addEventListener('DOMContentLoaded', () => {
+    PageTransition.init();
     initializeApp();
+    
+    // Show initial page load animation
+    setTimeout(() => {
+        PageTransition.hide();
+    }, 200);
 });
 
 // Global variables
@@ -1030,18 +1087,18 @@ async function initializeApp() {
 }
 
 /**
- * Show loading skeletons
+ * Show loading skeletons with elegant shimmer effect
  */
 function showLoadingSkeletons() {
     const container = document.getElementById('proverbsContainer');
     if (!container) return;
     
-    const skeletonCount = 6;
+    const skeletonCount = window.innerWidth < 768 ? 4 : 6;
     let skeletonHTML = '<div class="skeleton-container">';
     
     for (let i = 0; i < skeletonCount; i++) {
         skeletonHTML += `
-            <div class="skeleton-card">
+            <div class="skeleton-card" style="animation-delay: ${i * 0.08}s">
                 <div class="skeleton-header">
                     <div class="skeleton-tag"></div>
                     <div class="skeleton-actions">
@@ -1061,7 +1118,7 @@ function showLoadingSkeletons() {
 }
 
 /**
- * Hide loading skeletons
+ * Hide loading skeletons with elegant fade-out transition
  */
 function hideLoadingSkeletons() {
     const container = document.getElementById('proverbsContainer');
@@ -1070,12 +1127,12 @@ function hideLoadingSkeletons() {
     const skeletonContainer = container.querySelector('.skeleton-container');
     if (skeletonContainer) {
         skeletonContainer.style.opacity = '0';
-        skeletonContainer.style.transform = 'translateY(-10px)';
-        skeletonContainer.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        skeletonContainer.style.transform = 'translateY(-15px) scale(0.98)';
+        skeletonContainer.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         
         setTimeout(() => {
             skeletonContainer.remove();
-        }, 300);
+        }, 400);
     }
 }
 
@@ -1159,7 +1216,7 @@ function updateDailySpotlight(proverb) {
 }
 
 /**
- * Render proverbs to the grid
+ * Render proverbs to the grid with stagger animations
  */
 function renderProverbs(proverbsToRender, append = false) {
     const container = document.getElementById('proverbsContainer');
@@ -1177,6 +1234,10 @@ function renderProverbs(proverbsToRender, append = false) {
         return;
     }
 
+    // Calculate starting index for stagger delay when appending
+    const existingCards = container.querySelectorAll('.proverb-card');
+    const startIndex = append ? existingCards.length : 0;
+
     const cardsHTML = proverbsToRender.map((proverb, index) => {
         const isCantonese = proverb.cats ? proverb.cats.includes('cantonese') : proverb.cat === 'cantonese';
         const firstCat = proverb.cats ? proverb.cats[0] : (proverb.cat || 'wisdom');
@@ -1189,8 +1250,12 @@ function renderProverbs(proverbsToRender, append = false) {
         const hasStory = proverb.story ? true : false;
         const storyBadge = hasStory ? '<span class="story-badge" title="Has origin story">📜</span>' : '';
         const storyData = hasStory ? `data-story-title="${proverb.story.title.replace(/"/g, '&quot;')}" data-story-content="${proverb.story.content.replace(/"/g, '&quot;').replace(/\n/g, '\\n')}"` : '';
+        // Calculate stagger delay for this card
+        const staggerIndex = startIndex + index;
+        const delay = Math.min(staggerIndex * 0.03, 0.72); // Max delay of 0.72s (24th card)
+        
         return `
-            <article class="proverb-card ${isCantonese ? 'cantonese' : ''}" data-id="${proverbIdStr}" ${storyData}>
+            <article class="proverb-card ${isCantonese ? 'cantonese' : ''}" data-id="${proverbIdStr}" ${storyData} style="animation-delay: ${delay}s">
                 <div class="card-header">
                     <div class="card-header-left">
                         <span class="category-tag ${isCantonese ? 'cantonese' : ''}">${firstCat}</span>
@@ -1221,11 +1286,13 @@ function renderProverbs(proverbsToRender, append = false) {
 
     if (append) {
         container.insertAdjacentHTML('beforeend', cardsHTML);
+        // Re-initialize keyboard navigation after appending
+        KeyboardNavigation.updateCardsList();
     } else {
         container.innerHTML = cardsHTML;
     }
 
-    updateStats(append ? container.children.length : proverbsToRender.length);
+    updateStats(append ? container.querySelectorAll('.proverb-card').length : proverbsToRender.length);
 
     // Show/hide load more button
     const loadMoreSection = document.getElementById('loadMoreSection');
