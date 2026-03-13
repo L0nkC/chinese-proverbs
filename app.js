@@ -3379,3 +3379,4 @@ function setupFeaturedCollectionButton() {
     });
 }
 window.navigateToRelatedProverb = navigateToRelatedProverb;
+// Force rebuild Fri Mar 13 11:29:34 PM CST 2026
