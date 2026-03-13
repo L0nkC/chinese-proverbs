@@ -465,9 +465,6 @@ function setupChineseToggle() {
  * Initialize the application
  */
 async function initializeApp() {
-    // Initialize dark mode first
-    initDarkMode();
-    
     // Initialize Chinese converter first
     await ChineseConverter.init();
 
@@ -545,8 +542,8 @@ function renderProverbs(proverbsToRender, append = false) {
     }
 
     const cardsHTML = proverbsToRender.map((proverb, index) => {
-        const isCantonese = proverb.cats ? proverb.cats.includes('cantonese') : proverb.cat === 'cantonese';
-        const firstCat = proverb.cats ? proverb.cats[0] : (proverb.cat || '');
+        const isCantonese = proverb.cats && proverb.cats.includes('cantonese');
+        const firstCat = proverb.cats && proverb.cats[0] ? proverb.cats[0] : '';
         const proverbId = getProverbId(proverb);
         const proverbIdStr = String(proverbId).replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const favClass = isFavorite(proverbId) ? 'is-favorite' : '';
@@ -681,7 +678,7 @@ function performSearch(query) {
     } else if (currentFilter === 'favorites') {
         baseProverbs = getFavoriteProverbs();
     } else {
-        baseProverbs = allProverbs.filter(p => p.cats ? p.cats.includes(currentFilter) : p.cat === currentFilter);
+        baseProverbs = allProverbs.filter(p => p.cats && p.cats.includes(currentFilter));
     }
 
     const filtered = baseProverbs.filter(p =>
@@ -727,7 +724,7 @@ function applyFilter(filter) {
     } else if (filter === 'favorites') {
         currentProverbs = getFavoriteProverbs();
     } else {
-        currentProverbs = allProverbs.filter(p => p.cats ? p.cats.includes(filter) : p.cat === filter);
+        currentProverbs = allProverbs.filter(p => p.cats && p.cats.includes(filter));
     }
 
     renderProverbs(currentProverbs.slice(0, displayedCount));
