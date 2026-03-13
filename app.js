@@ -998,8 +998,19 @@ async function initializeApp() {
 
     // Initialize share card generator
     ShareCardGenerator.init();
+    
+    // Setup ripple effects for buttons
+    setupRippleEffects();
 
-    renderProverbs(currentProverbs.slice(0, displayedCount));
+    // Show loading skeleton first
+    showLoadingSkeletons();
+    
+    // Simulate a brief loading delay for smoother experience
+    setTimeout(() => {
+        renderProverbs(currentProverbs.slice(0, displayedCount));
+        hideLoadingSkeletons();
+    }, 400);
+    
     setupDailySpotlight();
     setupEventListeners();
     setupSearch();
@@ -1016,6 +1027,103 @@ async function initializeApp() {
     
     // Initialize keyboard navigation
     KeyboardNavigation.init();
+}
+
+/**
+ * Show loading skeletons
+ */
+function showLoadingSkeletons() {
+    const container = document.getElementById('proverbsContainer');
+    if (!container) return;
+    
+    const skeletonCount = 6;
+    let skeletonHTML = '<div class="skeleton-container">';
+    
+    for (let i = 0; i < skeletonCount; i++) {
+        skeletonHTML += `
+            <div class="skeleton-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-tag"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton-action"></div>
+                        <div class="skeleton-action"></div>
+                    </div>
+                </div>
+                <div class="skeleton-chinese"></div>
+                <div class="skeleton-pinyin"></div>
+                <div class="skeleton-english"></div>
+            </div>
+        `;
+    }
+    
+    skeletonHTML += '</div>';
+    container.innerHTML = skeletonHTML;
+}
+
+/**
+ * Hide loading skeletons
+ */
+function hideLoadingSkeletons() {
+    const container = document.getElementById('proverbsContainer');
+    if (!container) return;
+    
+    const skeletonContainer = container.querySelector('.skeleton-container');
+    if (skeletonContainer) {
+        skeletonContainer.style.opacity = '0';
+        skeletonContainer.style.transform = 'translateY(-10px)';
+        skeletonContainer.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        
+        setTimeout(() => {
+            skeletonContainer.remove();
+        }, 300);
+    }
+}
+
+/**
+ * Setup ripple effect for buttons
+ */
+function setupRippleEffects() {
+    // Add ripple to all buttons
+    const buttons = document.querySelectorAll('button:not(.close-btn):not(.favorite-btn):not(.speaker-btn)');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', createRipple);
+    });
+    
+    // Also add to dynamically created buttons via event delegation
+    document.addEventListener('click', (e) => {
+        const button = e.target.closest('.filter-btn, .action-btn, .card-btn, .spotlight-btn, .load-more-btn, .audio-btn');
+        if (button && !button.classList.contains('close-btn')) {
+            createRipple.call(button, e);
+        }
+    });
+}
+
+/**
+ * Create ripple effect
+ */
+function createRipple(e) {
+    const button = this;
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    ripple.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+    `;
+    
+    button.classList.add('ripple-container');
+    button.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
 }
 
 /**
@@ -1598,7 +1706,7 @@ function setupModal() {
 }
 
 /**
- * Show modal with a proverb
+ * Show modal with a proverb - with enhanced animation
  */
 function showProverbInModal(chinese, pinyin, english, category, proverbId) {
     const modal = document.getElementById('proverbModal');
@@ -1663,8 +1771,34 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
         updateModalFavoriteButton(proverbId);
     }
 
+    // Show modal with animation
+    modal.classList.remove('closing');
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // Reset scroll position
+    modalContent.scrollTop = 0;
+}
+
+/**
+ * Close modal with animation
+ */
+function closeModal() {
+    const modal = document.getElementById('proverbModal');
+    
+    // Add closing class for animation
+    modal.classList.add('closing');
+    modal.classList.remove('active');
+    
+    // Wait for animation to complete before fully hiding
+    setTimeout(() => {
+        modal.classList.remove('closing');
+        document.body.style.overflow = '';
+    }, 300);
+    
+    // Stop any playing audio
+    AudioManager.stop();
+    updateAudioUI(false);
 }
 
 /**
@@ -1698,19 +1832,6 @@ function updateModalFavoriteButton(proverbId) {
     const isFav = isFavorite(proverbId);
     btn.classList.toggle('is-favorite', isFav);
     btn.innerHTML = `<span class="heart-icon">${isFav ? '♥' : '♡'}</span> ${isFav ? 'Favorited' : 'Favorite'}`;
-}
-
-/**
- * Close modal
- */
-function closeModal() {
-    const modal = document.getElementById('proverbModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-    
-    // Stop any playing audio
-    AudioManager.stop();
-    updateAudioUI(false);
 }
 
 // ============================================
