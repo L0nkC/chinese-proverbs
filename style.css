@@ -2437,6 +2437,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: var(--space-6);
     margin-bottom: var(--space-12);
+    pointer-events: none; /* Don't block clicks */
 }
 
 .skeleton-card {
