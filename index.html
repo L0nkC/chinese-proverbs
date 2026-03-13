@@ -25,6 +25,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="big-features.css">
+    <link rel="stylesheet" href="big-features-quick-wins.css">
 </head>
 <body>
     <!-- Page Transition Overlay -->
@@ -73,9 +74,17 @@
             
             <!-- Header Action Buttons -->
             <div class="header-actions">
+                <button class="action-btn" onclick="surpriseMe()" title="Surprise Me!">
+                    <span class="action-btn-icon">🎲</span>
+                    <span class="action-btn-text">Surprise</span>
+                </button>
                 <button class="action-btn" onclick="LearningMode.showProgress()" title="Learning Mode">
                     <span class="action-btn-icon">📚</span>
                     <span class="action-btn-text">Learn</span>
+                </button>
+                <button class="action-btn" onclick="showExportModal()" title="Export Favorites">
+                    <span class="action-btn-icon">📤</span>
+                    <span class="action-btn-text">Export</span>
                 </button>
                 <button class="action-btn" onclick="CommunitySubmissions.showSubmissionForm()" title="Submit Proverb">
                     <span class="action-btn-icon">📝</span>
@@ -203,6 +212,26 @@
                         <span class="btn-text">Quiz</span>
                     </button>
                 </div>
+            </div>
+
+            <div class="filter-section length-section">
+                <span class="filter-label">Length:</span>
+                <div class="filter-buttons length-filter-buttons">
+                    <button class="filter-btn" onclick="filterByLength('chengyu')">
+                        <span class="btn-icon">四字</span>
+                        <span class="btn-text">Chengyu (4-char)</span>
+                    </button>
+                    <button class="filter-btn" onclick="filterByLength('short')">
+                        <span class="btn-icon">短</span>
+                        <span class="btn-text">Short</span>
+                    </button>
+                    <button class="filter-btn" onclick="filterByLength('long')">
+                        <span class="btn-icon">长</span>
+                        <span class="btn-text">Long</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="filter-section collections-section">
                 <span class="filter-label collections-label">Collections:</span>
                 <div class="filter-buttons collections-buttons">

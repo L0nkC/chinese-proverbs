@@ -1,0 +1,294 @@
+
+
+/* ========================================
+   QUICK WINS CSS
+   Search suggestions, Surprise Me, Export
+   ======================================== */
+
+/* ---------- SEARCH SUGGESTIONS ---------- */
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--rice-paper);
+    border: 2px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-lg);
+}
+
+.search-suggestions.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.suggestion-item {
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.2s ease;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background: var(--vermilion-soft);
+}
+
+.suggestion-text {
+    font-size: var(--text-base);
+    color: var(--ink-deep);
+}
+
+.suggestion-text strong {
+    color: var(--vermilion);
+    font-weight: 600;
+}
+
+.suggestion-type {
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+    background: var(--rice-paper-dark);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+}
+
+/* ---------- SURPRISE ME ---------- */
+.surprise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.surprise-overlay.show {
+    opacity: 1;
+}
+
+.surprise-content {
+    text-align: center;
+    padding: var(--space-8);
+    animation: surprisePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes surprisePop {
+    0% {
+        transform: scale(0.3) rotate(-10deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotate(2deg);
+    }
+    100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
+}
+
+.surprise-icon {
+    font-size: 5rem;
+    margin-bottom: var(--space-6);
+    animation: diceRoll 0.6s ease;
+}
+
+@keyframes diceRoll {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(90deg); }
+    50% { transform: rotate(180deg); }
+    75% { transform: rotate(270deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.surprise-chinese {
+    font-family: var(--font-chinese);
+    font-size: var(--text-4xl);
+    color: white;
+    margin-bottom: var(--space-4);
+    text-shadow: 0 2px 20px rgba(199, 62, 29, 0.5);
+}
+
+.surprise-pinyin {
+    font-family: var(--font-english);
+    font-size: var(--text-xl);
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    margin-bottom: var(--space-4);
+}
+
+.surprise-english {
+    font-family: var(--font-english);
+    font-size: var(--text-2xl);
+    color: white;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ---------- LENGTH FILTER BUTTONS ---------- */
+.length-filter-buttons {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.length-filter-btn {
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--ink-gray);
+    font-family: var(--font-english);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.length-filter-btn:hover {
+    background: var(--vermilion-soft);
+    border-color: var(--vermilion);
+    color: var(--vermilion);
+}
+
+.length-filter-btn.active {
+    background: var(--vermilion);
+    border-color: var(--vermilion);
+    color: white;
+}
+
+/* ---------- EXPORT MODAL ---------- */
+.export-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.export-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.export-modal-content {
+    position: relative;
+    background: var(--rice-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: var(--shadow-xl);
+    border: 2px solid var(--vermilion);
+    animation: modalSlideIn 0.3s ease;
+}
+
+.export-modal-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--ink-gray);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.export-modal-close:hover {
+    background: var(--vermilion-soft);
+    color: var(--vermilion);
+}
+
+.export-modal h2 {
+    font-family: var(--font-english);
+    font-size: var(--text-2xl);
+    color: var(--ink-deep);
+    margin-bottom: var(--space-2);
+    text-align: center;
+}
+
+.export-subtitle {
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+}
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.export-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-6);
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+    border-color: var(--vermilion);
+    background: var(--vermilion-soft);
+    transform: translateY(-2px);
+}
+
+.export-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-3);
+}
+
+.export-label {
+    font-family: var(--font-english);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--ink-deep);
+    margin-bottom: var(--space-1);
+}
+
+.export-desc {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+}

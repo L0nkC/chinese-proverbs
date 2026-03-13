@@ -1503,7 +1503,7 @@ function setupEventListeners() {
 }
 
 /**
- * Setup search functionality
+ * Setup search functionality with autocomplete
  */
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -1524,6 +1524,13 @@ function setupSearch() {
         searchClear.classList.toggle('show', value.length > 0);
         searchInput.classList.toggle('has-value', value.length > 0);
         
+        // Show autocomplete suggestions
+        if (value.length >= 2) {
+            showSearchSuggestions(value);
+        } else {
+            hideSearchSuggestions();
+        }
+        
         // Debounce search
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
@@ -1531,17 +1538,21 @@ function setupSearch() {
         }, 300);
     });
     
-    // Focus event - show history
+    // Focus event - show history or suggestions
     searchInput.addEventListener('focus', () => {
-        if (searchHistoryList.length > 0) {
+        const value = searchInput.value;
+        if (value.length >= 2) {
+            showSearchSuggestions(value);
+        } else if (searchHistoryList.length > 0) {
             showSearchHistory();
         }
     });
     
-    // Blur event - hide history (with delay to allow clicks)
+    // Blur event - hide suggestions (with delay to allow clicks)
     searchInput.addEventListener('blur', () => {
         setTimeout(() => {
             hideSearchHistory();
+            hideSearchSuggestions();
         }, 200);
     });
     
@@ -1550,6 +1561,7 @@ function setupSearch() {
         searchInput.value = '';
         searchClear.classList.remove('show');
         searchInput.classList.remove('has-value');
+        hideSearchSuggestions();
         searchInput.focus();
         performSearch('');
     });
@@ -1563,8 +1575,126 @@ function setupSearch() {
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.search-box')) {
             hideSearchHistory();
+            hideSearchSuggestions();
         }
     });
+}
+
+/**
+ * Show search suggestions dropdown
+ */
+function showSearchSuggestions(query) {
+    const suggestions = getSearchSuggestions(query);
+    if (suggestions.length === 0) {
+        hideSearchSuggestions();
+        return;
+    }
+    
+    // Create or update suggestions dropdown
+    let suggestionsEl = document.getElementById('searchSuggestions');
+    if (!suggestionsEl) {
+        suggestionsEl = document.createElement('div');
+        suggestionsEl.id = 'searchSuggestions';
+        suggestionsEl.className = 'search-suggestions';
+        document.querySelector('.search-box').appendChild(suggestionsEl);
+    }
+    
+    suggestionsEl.innerHTML = suggestions.map(s => `
+        <div class="suggestion-item" onclick="applySearchSuggestion('${s.text.replace(/'/g, "\\'")}')">
+            <span class="suggestion-text">${s.highlight}</span>
+            <span class="suggestion-type">${s.type}</span>
+        </div>
+    `).join('');
+    
+    suggestionsEl.classList.add('show');
+}
+
+/**
+ * Hide search suggestions
+ */
+function hideSearchSuggestions() {
+    const suggestionsEl = document.getElementById('searchSuggestions');
+    if (suggestionsEl) {
+        suggestionsEl.classList.remove('show');
+    }
+}
+
+/**
+ * Get search suggestions based on query
+ */
+function getSearchSuggestions(query) {
+    const suggestions = [];
+    const lowerQuery = query.toLowerCase();
+    
+    // Search through proverbs
+    allProverbs.forEach(p => {
+        const chinese = p.chinese || p.c || '';
+        const english = p.english || p.e || '';
+        const pinyin = p.pinyin || p.p || '';
+        
+        // Chinese match
+        if (chinese.includes(query)) {
+            const highlighted = chinese.replace(
+                new RegExp(`(${query})`, 'gi'),
+                '<strong>$1</strong>'
+            );
+            suggestions.push({
+                text: chinese,
+                highlight: highlighted,
+                type: 'Chinese'
+            });
+        }
+        
+        // English match
+        if (english.toLowerCase().includes(lowerQuery)) {
+            const index = english.toLowerCase().indexOf(lowerQuery);
+            const highlighted = english.substring(0, index) + 
+                '<strong>' + english.substring(index, index + query.length) + '</strong>' +
+                english.substring(index + query.length);
+            suggestions.push({
+                text: english,
+                highlight: highlighted,
+                type: 'English'
+            });
+        }
+        
+        // Pinyin match
+        if (pinyin.toLowerCase().includes(lowerQuery)) {
+            const index = pinyin.toLowerCase().indexOf(lowerQuery);
+            const highlighted = pinyin.substring(0, index) + 
+                '<strong>' + pinyin.substring(index, index + query.length) + '</strong>' +
+                pinyin.substring(index + query.length);
+            suggestions.push({
+                text: pinyin,
+                highlight: highlighted,
+                type: 'Pinyin'
+            });
+        }
+    });
+    
+    // Remove duplicates and limit to 8
+    const unique = [];
+    const seen = new Set();
+    for (const s of suggestions) {
+        if (!seen.has(s.text)) {
+            seen.add(s.text);
+            unique.push(s);
+        }
+        if (unique.length >= 8) break;
+    }
+    
+    return unique;
+}
+
+/**
+ * Apply search suggestion
+ */
+function applySearchSuggestion(text) {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.value = text;
+    hideSearchSuggestions();
+    performSearch(text);
+    addToSearchHistory(text);
 }
 
 // Search history management
@@ -3416,3 +3546,192 @@ function setupFeaturedCollectionButton() {
 }
 window.navigateToRelatedProverb = navigateToRelatedProverb;
 // Force rebuild Fri Mar 13 11:29:34 PM CST 2026
+
+// ============================================
+// QUICK WINS FEATURES
+// ============================================
+
+/**
+ * "Surprise Me" - Show random proverb with animation
+ */
+function surpriseMe() {
+    // Pick random proverb
+    const randomIndex = Math.floor(Math.random() * allProverbs.length);
+    const proverb = allProverbs[randomIndex];
+    
+    // Create surprise animation overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'surprise-overlay';
+    overlay.innerHTML = `
+        <div class="surprise-content">
+            <div class="surprise-icon">🎲</div>
+            <div class="surprise-chinese">${proverb.chinese || proverb.c}</div>
+            <div class="surprise-pinyin">${proverb.pinyin || proverb.p}</div>
+            <div class="surprise-english">${proverb.english || proverb.e}</div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        overlay.classList.add('show');
+    });
+    
+    // Auto-remove after 3 seconds or click to dismiss
+    const removeOverlay = () => {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 300);
+    };
+    
+    overlay.addEventListener('click', removeOverlay);
+    setTimeout(removeOverlay, 3000);
+    
+    // Also open the modal with this proverb
+    setTimeout(() => {
+        openProverbModal(proverb);
+    }, 500);
+}
+
+/**
+ * Filter by character count (chengyu vs long proverbs)
+ */
+function filterByLength(type) {
+    let filtered = [];
+    
+    switch(type) {
+        case 'chengyu':
+            // 4-character idioms
+            filtered = allProverbs.filter(p => {
+                const chinese = p.chinese || p.c || '';
+                const charCount = chinese.replace(/[^\u4e00-\u9fa5]/g, '').length;
+                return charCount === 4;
+            });
+            break;
+        case 'short':
+            // 5-8 characters
+            filtered = allProverbs.filter(p => {
+                const chinese = p.chinese || p.c || '';
+                const charCount = chinese.replace(/[^\u4e00-\u9fa5]/g, '').length;
+                return charCount >= 5 && charCount <= 8;
+            });
+            break;
+        case 'long':
+            // 9+ characters
+            filtered = allProverbs.filter(p => {
+                const chinese = p.chinese || p.c || '';
+                const charCount = chinese.replace(/[^\u4e00-\u9fa5]/g, '').length;
+                return charCount > 8;
+            });
+            break;
+        default:
+            filtered = [...allProverbs];
+    }
+    
+    currentProverbs = filtered;
+    displayedCount = 24;
+    renderProverbs(currentProverbs.slice(0, displayedCount));
+    
+    // Show toast
+    const typeLabel = type === 'chengyu' ? '4-Character Chengyu' : type === 'short' ? 'Short Proverbs' : 'Long Proverbs';
+    showToast(`Showing ${filtered.length} ${typeLabel}`);
+}
+
+/**
+ * Export favorites as JSON
+ */
+function exportFavoritesAsJSON() {
+    const favorites = getFavoriteProverbs();
+    if (favorites.length === 0) {
+        showToast('No favorites to export');
+        return;
+    }
+    
+    const data = {
+        exportDate: new Date().toISOString(),
+        count: favorites.length,
+        favorites: favorites
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chinese-proverbs-favorites-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast(`Exported ${favorites.length} favorites as JSON`);
+}
+
+/**
+ * Export favorites as CSV
+ */
+function exportFavoritesAsCSV() {
+    const favorites = getFavoriteProverbs();
+    if (favorites.length === 0) {
+        showToast('No favorites to export');
+        return;
+    }
+    
+    // CSV header
+    let csv = 'Chinese,Pinyin,English,Category\n';
+    
+    // Add rows
+    favorites.forEach(p => {
+        const chinese = (p.chinese || p.c || '').replace(/"/g, '""');
+        const pinyin = (p.pinyin || p.p || '').replace(/"/g, '""');
+        const english = (p.english || p.e || '').replace(/"/g, '""');
+        const category = (p.cat || (p.cats ? p.cats.join(', ') : '')).replace(/"/g, '""');
+        
+        csv += `"${chinese}","${pinyin}","${english}","${category}"\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chinese-proverbs-favorites-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast(`Exported ${favorites.length} favorites as CSV`);
+}
+
+/**
+ * Show export options modal
+ */
+function showExportModal() {
+    const favorites = getFavoriteProverbs();
+    
+    const modal = document.createElement('div');
+    modal.className = 'export-modal';
+    modal.innerHTML = `
+        <div class="export-modal-overlay" onclick="this.parentElement.remove()"></div>
+        <div class="export-modal-content">
+            <button class="export-modal-close" onclick="this.closest('.export-modal').remove()">×</button>
+            <h2>📤 Export Favorites</h2>
+            <p class="export-subtitle">You have ${favorites.length} favorite proverb${favorites.length !== 1 ? 's' : ''}</p>
+            
+            <div class="export-options">
+                <button class="export-btn" onclick="exportFavoritesAsJSON(); document.querySelector('.export-modal').remove();">
+                    <span class="export-icon">📋</span>
+                    <span class="export-label">Export as JSON</span>
+                    <span class="export-desc">Best for backup & import</span>
+                </button>
+                
+                <button class="export-btn" onclick="exportFavoritesAsCSV(); document.querySelector('.export-modal').remove();">
+                    <span class="export-icon">📊</span>
+                    <span class="export-label">Export as CSV</span>
+                    <span class="export-desc">Best for spreadsheets</span>
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
