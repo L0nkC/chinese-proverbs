@@ -3,11 +3,13 @@
  * Enhanced with Pinyin, Cantonese support, and improved UI
  */
 
-// AGGRESSIVE GLOBAL BUTTON HANDLER
-window.handleFilterClick = function(btn) {
-    console.log('[AGGRESSIVE] CLICK:', btn.dataset.filter);
-    
+// AGGRESSIVE GLOBAL BUTTON HANDLER - handles both inline onclick and addEventListener
+window.handleFilterClick = function(arg) {
+    // Handle both onclick(this) and addEventListener(e)
+    const btn = arg.currentTarget || arg;
     const filter = btn.dataset.filter;
+    
+    console.log('[AGGRESSIVE] CLICK:', filter);
     
     // Update active state
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -38,7 +40,12 @@ window.handleFilterClick = function(btn) {
         }
     }
     
-    console.log('[AGGRESSIVE] Filter:', filter, 'Count:', currentProverbs ? currentProverbs.length : 0);
+    // Render
+    if (typeof renderProverbs === 'function' && currentProverbs) {
+        renderProverbs(currentProverbs.slice(0, displayedCount));
+    }
+    
+    console.log('[AGGRESSIVE] Filter applied:', filter, 'Count:', currentProverbs ? currentProverbs.length : 0);
     return false;
 };
 
@@ -1856,31 +1863,6 @@ function setupFilters() {
         
         console.log('[AGGRESSIVE] All buttons set up');
     }, 100);
-}
-
-function handleFilterClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const btn = e.currentTarget;
-    const filter = btn.dataset.filter;
-    
-    console.log('[AGGRESSIVE] Button CLICKED:', filter);
-    
-    // Update active state
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    // Apply filter
-    currentFilter = filter;
-    displayedCount = 24;
-    applyFilter(filter);
-    
-    return false;
-}
-    });
-    
-    console.log('[Filters] Event handlers attached to all buttons');
 }
 
 // ============================================
