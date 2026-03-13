@@ -6,7 +6,7 @@
     <title>中华谚语 | Chinese Proverbs - Ancient Wisdom</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,49 +14,111 @@
     <div class="bg-pattern"></div>
     <div class="bamboo-left"></div>
     <div class="bamboo-right"></div>
+    <div class="floating-lantern lantern-1">🏮</div>
+    <div class="floating-lantern lantern-2">🏮</div>
     
     <!-- Main Container -->
     <div class="scroll-container">
         <!-- Header Seal -->
         <div class="header-seal">
-            <div class="seal-mark">智慧</div>
+            <div class="seal-outer">
+                <div class="seal-mark">智慧</div>
+            </div>
         </div>
         
         <!-- Header -->
         <header class="main-header">
+            <div class="header-decoration top">◈ ◆ ◈</div>
             <h1 class="site-title">
                 <span class="title-chinese">中华谚语</span>
-                <span class="title-divider">◆</span>
+                <span class="title-divider">
+                    <span class="divider-dot"></span>
+                </span>
                 <span class="title-english">Chinese Proverbs</span>
             </h1>
             <p class="site-subtitle">Ancient Wisdom for Modern Times</p>
-            <p class="site-description">Discover over 200 timeless proverbs from Chinese culture, 
-                each carrying centuries of wisdom and insight.</p>
+            <p class="site-description">Discover over 250 timeless proverbs from Chinese culture, 
+                featuring Mandarin and Cantonese sayings with Pinyin pronunciation.</p>
+            <div class="header-decoration bottom">❖ ❖ ❖</div>
         </header>
+
+        <!-- Daily Proverb Spotlight -->
+        <section class="daily-spotlight" id="dailySpotlight">
+            <div class="spotlight-inner">
+                <div class="spotlight-label">
+                    <span class="label-text">今日一句</span>
+                    <span class="label-sub">Daily Wisdom</span>
+                </div>
+                <div class="spotlight-content">
+                    <p class="spotlight-chinese" id="dailyChinese"></p>
+                    <p class="spotlight-pinyin" id="dailyPinyin"></p>
+                    <p class="spotlight-english" id="dailyEnglish"></p>
+                </div>
+                <button class="spotlight-btn" onclick="showRandomProverb()">
+                    <span>🎲 New Proverb</span>
+                </button>
+            </div>
+        </section>
 
         <!-- Controls -->
         <div class="controls-section">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search proverbs..." autocomplete="off">
+                <input type="text" id="searchInput" placeholder="Search proverbs, pinyin, or meaning..." autocomplete="off">
                 <span class="search-icon">⌕</span>
+                <kbd class="search-kbd">Ctrl K</kbd>
             </div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="wisdom">Wisdom</button>
-                <button class="filter-btn" data-filter="learning">Learning</button>
-                <button class="filter-btn" data-filter="perseverance">Perseverance</button>
-                <button class="filter-btn" data-filter="friendship">Friendship</button>
-                <button class="filter-btn" data-filter="life">Life</button>
-            </div>
-            <div class="view-toggle">
-                <button id="randomBtn" class="action-btn">🎲 Random</button>
-                <button id="copyBtn" class="action-btn">📋 Copy</button>
+            
+            <div class="filter-section">
+                <span class="filter-label">Categories:</span>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">
+                        <span class="btn-icon">◈</span>
+                        <span class="btn-text">All</span>
+                    </button>
+                    <button class="filter-btn" data-filter="wisdom">
+                        <span class="btn-icon">◉</span>
+                        <span class="btn-text">Wisdom</span>
+                    </button>
+                    <button class="filter-btn" data-filter="learning">
+                        <span class="btn-icon">◎</span>
+                        <span class="btn-text">Learning</span>
+                    </button>
+                    <button class="filter-btn" data-filter="perseverance">
+                        <span class="btn-icon">◈</span>
+                        <span class="btn-text">Perseverance</span>
+                    </button>
+                    <button class="filter-btn" data-filter="friendship">
+                        <span class="btn-icon">◉</span>
+                        <span class="btn-text">Friendship</span>
+                    </button>
+                    <button class="filter-btn" data-filter="life">
+                        <span class="btn-icon">◎</span>
+                        <span class="btn-text">Life</span>
+                    </button>
+                    <button class="filter-btn cantonese" data-filter="cantonese">
+                        <span class="btn-icon">粵</span>
+                        <span class="btn-text">Cantonese</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Stats -->
         <div class="stats-bar">
-            <span id="proverbCount">Showing 200+ proverbs</span>
+            <div class="stat-item">
+                <span class="stat-number" id="totalCount">250+</span>
+                <span class="stat-label">Proverbs</span>
+            </div>
+            <div class="stat-divider">|</div>
+            <div class="stat-item">
+                <span class="stat-number">2</span>
+                <span class="stat-label">Languages</span>
+            </div>
+            <div class="stat-divider">|</div>
+            <div class="stat-item">
+                <span class="stat-number" id="showingCount">All</span>
+                <span class="stat-label">Showing</span>
+            </div>
         </div>
 
         <!-- Proverbs Grid -->
@@ -64,33 +126,85 @@
             <!-- Proverbs will be loaded here by JavaScript -->
         </main>
 
-        <!-- Daily Proverb Modal -->
+        <!-- Load More -->
+        <div class="load-more-section" id="loadMoreSection">
+            <button class="load-more-btn" id="loadMoreBtn">
+                <span>Load More</span>
+                <span class="load-icon">↓</span>
+            </button>
+        </div>
+
+        <!-- Proverb Modal -->
         <div id="proverbModal" class="modal">
             <div class="modal-content">
-                <span class="close-btn">&times;</span>
+                <button class="close-btn" aria-label="Close">&times;</button>
+                <div class="modal-decoration top">◈</div>
                 <div class="modal-proverb">
-                    <div class="daily-stamp">每日一句</div>
+                    <div class="modal-category" id="modalCategory"></div>
                     <p class="proverb-chinese" id="modalChinese"></p>
+                    <p class="proverb-pinyin" id="modalPinyin"></p>
+                    <div class="modal-divider"></div>
                     <p class="proverb-english" id="modalEnglish"></p>
                     <div class="proverb-actions">
-                        <button id="shareBtn" class="share-btn">Share</button>
-                        <button id="newProverbBtn" class="share-btn">Another</button>
+                        <button id="copyBtn" class="action-btn secondary">
+                            <span>📋</span> Copy
+                        </button>
+                        <button id="shareBtn" class="action-btn primary">
+                            <span>↗</span> Share
+                        </button>
+                        <button id="newProverbBtn" class="action-btn secondary">
+                            <span>🎲</span> Another
+                        </button>
                     </div>
                 </div>
+                <div class="modal-decoration bottom">◈</div>
             </div>
         </div>
 
         <!-- Footer -->
         <footer class="main-footer">
-            <div class="footer-decoration">❖ ❖ ❖</div>
+            <div class="footer-seal">文</div>
+            <div class="footer-decoration">◈ ◆ ◈</div>
             <p class="footer-text">"学如不及，犹恐失之"</p>
+            <p class="footer-pinyin">Xué rú bù jí, yóu kǒng shī zhī</p>
             <p class="footer-translation">"Learn as if you cannot catch up, fearing to lose what you have."</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link" onclick="showAbout(); return false;">About</a>
+                <span class="link-divider">•</span>
+                <a href="#" class="footer-link" onclick="showKeyboardShortcuts(); return false;">Shortcuts</a>
+            </div>
             <p class="footer-copy">&copy; 2026 Chinese Proverbs Collection</p>
         </footer>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content about-content">
+            <button class="close-btn" onclick="closeAbout()">&times;</button>
+            <h2>About This Collection</h2>
+            <div class="about-section">
+                <h3>🎋 Chinese Proverbs (谚语)</h3>
+                <p>Chinese proverbs are concise expressions of wisdom passed down through generations. 
+                   They reflect the values, philosophy, and life experiences of Chinese culture.</p>
+            </div>
+            <div class="about-section">
+                <h3>🗣️ Cantonese Proverbs (粤语谚语)</h3>
+                <p>Cantonese proverbs are unique to the Cantonese-speaking regions of Southern China, 
+                   particularly Guangdong and Hong Kong. They are known for their vivid imagery and humor.</p>
+            </div>
+            <div class="about-section">
+                <h3>📝 Pinyin & Jyutping</h3>
+                <p>Mandarin proverbs include <strong>Pinyin</strong> romanization. 
+                   Cantonese proverbs use <strong>Jyutping</strong> for pronunciation guidance.</p>
+            </div>
+        </div>
+    </div>
 
     <script src="proverbs.js"></script>
     <script src="app.js"></script>
