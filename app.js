@@ -4,6 +4,234 @@
  */
 
 // ============================================
+// AUDIO PRONUNCIATION MANAGER (Web Speech API)
+// ============================================
+
+const AudioManager = {
+    synth: null,
+    currentUtterance: null,
+    isPlaying: false,
+    currentLanguage: null,
+
+    /**
+     * Initialize the audio manager
+     */
+    init() {
+        if ('speechSynthesis' in window) {
+            this.synth = window.speechSynthesis;
+            // Load voices when available
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = () => this.loadVoices();
+            }
+            this.loadVoices();
+        } else {
+            console.warn('Web Speech API not supported in this browser');
+        }
+    },
+
+    /**
+     * Load available voices
+     */
+    loadVoices() {
+        this.voices = this.synth.getVoices();
+        // Find Chinese voices
+        this.mandarinVoice = this.voices.find(v => 
+            v.lang.includes('zh-CN') || v.lang.includes('zh-Hans') || v.lang.includes('zh')
+        );
+        this.cantoneseVoice = this.voices.find(v => 
+            v.lang.includes('zh-HK') || v.lang.includes('zh-TW') || v.lang.includes('zh-Hant')
+        );
+    },
+
+    /**
+     * Get the best voice for a language
+     */
+    getVoice(language) {
+        // Reload voices if needed (some browsers load async)
+        if (!this.voices || this.voices.length === 0) {
+            this.loadVoices();
+        }
+
+        if (language === 'cantonese') {
+            // Try to find a Cantonese voice first
+            return this.voices.find(v => v.lang.includes('zh-HK')) ||
+                   this.voices.find(v => v.lang.includes('zh-TW')) ||
+                   this.voices.find(v => v.lang.includes('zh-Hant')) ||
+                   this.mandarinVoice ||
+                   this.voices[0];
+        } else {
+            // Mandarin - prefer Chinese voices
+            return this.voices.find(v => v.lang.includes('zh-CN')) ||
+                   this.voices.find(v => v.lang.includes('zh')) ||
+                   this.voices[0];
+        }
+    },
+
+    /**
+     * Play audio for given text
+     */
+    play(text, language = 'mandarin') {
+        if (!this.synth) {
+            showToast('Audio not supported in your browser');
+            return false;
+        }
+
+        // Cancel any ongoing speech
+        this.stop();
+
+        // Create utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voice = this.getVoice(language);
+        
+        if (voice) {
+            utterance.voice = voice;
+            utterance.lang = voice.lang;
+        } else {
+            // Fallback to language codes
+            utterance.lang = language === 'cantonese' ? 'zh-HK' : 'zh-CN';
+        }
+
+        // Set properties
+        utterance.rate = 0.8; // Slightly slower for clarity
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        // Events
+        utterance.onstart = () => {
+            this.isPlaying = true;
+            this.currentLanguage = language;
+            updateAudioUI(true, language);
+        };
+
+        utterance.onend = () => {
+            this.isPlaying = false;
+            this.currentLanguage = null;
+            updateAudioUI(false, language);
+        };
+
+        utterance.onerror = (e) => {
+            console.error('Speech synthesis error:', e);
+            this.isPlaying = false;
+            this.currentLanguage = null;
+            updateAudioUI(false, language);
+            showToast('Audio playback failed. Please try again.');
+        };
+
+        this.currentUtterance = utterance;
+        this.synth.speak(utterance);
+        
+        return true;
+    },
+
+    /**
+     * Stop current audio
+     */
+    stop() {
+        if (this.synth) {
+            this.synth.cancel();
+        }
+        this.isPlaying = false;
+        this.currentLanguage = null;
+    },
+
+    /**
+     * Check if audio is supported
+     */
+    isSupported() {
+        return 'speechSynthesis' in window;
+    }
+};
+
+/**
+ * Update audio UI state
+ */
+function updateAudioUI(isPlaying, language) {
+    const statusEl = document.getElementById('audioStatus');
+    
+    // Update modal buttons
+    const mandarinBtn = document.getElementById('playMandarinBtn');
+    const cantoneseBtn = document.getElementById('playCantoneseBtn');
+    
+    if (mandarinBtn) {
+        mandarinBtn.classList.toggle('playing', isPlaying && language === 'mandarin');
+    }
+    if (cantoneseBtn) {
+        cantoneseBtn.classList.toggle('playing', isPlaying && language === 'cantonese');
+    }
+    
+    // Update status text
+    if (statusEl) {
+        if (isPlaying) {
+            statusEl.textContent = language === 'cantonese' ? 'Playing Cantonese...' : 'Playing Mandarin...';
+        } else {
+            statusEl.textContent = '';
+        }
+    }
+
+    // Update card speaker buttons
+    document.querySelectorAll('.speaker-btn').forEach(btn => {
+        btn.classList.remove('playing');
+    });
+}
+
+/**
+ * Play audio for the current proverb in modal
+ */
+function playAudio(language) {
+    const modalChinese = document.getElementById('modalChinese');
+    if (!modalChinese) return;
+    
+    const text = modalChinese.dataset.original || modalChinese.textContent;
+    
+    // Check if already playing this language
+    if (AudioManager.isPlaying && AudioManager.currentLanguage === language) {
+        AudioManager.stop();
+        updateAudioUI(false, language);
+        return;
+    }
+    
+    const success = AudioManager.play(text, language);
+    if (success) {
+        updateAudioUI(true, language);
+    }
+}
+
+/**
+ * Play audio for a card speaker button
+ */
+function playCardAudio(text, btnElement) {
+    if (!AudioManager.isSupported()) {
+        showToast('Audio not supported in your browser');
+        return;
+    }
+    
+    // Check if already playing
+    if (AudioManager.isPlaying && btnElement.classList.contains('playing')) {
+        AudioManager.stop();
+        btnElement.classList.remove('playing');
+        return;
+    }
+    
+    // Remove playing state from all buttons
+    document.querySelectorAll('.speaker-btn').forEach(btn => btn.classList.remove('playing'));
+    
+    // Play the audio
+    const success = AudioManager.play(text, 'mandarin');
+    if (success) {
+        btnElement.classList.add('playing');
+        
+        // Remove playing state when done
+        const originalOnEnd = AudioManager.currentUtterance.onend;
+        AudioManager.currentUtterance.onend = () => {
+            btnElement.classList.remove('playing');
+            AudioManager.isPlaying = false;
+            AudioManager.currentLanguage = null;
+            if (originalOnEnd) originalOnEnd();
+        };
+    }
+}
+
+// ============================================
 // CHINESE CHARACTER CONVERSION (Simplified <-> Traditional)
 // ============================================
 
@@ -462,9 +690,296 @@ function setupChineseToggle() {
 }
 
 /**
+ * Share Image Generator for Social Media
+ * Creates beautiful image cards for sharing
+ */
+
+const ShareCardGenerator = {
+    currentImageData: null,
+    currentProverb: null,
+
+    /**
+     * Initialize share functionality
+     */
+    init() {
+        this.setupEventListeners();
+    },
+
+    /**
+     * Setup event listeners
+     */
+    setupEventListeners() {
+        // Share button in modal
+        const shareImageBtn = document.getElementById('shareImageBtn');
+        if (shareImageBtn) {
+            shareImageBtn.addEventListener('click', () => this.generateShareImage());
+        }
+
+        // Download button in preview modal
+        const downloadBtn = document.getElementById('downloadImageBtn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => this.downloadImage());
+        }
+
+        // Copy image button
+        const copyImageBtn = document.getElementById('copyImageBtn');
+        if (copyImageBtn) {
+            copyImageBtn.addEventListener('click', () => this.copyImageToClipboard());
+        }
+    },
+
+    /**
+     * Generate share image from current modal content
+     */
+    async generateShareImage() {
+        const chinese = document.getElementById('modalChinese').textContent;
+        const pinyin = document.getElementById('modalPinyin').textContent;
+        const english = document.getElementById('modalEnglish').textContent;
+
+        if (!chinese || !pinyin || !english) {
+            showToast('No proverb to share');
+            return;
+        }
+
+        this.currentProverb = { chinese, pinyin, english };
+
+        // Show loading toast
+        showToast('Generating image...');
+
+        try {
+            // Update the share card content
+            document.getElementById('shareCardChinese').textContent = chinese;
+            document.getElementById('shareCardPinyin').textContent = pinyin;
+            document.getElementById('shareCardEnglish').textContent = english;
+
+            // Wait for fonts to load
+            await document.fonts.ready;
+
+            // Small delay to ensure rendering
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Generate image using html2canvas
+            const shareCard = document.getElementById('shareCard');
+            const canvas = await html2canvas(shareCard, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                logging: false,
+                width: 600,
+                height: 800
+            });
+
+            // Convert to image data
+            this.currentImageData = canvas.toDataURL('image/png', 1.0);
+
+            // Show preview modal
+            this.showPreviewModal();
+
+        } catch (error) {
+            console.error('Error generating share image:', error);
+            showToast('Failed to generate image. Please try again.');
+        }
+    },
+
+    /**
+     * Show the preview modal with the generated image
+     */
+    showPreviewModal() {
+        const modal = document.getElementById('sharePreviewModal');
+        const previewImage = document.getElementById('sharePreviewImage');
+
+        if (previewImage && this.currentImageData) {
+            previewImage.src = this.currentImageData;
+        }
+
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    },
+
+    /**
+     * Close the preview modal
+     */
+    closePreviewModal() {
+        const modal = document.getElementById('sharePreviewModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    },
+
+    /**
+     * Download the generated image
+     */
+    downloadImage() {
+        if (!this.currentImageData || !this.currentProverb) {
+            showToast('No image to download');
+            return;
+        }
+
+        // Create a safe filename from the Chinese text
+        const safeChinese = this.currentProverb.chinese
+            .replace(/[^\u4e00-\u9fa5]/g, '')
+            .substring(0, 10);
+        const filename = `chinese-proverb-${safeChinese || 'wisdom'}.png`;
+
+        // Create download link
+        const link = document.createElement('a');
+        link.href = this.currentImageData;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast('Image downloaded!');
+        this.closePreviewModal();
+    },
+
+    /**
+     * Copy image to clipboard
+     */
+    async copyImageToClipboard() {
+        if (!this.currentImageData) {
+            showToast('No image to copy');
+            return;
+        }
+
+        try {
+            // Convert data URL to blob
+            const response = await fetch(this.currentImageData);
+            const blob = await response.blob();
+
+            // Try to use Clipboard API with image
+            if (navigator.clipboard && navigator.clipboard.write) {
+                const item = new ClipboardItem({ 'image/png': blob });
+                await navigator.clipboard.write([item]);
+                showToast('Image copied to clipboard!');
+                this.closePreviewModal();
+            } else {
+                // Fallback - copy as text
+                const textToCopy = `"${this.currentProverb.chinese}" (${this.currentProverb.pinyin}) - ${this.currentProverb.english}`;
+                await navigator.clipboard.writeText(textToCopy);
+                showToast('Proverb text copied! Image copy not supported in this browser.');
+            }
+        } catch (error) {
+            console.error('Error copying image:', error);
+            // Fallback to copying text
+            const textToCopy = `"${this.currentProverb.chinese}" (${this.currentProverb.pinyin}) - ${this.currentProverb.english}`;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => showToast('Proverb text copied!'))
+                .catch(() => showToast('Failed to copy'));
+        }
+    },
+
+    /**
+     * Generate and share directly (for card buttons)
+     */
+    async shareFromCard(chinese, pinyin, english) {
+        this.currentProverb = { chinese, pinyin, english };
+
+        // Update the share card content
+        document.getElementById('shareCardChinese').textContent = chinese;
+        document.getElementById('shareCardPinyin').textContent = pinyin;
+        document.getElementById('shareCardEnglish').textContent = english;
+
+        showToast('Generating image...');
+
+        try {
+            await document.fonts.ready;
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const shareCard = document.getElementById('shareCard');
+            const canvas = await html2canvas(shareCard, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: null,
+                logging: false,
+                width: 600,
+                height: 800
+            });
+
+            this.currentImageData = canvas.toDataURL('image/png', 1.0);
+            this.showPreviewModal();
+
+        } catch (error) {
+            console.error('Error generating share image:', error);
+            showToast('Failed to generate image');
+        }
+    }
+};
+
+/**
+ * Close share preview modal (global function for onclick)
+ */
+function closeSharePreview() {
+    ShareCardGenerator.closePreviewModal();
+}
+
+// Expose to global scope
+window.closeSharePreview = closeSharePreview;
+window.shareFromCard = (chinese, pinyin, english) => {
+    ShareCardGenerator.shareFromCard(chinese, pinyin, english);
+};
+
+/**
+ * Play audio for daily spotlight
+ */
+function playDailyAudio() {
+    const dailyChinese = document.getElementById('dailyChinese');
+    if (!dailyChinese) return;
+    
+    const text = dailyChinese.dataset.original || dailyChinese.textContent;
+    const btn = document.getElementById('dailySpeakerBtn');
+    
+    if (!AudioManager.isSupported()) {
+        showToast('Audio not supported in your browser');
+        return;
+    }
+    
+    // Check if already playing
+    if (AudioManager.isPlaying && btn.classList.contains('playing')) {
+        AudioManager.stop();
+        btn.classList.remove('playing');
+        return;
+    }
+    
+    // Remove playing state from all buttons
+    document.querySelectorAll('.speaker-btn, .spotlight-speaker-btn').forEach(btn => btn.classList.remove('playing'));
+    
+    // Play the audio
+    const success = AudioManager.play(text, 'mandarin');
+    if (success) {
+        btn.classList.add('playing');
+        
+        // Remove playing state when done
+        const originalOnEnd = AudioManager.currentUtterance.onend;
+        AudioManager.currentUtterance.onend = () => {
+            btn.classList.remove('playing');
+            AudioManager.isPlaying = false;
+            AudioManager.currentLanguage = null;
+            if (originalOnEnd) originalOnEnd();
+        };
+    }
+}
+
+/**
+ * Initialize dark mode (placeholder for future implementation)
+ */
+function initDarkMode() {
+    // Dark mode implementation can be added here
+    // For now, this is a placeholder to prevent errors
+}
+
+/**
  * Initialize the application
  */
 async function initializeApp() {
+    // Initialize audio manager first
+    AudioManager.init();
+    
     // Initialize dark mode first
     initDarkMode();
     
@@ -476,6 +991,9 @@ async function initializeApp() {
 
     // Load favorites from localStorage
     loadFavorites();
+
+    // Initialize share card generator
+    ShareCardGenerator.init();
 
     renderProverbs(currentProverbs.slice(0, displayedCount));
     setupDailySpotlight();
@@ -552,15 +1070,21 @@ function renderProverbs(proverbsToRender, append = false) {
         const favClass = isFavorite(proverbId) ? 'is-favorite' : '';
         const heartIcon = isFavorite(proverbId) ? '♥' : '♡';
         const displayChinese = ChineseConverter.convert(proverb.cn);
+        const safeChinese = proverb.cn.replace(/'/g, "\\'");
         return `
             <article class="proverb-card ${isCantonese ? 'cantonese' : ''}" data-id="${proverbIdStr}">
                 <div class="card-header">
                     <div class="card-header-left">
                         <span class="category-tag ${isCantonese ? 'cantonese' : ''}">${firstCat}</span>
                     </div>
-                    <button class="favorite-btn ${favClass}" data-id="${proverbIdStr}" onclick="toggleFavorite('${proverbIdStr}', event)" aria-label="Toggle favorite">
-                        <span class="heart-icon">${heartIcon}</span>
-                    </button>
+                    <div class="card-header-actions">
+                        <button class="speaker-btn" onclick="playCardAudio('${safeChinese}', this)" aria-label="Play pronunciation">
+                            🔊
+                        </button>
+                        <button class="favorite-btn ${favClass}" data-id="${proverbIdStr}" onclick="toggleFavorite('${proverbIdStr}', event)" aria-label="Toggle favorite">
+                            <span class="heart-icon">${heartIcon}</span>
+                        </button>
+                    </div>
                 </div>
                 <p class="proverb-chinese" data-original="${proverb.cn}">${displayChinese}</p>
                 <p class="proverb-pinyin">${proverb.py}</p>
@@ -569,6 +1093,7 @@ function renderProverbs(proverbsToRender, append = false) {
                     <div class="proverb-actions-left">
                         <button class="card-btn" onclick="copyProverb('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}')">Copy</button>
                         <button class="card-btn" onclick="showProverbInModal('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}', '${firstCat}', '${proverbIdStr}')">View</button>
+                        <button class="card-btn share-card-btn" onclick="shareFromCard('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}')">📷 Share</button>
                     </div>
                 </div>
             </article>
@@ -652,28 +1177,225 @@ function setupEventListeners() {
  */
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    const searchHistory = document.getElementById('searchHistory');
+    const clearHistoryBtn = document.getElementById('clearHistory');
+    
     let debounceTimer;
-
+    
+    // Initialize search history
+    loadSearchHistory();
+    
+    // Input event with debounce
     searchInput.addEventListener('input', (e) => {
+        const value = e.target.value;
+        
+        // Show/hide clear button
+        searchClear.classList.toggle('show', value.length > 0);
+        searchInput.classList.toggle('has-value', value.length > 0);
+        
+        // Debounce search
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
-            performSearch(e.target.value);
+            performSearch(value);
         }, 300);
     });
+    
+    // Focus event - show history
+    searchInput.addEventListener('focus', () => {
+        if (searchHistoryList.length > 0) {
+            showSearchHistory();
+        }
+    });
+    
+    // Blur event - hide history (with delay to allow clicks)
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            hideSearchHistory();
+        }, 200);
+    });
+    
+    // Clear button
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.classList.remove('show');
+        searchInput.classList.remove('has-value');
+        searchInput.focus();
+        performSearch('');
+    });
+    
+    // Clear history button
+    clearHistoryBtn.addEventListener('click', () => {
+        clearSearchHistory();
+    });
+    
+    // Hide history when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-box')) {
+            hideSearchHistory();
+        }
+    });
 }
+
+// Search history management
+let searchHistoryList = [];
+const SEARCH_HISTORY_KEY = 'chinese_proverbs_search_history';
+const MAX_HISTORY_ITEMS = 5;
+
+/**
+ * Load search history from localStorage
+ */
+function loadSearchHistory() {
+    try {
+        const saved = localStorage.getItem(SEARCH_HISTORY_KEY);
+        if (saved) {
+            searchHistoryList = JSON.parse(saved);
+        }
+    } catch (e) {
+        console.error('Error loading search history:', e);
+        searchHistoryList = [];
+    }
+}
+
+/**
+ * Save search history to localStorage
+ */
+function saveSearchHistory() {
+    try {
+        localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(searchHistoryList));
+    } catch (e) {
+        console.error('Error saving search history:', e);
+    }
+}
+
+/**
+ * Add a search term to history
+ */
+function addToSearchHistory(query) {
+    if (!query || query.trim().length === 0) return;
+    
+    const trimmed = query.trim();
+    
+    // Remove if already exists
+    searchHistoryList = searchHistoryList.filter(item => item.toLowerCase() !== trimmed.toLowerCase());
+    
+    // Add to front
+    searchHistoryList.unshift(trimmed);
+    
+    // Keep only max items
+    if (searchHistoryList.length > MAX_HISTORY_ITEMS) {
+        searchHistoryList = searchHistoryList.slice(0, MAX_HISTORY_ITEMS);
+    }
+    
+    saveSearchHistory();
+}
+
+/**
+ * Remove a search term from history
+ */
+function removeFromSearchHistory(query) {
+    searchHistoryList = searchHistoryList.filter(item => item !== query);
+    saveSearchHistory();
+    renderSearchHistory();
+}
+
+/**
+ * Clear all search history
+ */
+function clearSearchHistory() {
+    searchHistoryList = [];
+    saveSearchHistory();
+    renderSearchHistory();
+    hideSearchHistory();
+}
+
+/**
+ * Show search history dropdown
+ */
+function showSearchHistory() {
+    const searchHistory = document.getElementById('searchHistory');
+    renderSearchHistory();
+    if (searchHistoryList.length > 0) {
+        searchHistory.classList.add('show');
+    }
+}
+
+/**
+ * Hide search history dropdown
+ */
+function hideSearchHistory() {
+    const searchHistory = document.getElementById('searchHistory');
+    searchHistory.classList.remove('show');
+}
+
+/**
+ * Render search history list
+ */
+function renderSearchHistory() {
+    const listEl = document.getElementById('searchHistoryList');
+    
+    if (searchHistoryList.length === 0) {
+        listEl.innerHTML = '<div class="search-history-empty">No recent searches</div>';
+        return;
+    }
+    
+    listEl.innerHTML = searchHistoryList.map(query => `
+        <div class="search-history-item" data-query="${escapeHtml(query)}">
+            <span class="search-history-text">
+                <span class="search-history-icon">⌕</span>
+                ${escapeHtml(query)}
+            </span>
+            <button class="search-history-delete" data-query="${escapeHtml(query)}" aria-label="Remove from history">
+                ×
+            </button>
+        </div>
+    `).join('');
+    
+    // Add click handlers
+    listEl.querySelectorAll('.search-history-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (e.target.classList.contains('search-history-delete')) {
+                e.stopPropagation();
+                removeFromSearchHistory(item.dataset.query);
+            } else {
+                const query = item.dataset.query;
+                document.getElementById('searchInput').value = query;
+                document.getElementById('searchClear').classList.add('show');
+                document.getElementById('searchInput').classList.add('has-value');
+                performSearch(query);
+                hideSearchHistory();
+            }
+        });
+    });
+}
+
+/**
+ * Escape HTML to prevent XSS
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Store current search query for highlighting
+let currentSearchQuery = '';
 
 /**
  * Perform search
  */
 function performSearch(query) {
-    const lowerQuery = query.toLowerCase().trim();
-
-    if (!lowerQuery) {
+    currentSearchQuery = query.toLowerCase().trim();
+    
+    if (!currentSearchQuery) {
         displayedCount = 24;
         applyFilter(currentFilter);
         return;
     }
-
+    
+    // Add to search history
+    addToSearchHistory(query);
+    
     // Determine the base set to search from based on current filter
     let baseProverbs;
     if (currentFilter === 'all') {
@@ -683,15 +1405,98 @@ function performSearch(query) {
     } else {
         baseProverbs = allProverbs.filter(p => p.cats ? p.cats.includes(currentFilter) : p.cat === currentFilter);
     }
-
+    
     const filtered = baseProverbs.filter(p =>
-        p.cn.includes(query) ||
-        p.py.toLowerCase().includes(lowerQuery) ||
-        p.en.toLowerCase().includes(lowerQuery)
+        matchesSearch(p, currentSearchQuery)
     );
-
+    
     currentProverbs = filtered;
-    renderProverbs(filtered);
+    renderProverbs(filtered, false, currentSearchQuery);
+}
+
+/**
+ * Check if a proverb matches the search query
+ * Supports Chinese, Pinyin (with tone-insensitive matching), and English
+ */
+function matchesSearch(proverb, query) {
+    // Direct Chinese character match
+    if (proverb.cn.includes(query)) return true;
+    
+    // English match
+    if (proverb.en.toLowerCase().includes(query)) return true;
+    
+    // Pinyin matching - handle both exact and tone-insensitive
+    const pinyinLower = proverb.py.toLowerCase();
+    
+    // Exact pinyin match
+    if (pinyinLower.includes(query)) return true;
+    
+    // Tone-insensitive pinyin match (remove tone numbers and diacritics)
+    const normalizedPinyin = normalizePinyin(proverb.py);
+    const normalizedQuery = normalizePinyin(query);
+    
+    if (normalizedPinyin.includes(normalizedQuery)) return true;
+    
+    // Also check if query without spaces matches pinyin
+    const pinyinNoSpaces = normalizedPinyin.replace(/\s/g, '');
+    const queryNoSpaces = normalizedQuery.replace(/\s/g, '');
+    
+    if (pinyinNoSpaces.includes(queryNoSpaces)) return true;
+    
+    return false;
+}
+
+/**
+ * Normalize pinyin by removing tone marks and converting to lowercase
+ */
+function normalizePinyin(pinyin) {
+    return pinyin
+        .toLowerCase()
+        .replace(/[āáǎà]/g, 'a')
+        .replace(/[ēéěè]/g, 'e')
+        .replace(/[īíǐì]/g, 'i')
+        .replace(/[ōóǒò]/g, 'o')
+        .replace(/[ūúǔù]/g, 'u')
+        .replace(/[ǖǘǚǜ]/g, 'u');
+}
+
+/**
+ * Highlight matching text in a string
+ */
+function highlightText(text, query) {
+    if (!query || query.trim().length === 0) return escapeHtml(text);
+    
+    // Escape the text first
+    const escaped = escapeHtml(text);
+    
+    // Create regex for matching (escape special regex chars in query)
+    const escapedQuery = escapeRegExp(query);
+    
+    // Try exact match first
+    let regex = new RegExp(`(${escapedQuery})`, 'gi');
+    let highlighted = escaped.replace(regex, '<span class="search-highlight">$1</span>');
+    
+    // If no match, try normalized pinyin matching
+    if (highlighted === escaped) {
+        // For pinyin, we need to match tone-insensitively
+        // This is a simplified approach - highlight if the normalized version matches
+        const normalizedQuery = normalizePinyin(query);
+        if (normalizedQuery !== query.toLowerCase()) {
+            // Try to highlight based on normalized match
+            const normalizedText = normalizePinyin(text);
+            // This is tricky because we need to highlight the original, not normalized
+            // For now, we'll skip pinyin-specific highlighting
+        }
+    }
+    
+    return highlighted;
+}
+
+/**
+ * Escape special regex characters
+ */
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -763,6 +1568,11 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
     const categoryEl = document.getElementById('modalCategory');
     const modalContent = modal.querySelector('.modal-content');
     const modalChinese = document.getElementById('modalChinese');
+    const cantoneseBtn = document.getElementById('playCantoneseBtn');
+    
+    // Reset audio state
+    AudioManager.stop();
+    updateAudioUI(false);
 
     // Store the proverb ID for the favorite button
     if (proverbId) {
@@ -778,6 +1588,13 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
 
     categoryEl.textContent = category;
     categoryEl.className = 'modal-category' + (category === 'cantonese' ? ' cantonese' : '');
+    
+    // Show/hide Cantonese button based on proverb type
+    if (cantoneseBtn) {
+        const isCantonese = category === 'cantonese' || 
+                           (proverbs.find(p => p.cn === chinese)?.cats?.includes('cantonese'));
+        cantoneseBtn.style.display = isCantonese ? 'inline-flex' : 'none';
+    }
 
     // Update favorite button state if ID is provided
     if (proverbId) {
@@ -807,7 +1624,279 @@ function closeModal() {
     const modal = document.getElementById('proverbModal');
     modal.classList.remove('active');
     document.body.style.overflow = '';
+    
+    // Stop any playing audio
+    AudioManager.stop();
+    updateAudioUI(false);
 }
+
+// ============================================
+// KEYBOARD NAVIGATION
+// ============================================
+
+const KeyboardNavigation = {
+    focusedCardIndex: -1,
+    cards: [],
+    filterButtons: [],
+    isSearchFocused: false,
+    
+    /**
+     * Initialize keyboard navigation
+     */
+    init() {
+        this.cacheElements();
+        this.setupEventListeners();
+        this.addSkipLink();
+        this.addKeyboardHint();
+    },
+    
+    /**
+     * Cache DOM elements
+     */
+    cacheElements() {
+        this.filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+    },
+    
+    /**
+     * Setup keyboard event listeners
+     */
+    setupEventListeners() {
+        // Track search focus
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                this.isSearchFocused = true;
+            });
+            searchInput.addEventListener('blur', () => {
+                this.isSearchFocused = false;
+            });
+        }
+        
+        // Global keyboard handler
+        document.addEventListener('keydown', (e) => {
+            // Don't handle if user is typing in search
+            if (this.isSearchFocused) {
+                // Allow Escape to blur search and return to cards
+                if (e.key === 'Escape') {
+                    searchInput.blur();
+                    e.preventDefault();
+                }
+                return;
+            }
+            
+            // Don't handle if modal is open (modal has its own handlers)
+            const modal = document.getElementById('proverbModal');
+            const aboutModal = document.getElementById('aboutModal');
+            if (modal?.classList.contains('active') || aboutModal?.classList.contains('active')) {
+                return;
+            }
+            
+            switch (e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    this.navigateCards(1);
+                    break;
+                    
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    this.navigateCards(-1);
+                    break;
+                    
+                case 'Enter':
+                    if (this.focusedCardIndex >= 0) {
+                        e.preventDefault();
+                        this.openFocusedCard();
+                    }
+                    break;
+                    
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    e.preventDefault();
+                    this.switchCategory(parseInt(e.key));
+                    break;
+                    
+                case '?':
+                    e.preventDefault();
+                    this.showShortcuts();
+                    break;
+                    
+                case '/':
+                    e.preventDefault();
+                    searchInput?.focus();
+                    break;
+            }
+        });
+        
+        // Update cards list when DOM changes
+        const observer = new MutationObserver(() => {
+            this.updateCardsList();
+        });
+        
+        const container = document.getElementById('proverbsContainer');
+        if (container) {
+            observer.observe(container, { childList: true, subtree: true });
+        }
+        
+        // Initial update
+        this.updateCardsList();
+    },
+    
+    /**
+     * Update the list of navigable cards
+     */
+    updateCardsList() {
+        this.cards = Array.from(document.querySelectorAll('.proverb-card'));
+        
+        // Add tabindex to cards if not already present
+        this.cards.forEach((card, index) => {
+            if (!card.hasAttribute('tabindex')) {
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', `Proverb ${index + 1}: ${card.querySelector('.proverb-chinese')?.textContent || ''}`);
+            }
+            
+            // Add click handler for opening modal
+            card.addEventListener('click', () => {
+                const chinese = card.querySelector('.proverb-chinese')?.dataset.original || '';
+                const pinyin = card.querySelector('.proverb-pinyin')?.textContent || '';
+                const english = card.querySelector('.proverb-english')?.textContent || '';
+                const categoryTag = card.querySelector('.category-tag');
+                const category = categoryTag ? categoryTag.textContent : '';
+                const proverbId = card.dataset.id;
+                
+                showProverbInModal(chinese, pinyin, english, category, proverbId);
+            });
+        });
+    },
+    
+    /**
+     * Navigate between cards
+     */
+    navigateCards(direction) {
+        if (this.cards.length === 0) return;
+        
+        // Remove focus from current card
+        if (this.focusedCardIndex >= 0 && this.cards[this.focusedCardIndex]) {
+            this.cards[this.focusedCardIndex].classList.remove('focused');
+        }
+        
+        // Calculate new index
+        this.focusedCardIndex += direction;
+        
+        // Wrap around
+        if (this.focusedCardIndex < 0) {
+            this.focusedCardIndex = this.cards.length - 1;
+        } else if (this.focusedCardIndex >= this.cards.length) {
+            this.focusedCardIndex = 0;
+        }
+        
+        // Focus new card
+        const newCard = this.cards[this.focusedCardIndex];
+        if (newCard) {
+            newCard.classList.add('focused');
+            newCard.focus();
+            newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    },
+    
+    /**
+     * Open modal for focused card
+     */
+    openFocusedCard() {
+        if (this.focusedCardIndex < 0 || this.focusedCardIndex >= this.cards.length) return;
+        
+        const card = this.cards[this.focusedCardIndex];
+        const chinese = card.querySelector('.proverb-chinese')?.dataset.original || '';
+        const pinyin = card.querySelector('.proverb-pinyin')?.textContent || '';
+        const english = card.querySelector('.proverb-english')?.textContent || '';
+        const categoryTag = card.querySelector('.category-tag');
+        const category = categoryTag ? categoryTag.textContent : '';
+        const proverbId = card.dataset.id;
+        
+        showProverbInModal(chinese, pinyin, english, category, proverbId);
+    },
+    
+    /**
+     * Switch category by number (1-9)
+     */
+    switchCategory(num) {
+        // Map numbers to filter buttons (1-9 correspond to first 9 categories)
+        // Categories: all(0), wisdom(1), learning(2), perseverance(3), friendship(4), 
+        //             life(5), love(6), business(7), family(8), health(9), cantonese(10), favorites(11)
+        const index = num - 1; // Convert to 0-based
+        
+        if (index >= 0 && index < this.filterButtons.length) {
+            const btn = this.filterButtons[index];
+            if (btn) {
+                btn.click();
+                btn.focus();
+                
+                // Reset card focus when changing category
+                this.focusedCardIndex = -1;
+                this.cards.forEach(c => c.classList.remove('focused'));
+                
+                // Show toast
+                const filterName = btn.querySelector('.btn-text')?.textContent || btn.dataset.filter;
+                showToast(`Switched to: ${filterName}`);
+            }
+        }
+    },
+    
+    /**
+     * Add skip link for accessibility
+     */
+    addSkipLink() {
+        const skipLink = document.createElement('a');
+        skipLink.href = '#proverbsContainer';
+        skipLink.className = 'skip-link';
+        skipLink.textContent = 'Skip to proverbs';
+        document.body.prepend(skipLink);
+    },
+    
+    /**
+     * Add keyboard hint
+     */
+    addKeyboardHint() {
+        const hint = document.createElement('div');
+        hint.className = 'keyboard-hint';
+        hint.innerHTML = `
+            <kbd>↑↓←→</kbd> Navigate &nbsp; 
+            <kbd>Enter</kbd> Open &nbsp; 
+            <kbd>1-9</kbd> Categories &nbsp; 
+            <kbd>/</kbd> Search &nbsp; 
+            <kbd>?</kbd> Help
+        `;
+        document.body.appendChild(hint);
+        
+        // Show hint briefly on first keyboard use
+        let shown = false;
+        const showHint = () => {
+            if (!shown) {
+                shown = true;
+                hint.classList.add('visible');
+                setTimeout(() => hint.classList.remove('visible'), 5000);
+            }
+        };
+        
+        document.addEventListener('keydown', showHint, { once: true });
+    },
+    
+    /**
+     * Show keyboard shortcuts
+     */
+    showShortcuts() {
+        showToast('Shortcuts: ↑↓←→ Navigate | Enter Open | 1-9 Categories | / Search | ESC Close');
+    }
+};
 
 /**
  * Show random proverb in modal
@@ -961,3 +2050,6 @@ window.showAbout = showAbout;
 window.closeAbout = closeAbout;
 window.showKeyboardShortcuts = showKeyboardShortcuts;
 window.toggleFavorite = toggleFavorite;
+window.playAudio = playAudio;
+window.playCardAudio = playCardAudio;
+window.playDailyAudio = playDailyAudio;

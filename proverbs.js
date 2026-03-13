@@ -5,7 +5,13 @@ const proverbs = [
     // WISDOM (+ other categories where applicable)
     { cn: "三思而后行", py: "sān sī ér hòu xíng", en: "Think three times before you act. / Look before you leap.", cats: ["wisdom", "business"] },
     { cn: "知之为知之，不知为不知", py: "zhī zhī wéi zhī zhī, bù zhī wéi bù zhī", en: "To know what you know and know what you do not know is true knowledge.", cats: ["wisdom", "learning"] },
-    { cn: "塞翁失马，焉知非福", py: "sài wēng shī mǎ, yān zhī fēi fú", en: "A loss may turn out to be a gain. / Every cloud has a silver lining.", cats: ["wisdom", "life"] },
+    { cn: "塞翁失马，焉知非福", py: "sài wēng shī mǎ, yān zhī fēi fú", en: "A loss may turn out to be a gain. / Every cloud has a silver lining.", cats: ["wisdom", "life"], story: { title: "The Old Man Who Lost His Horse", content: "During the Han Dynasty, there was an old man named Sai Weng who lived near the northern frontier. One day, his horse ran away to the northern tribes. His neighbors came to console him, but Sai Weng said, 'Who knows if this is not a blessing?'
+
+Months later, his horse returned with several fine northern steeds. The neighbors came to congratulate him, but Sai Weng said, 'Who knows if this is not a misfortune?'
+
+Sai Weng's son loved riding these new horses. One day, he fell and broke his leg. Again, the neighbors came to console the old man, but Sai Weng said, 'Who knows if this is not a blessing?'
+
+Soon after, the northern tribes invaded, and all able-bodied young men were drafted into battle, where most perished. Because of his broken leg, Sai Weng's son was spared from military service and survived. The story illustrates how fortune and misfortune are intertwined and constantly transform into one another." } },
     { cn: "祸兮福之所倚，福兮祸之所伏", py: "huò xī fú zhī suǒ yǐ, fú xī huò zhī suǒ fú", en: "Misfortune leans on fortune; fortune hides in misfortune.", cats: ["wisdom", "life"] },
     { cn: "满招损，谦受益", py: "mǎn zhāo sǔn, qiān shòu yì", en: "Arrogance brings loss, modesty brings benefit.", cats: ["wisdom", "learning"] },
     { cn: "骄者必败", py: "jiāo zhě bì bài", en: "The proud will surely fall. / Pride comes before a fall.", cats: ["wisdom", "perseverance"] },
@@ -30,7 +36,11 @@ const proverbs = [
     { cn: "种瓜得瓜，种豆得豆", py: "zhòng guā dé guā, zhòng dòu dé dòu", en: "As you sow, so shall you reap.", cats: ["wisdom", "life", "perseverance"] },
     { cn: "江山易改，本性难移", py: "jiāng shān yì gǎi, běn xìng nán yí", en: "Rivers and mountains are easy to change, but one's nature is hard to change.", cats: ["wisdom", "family"] },
     { cn: "冰冻三尺，非一日之寒", py: "bīng dòng sān chǐ, fēi yī rì zhī hán", en: "Ice three feet thick is not formed in a single day.", cats: ["wisdom", "perseverance"] },
-    { cn: "不入虎穴，焉得虎子", py: "bù rù hǔ xué, yān dé hǔ zǐ", en: "If you don't enter the tiger's den, how can you catch the tiger's cub?", cats: ["wisdom", "business", "perseverance"] },
+    { cn: "不入虎穴，焉得虎子", py: "bù rù hǔ xué, yān dé hǔ zǐ", en: "If you don't enter the tiger's den, how can you catch the tiger's cub?", cats: ["wisdom", "business", "perseverance"], story: { title: "Ban Chao's Bold Mission", content: "In 73 CE, during the Eastern Han Dynasty, the great explorer and diplomat Ban Chao was sent on a diplomatic mission to the Western Regions (Central Asia). While visiting the kingdom of Shanshan, he learned that a Xiongnu delegation had also arrived and the king was leaning toward siding with the Xiongnu against the Han.
+
+Ban Chao gathered his 36 men and told them: 'Without entering the tiger's den, how can we catch the tiger's cub? We must act tonight!' That night, they attacked the Xiongnu camp, killing the envoys and burning their camp.
+
+The next morning, Ban Chao presented the Xiongnu leader's head to the shocked king of Shanshan, who immediately pledged allegiance to the Han Dynasty. This bold action secured the Silk Road for decades and established Chinese influence in Central Asia. The proverb has come to mean that great achievements require taking great risks." } },
     { cn: "机不可失，时不再来", py: "jī bù kě shī, shí bù zài lái", en: "Opportunity knocks but once.", cats: ["wisdom", "business"] },
     { cn: "百闻不如一见", py: "bǎi wén bù rú yī jiàn", en: "Hearing something a hundred times is not as good as seeing it once.", cats: ["wisdom", "learning"] },
 
@@ -68,7 +78,15 @@ const proverbs = [
     { cn: "锲而不舍", py: "qiè ér bù shě", en: "Carve without giving up.", cats: ["perseverance"] },
     { cn: "金石可镂", py: "jīn shí kě lòu", en: "Even metal and stone can be engraved.", cats: ["perseverance"] },
     { cn: "只要功夫深", py: "zhǐ yào gōng fu shēn", en: "If you work hard enough.", cats: ["perseverance"] },
-    { cn: "铁杵磨成针", py: "tiě chǔ mó chéng zhēn", en: "An iron pestle can be ground into a needle.", cats: ["perseverance", "learning"] },
+    { cn: "铁杵磨成针", py: "tiě chǔ mó chéng zhēn", en: "An iron pestle can be ground into a needle.", cats: ["perseverance", "learning"], story: { title: "Li Bai and the Old Woman", content: "The famous Tang Dynasty poet Li Bai was known for his brilliant verses, but as a young boy, he was actually quite lazy and often skipped his studies. One day, while wandering by a stream instead of attending class, he saw an old woman grinding a thick iron pestle against a stone.
+
+Curious, young Li Bai asked what she was doing. The old woman replied, 'I'm grinding this iron pestle into a sewing needle.'
+
+Li Bai laughed and said, 'But that's impossible! It would take forever!'
+
+The old woman looked at him seriously and replied, 'If I work at it every day without giving up, eventually the pestle will become a needle. The same is true for your studies.'
+
+Ashamed, Li Bai returned to his books and became one of the most diligent students of his generation. This proverb reminds us that with persistent effort, even seemingly impossible tasks can be accomplished." } },
     { cn: "世上无难事", py: "shì shàng wú nán shì", en: "In the world, nothing is difficult.", cats: ["perseverance", "wisdom"] },
     { cn: "只怕有心人", py: "zhǐ pà yǒu xīn rén", en: "If you put your mind to it.", cats: ["perseverance", "wisdom"] },
     { cn: "吃得苦中苦", py: "chī dé kǔ zhōng kǔ", en: "Eat the bitterest of the bitter.", cats: ["perseverance", "health"] },
@@ -85,8 +103,18 @@ const proverbs = [
     { cn: "不积跬步，无以至千里", py: "bù jī kuǐ bù, wú yǐ zhì qiān lǐ", en: "No thousand-mile journey happens without tiny steps.", cats: ["perseverance", "wisdom"] },
     { cn: "精诚所至", py: "jīng chéng suǒ zhì", en: "With complete sincerity.", cats: ["perseverance", "wisdom", "love"] },
     { cn: "金石为开", py: "jīn shí wéi kāi", en: "Even metal and stone will open.", cats: ["perseverance", "wisdom", "love"] },
-    { cn: "卧薪尝胆", py: "wò xīn cháng dǎn", en: "Sleep on brushwood and taste gall. / Endure hardships.", cats: ["perseverance", "wisdom"] },
-    { cn: "破釜沉舟", py: "pò fǔ chén zhōu", en: "Break the cauldrons and sink the boats. / Burn bridges.", cats: ["perseverance", "wisdom", "business"] },
+    { cn: "卧薪尝胆", py: "wò xīn cháng dǎn", en: "Sleep on brushwood and taste gall. / Endure hardships.", cats: ["perseverance", "wisdom"], story: { title: "King Goujian's Vengeance", content: "During the Spring and Autumn Period (770-476 BCE), King Goujian of Yue was defeated by King Fuchai of Wu. As a condition of peace, Goujian was forced to serve as Fuchai's slave for three years, even tasting Fuchai's feces to diagnose his illness.
+
+After being released, Goujian was determined to rebuild his kingdom and avenge this humiliation. He hung a gall bladder above his bed and tasted its bitter contents every morning and evening to remind himself of his suffering. He slept on brushwood instead of a comfortable bed. He worked in the fields alongside his people, wore simple clothes, and ate humble food.
+
+Over twenty years, Yue grew strong under his leadership. Meanwhile, Fuchai grew complacent and arrogant. When the time was right, Goujian launched his attack and destroyed the Wu kingdom. This story embodies the spirit of enduring hardship and maintaining determination to achieve one's goals." } },
+    { cn: "破釜沉舟", py: "pò fǔ chén zhōu", en: "Break the cauldrons and sink the boats. / Burn bridges.", cats: ["perseverance", "wisdom", "business"], story: { title: "Xiang Yu's Fight to the Death", content: "In 207 BCE, during the fall of the Qin Dynasty, the rebel general Xiang Yu led his army across the Zhang River to attack the Qin forces. After crossing the river, he ordered his men to sink all the boats, smash the cooking pots (cauldrons), and burn their tents. Each soldier was given only three days' worth of dry rations.
+
+Xiang Yu declared to his shocked troops: 'We now have no way to retreat. The only way to survive is to defeat the enemy within three days!'
+
+With their backs against the wall, Xiang Yu's army fought with desperate courage. They won nine consecutive battles against the numerically superior Qin army, eventually forcing the Qin commander to surrender. This decisive victory broke the back of the Qin Dynasty's military power.
+
+The phrase represents absolute commitment - eliminating all avenues of retreat to force total focus on victory." } },
 
     // FRIENDSHIP
     { cn: "海内存知己", py: "hǎi nèi cún zhī jǐ", en: "Within the four seas, all men are brothers.", cats: ["friendship", "love"] },
@@ -270,6 +298,128 @@ const proverbs = [
     { cn: "一张一弛，文武之道", py: "yī zhāng yī chí, wén wǔ zhī dào", en: "Alternate tension and relaxation - the way of civil and military.", cats: ["health", "wisdom", "perseverance"] },
     { cn: "劳逸结合", py: "láo yì jié hé", en: "Balance work and rest.", cats: ["health", "wisdom", "life"] },
     { cn: "安步当车", py: "ān bù dàng chē", en: "Walk leisurely instead of riding. / Walking is healthy.", cats: ["health", "wisdom", "life"] },
+
+    // IDIOM STORIES - Famous Proverbs with Historical Origins
+    { cn: "画蛇添足", py: "huà shé tiān zú", en: "Adding feet to a snake. / Ruining the effect by adding something superfluous.", cats: ["wisdom", "life"], story: { title: "The Snake Drawing Contest", content: "During the Warring States Period, a group of men were drinking together when they decided to have a contest: whoever finished drawing a snake on the ground first would win a pot of wine.
+
+One man finished his snake quickly. Seeing that the others were still struggling, he arrogantly decided to add feet to his snake, thinking it would make his drawing even better. Just as he finished adding the feet, another man completed his simple snake drawing and claimed the wine.
+
+The winner pointed out: 'Snakes don't have feet. What you drew isn't a snake anymore!' The first man lost the contest because of his unnecessary addition.
+
+This story teaches us that sometimes adding too much or being excessive can ruin something that was already good enough. It warns against overdoing things and losing sight of what is truly needed." } },
+    { cn: "守株待兔", py: "shǒu zhū dài tù", en: "Guarding the tree waiting for rabbits. / Waiting for fortune to strike again without effort.", cats: ["wisdom", "business", "life"], story: { title: "The Farmer and the Rabbit", content: "In the State of Song during the Spring and Autumn Period, there was a farmer who worked hard in his fields every day. One day, while plowing, he saw a rabbit run into a tree stump and break its neck, dying instantly.
+
+The farmer happily took the rabbit home for dinner. He thought: 'How wonderful! If I wait by this tree stump every day, I'll surely catch more rabbits without any work!'
+
+So he abandoned his plow, sat by the tree stump, and waited for more rabbits to come. Days turned into weeks, but no more rabbits came. His fields became overgrown with weeds, and he became the laughingstock of the village.
+
+The story satirizes those who rely on luck rather than hard work, or who try to gain from chance occurrences without understanding that they were accidents, not patterns to depend on." } },
+    { cn: "刻舟求剑", py: "kè zhōu qiú jiàn", en: "Marking the boat to find the sword. / Taking measures without regard to changing circumstances.", cats: ["wisdom", "learning"], story: { title: "The Man Who Marked His Boat", content: "A man from the State of Chu was crossing a river in a boat when his sword fell into the water. He quickly took out his knife and carved a notch on the side of the boat where his sword had fallen.
+
+When the boat reached the shore, he confidently said: 'My sword fell right here,' pointing to the mark on the boat. He then dove into the water at that exact spot, searching for his sword.
+
+Of course, he found nothing. The boat had moved, but the sword remained at the bottom of the river where it had originally fallen. The man had failed to understand that while the boat moved, the sword stayed in place.
+
+This story illustrates the foolishness of rigid thinking and not adapting to changing circumstances. It warns against relying on static solutions when the world around us is dynamic." } },
+    { cn: "亡羊补牢", py: "wáng yáng bǔ láo", en: "Fixing the pen after sheep are lost. / Better late than never.", cats: ["wisdom", "learning", "life"], story: { title: "The Shepherd Mends His Pen", content: "A shepherd raised many sheep. One night, he discovered a hole in his sheep pen and one sheep was missing - eaten by a wolf. His neighbor advised him: 'You should fix that hole immediately!'
+
+But the shepherd replied dismissively: 'The sheep is already lost. What's the point of fixing the pen now?'
+
+The next morning, another sheep was gone. The shepherd finally realized his mistake and immediately repaired the pen, reinforcing it to make it stronger than before.
+
+Although he had lost two sheep, he prevented further losses. As the saying goes: 'It's not too late to mend the pen after the sheep are lost.'
+
+This proverb teaches us that when we make mistakes or face setbacks, we should learn from them and make corrections promptly. It's never too late to fix a problem and prevent further damage." } },
+    { cn: "井底之蛙", py: "jǐng dǐ zhī wā", en: "Frog in the well. / A person with limited perspective.", cats: ["wisdom", "learning"], story: { title: "The Frog of the Well", content: "A frog lived in an old well. He was very content with his home and often boasted to a visiting sea turtle about how wonderful his well was.
+
+'Look how comfortable I am!' the frog said. 'I can hop around on the ledge, rest in the hollows of the bricks, and swim in the cool water. This well is the greatest place in the world!'
+
+The sea turtle tried to tell the frog about the vast ocean - how it stretched to the horizon, how its waters were immeasurably deep, and how its waves reached mountains. The frog was stunned into silence. He finally realized how small his world had been.
+
+This proverb describes someone with a narrow outlook who believes their limited experience represents the whole world. It encourages us to expand our horizons and recognize there's always more to learn and experience." } },
+    { cn: "毛遂自荐", py: "máo suì zì jiàn", en: "Mao Sui recommending himself. / Volunteering for a task.", cats: ["wisdom", "business", "perseverance"], story: { title: "Mao Sui's Self-Recommendation", content: "During the Warring States Period, Prince Pingyuan of Zhao needed to select twenty talented men to accompany him on a diplomatic mission to the State of Chu. He had already chosen nineteen but couldn't find a suitable twentieth person.
+
+Mao Sui, who had been living as a guest at the prince's house for three years, stepped forward and said: 'I hear you need one more person. I would like to recommend myself.'
+
+The prince was skeptical: 'A talented person is like a nail in a bag - the tip will show through. You've been here three years and I've never heard of you.'
+
+Mao Sui replied: 'The problem is you never put me in the bag. If you had, the tip would have shown long ago.'
+
+Impressed by his confidence, the prince took him along. When negotiations with Chu stalled, Mao Sui fearlessly confronted the King of Chu with drawn sword, compelling him to agree to an alliance. Mao Sui proved his worth and became famous for his bold self-confidence." } },
+    { cn: "纸上谈兵", py: "zhǐ shàng tán bīng", en: "Discussing military tactics on paper. / Theoretical knowledge without practical experience.", cats: ["wisdom", "learning", "business"], story: { title: "Zhao Kuo's Theoretical Defeat", content: "During the Warring States Period, there was a general named Zhao Kuo, son of the famous Zhao She. Since childhood, Zhao Kuo studied military strategy and could debate tactics with anyone, even his father. Everyone praised his theoretical knowledge.
+
+In 260 BCE, when Qin attacked Zhao, the elderly general Lian Po led the defense. The battle became a stalemate, so Qin spread rumors that they feared only Zhao Kuo, not Lian Po. The King of Zhao believed the rumors and replaced Lian Po with Zhao Kuo.
+
+Zhao Kuo's mother warned the king: 'My husband said Zhao Kuo treats war like a game. He lacks real experience.' But the king didn't listen.
+
+Zhao Kuo immediately changed all of Lian Po's battle plans, following only what he had read in books. The Qin general Bai Qi feigned retreat to lure Zhao Kuo out, then surrounded and destroyed his army. Zhao Kuo died in battle, and 400,000 Zhao soldiers were buried alive.
+
+This story warns against relying solely on book knowledge without practical experience and judgment." } },
+    { cn: "完璧归赵", py: "wán bì guī zhào", en: "Returning the jade intact to Zhao. / Returning something to its rightful owner in perfect condition.", cats: ["wisdom", "business"], story: { title: "Lin Xiangru Saves the He Shi Bi", content: "The He Shi Bi was a legendary jade disc of extraordinary beauty, treasured by the State of Zhao. The King of Qin offered fifteen cities in exchange for the jade. The King of Zhao knew this was likely a trick but feared refusing would give Qin an excuse to attack.
+
+Lin Xiangru, a clever courtier, volunteered to deliver the jade. At the Qin court, the King of Qin examined the jade with delight but showed no intention of discussing the cities. Lin Xiangru calmly said: 'The jade has a flaw. Let me show you.'
+
+When the king handed back the jade, Lin Xiangru retreated to a pillar and held the jade high. 'If you try to take this by force, I will smash the jade and myself against this pillar!' he declared. 'If you are sincere, let's have a ceremony to transfer the cities first.'
+
+Knowing Qin had no intention of giving up the cities, Lin Xiangru secretly sent the jade back to Zhao. When confronted, he said: 'Qin has never kept its word. I ensured the jade's safety first.' The King of Qin, impressed by his courage and wit, let him go.
+
+The story celebrates wisdom, courage, and protecting one's treasures through clever diplomacy." } },
+    { cn: "负荆请罪", py: "fù jīng qǐng zuì", en: "Carrying thorns to ask for punishment. / Offering a sincere apology.", cats: ["wisdom", "friendship"], story: { title: "Lian Po and Lin Xiangru's Reconciliation", content: "After Lin Xiangru's successful mission with the He Shi Bi jade, the King of Zhao promoted him to a high position above General Lian Po. Lian Po, a proud military commander who had defended Zhao for decades, was furious. 'I have shed blood for this kingdom, while he just used words!' he declared. 'If I see him, I will humiliate him!'
+
+Lin Xiangru heard this but avoided all encounters with Lian Po, even feigning illness when he knew Lian Po would be at court. His followers were ashamed, thinking their master was a coward.
+
+Lin Xiangru explained: 'Which is more important - my personal honor or the safety of the state? If two powerful ministers fight, enemies will attack. I avoid conflict for the good of Zhao.'
+
+When Lian Po heard this, he was deeply ashamed. He removed his shirt, carried a bundle of thorny branches on his back (a traditional punishment), and went to Lin Xiangru's house to beg for forgiveness. The two became close friends and allies, working together to strengthen Zhao.
+
+This story exemplifies humility, recognizing one's mistakes, and prioritizing the greater good over personal pride." } },
+    { cn: "四面楚歌", py: "sì miàn chǔ gē", en: "Songs of Chu on all sides. / Surrounded by enemies; isolated and desperate.", cats: ["wisdom", "life"], story: { title: "Xiang Yu's Final Battle", content: "In 202 BCE, Xiang Yu, the powerful warlord known as the 'Conqueror of Western Chu,' found himself trapped at Gaixia by the forces of Liu Bang, who would later found the Han Dynasty. Xiang Yu's army was surrounded, outnumbered, and running low on supplies.
+
+During the night, Liu Bang's forces began singing folk songs from the Chu region - Xiang Yu's homeland. Hearing songs of home on all sides, Xiang Yu's soldiers believed that Chu had already fallen and that their families were in enemy hands. Their morale collapsed, and many deserted or surrendered.
+
+Xiang Yu, hearing the songs, understood Liu Bang's psychological warfare. In despair, he composed the famous 'Song of Gaixia': 'My strength could pull mountains, my spirit could cover the world; but the times are against me, and my horse can run no more. If my horse can run no more, what can I do? Yu, my beloved, what will become of you?'
+
+Despite breaking through the encirclement with a small force, Xiang Yu was eventually cornered at the Wu River. Unwilling to face capture, he committed suicide, ending the Chu-Han contention.
+
+The phrase describes being surrounded on all sides with no way out, feeling utterly isolated and desperate." } },
+    { cn: "鹬蚌相争，渔翁得利", py: "yù bàng xiāng zhēng, yú wēng dé lì", en: "When the snipe and the clam fight, the fisherman profits. / Two parties fight while a third benefits.", cats: ["wisdom", "business"], story: { title: "The Snipe, the Clam, and the Fisherman", content: "One day, a snipe (a type of wading bird) spotted a clam lying open on the beach and tried to eat its soft flesh. The clam quickly clamped its shell shut, trapping the snipe's beak inside.
+
+The snipe said: 'If you don't open up, you will dry out and die when the sun gets hot.'
+
+The clam replied: 'If I don't open up, you won't be able to eat or fly away, and you will starve to death!'
+
+They remained locked in their struggle for hours. Neither would give way, each believing they could outlast the other.
+
+An old fisherman came along and saw the struggling pair. He easily caught them both, delighted at his unexpected double prize. The two enemies had been so focused on defeating each other that they failed to see the danger approaching from outside.
+
+This proverb warns against prolonged conflicts where both parties lose sight of the bigger picture, allowing third parties to take advantage of the situation." } },
+    { cn: "邯郸学步", py: "hán dān xué bù", en: "Learning to walk in Handan. / Losing one's own identity while imitating others.", cats: ["wisdom", "learning"], story: { title: "The Young Man Who Forgot How to Walk", content: "In the Warring States Period, the people of Handan (capital of Zhao) were famous for their elegant, graceful way of walking. A young man from the State of Yan heard about this and decided to travel to Handan to learn their walking style.
+
+He spent months watching and imitating the Handan people. He tried to copy every detail of their posture, stride, and movement. But the more he tried to mimic them, the more awkward he became.
+
+He became so focused on copying others that he completely forgot his own natural way of walking. Finally, when he tried to return home, he found he couldn't walk at all - he had to crawl back to Yan.
+
+The story satirizes those who try so hard to imitate others that they lose their own identity and abilities. It teaches us to appreciate our own strengths while learning from others, rather than blindly copying at the expense of our authentic selves." } },
+    { cn: "叶公好龙", py: "yè gōng hào lóng", en: "Lord Ye's love of dragons. / Professed love of something one actually fears.", cats: ["wisdom", "life"], story: { title: "Lord Ye and the Real Dragon", content: "Lord Ye was a man famous throughout the land for his passionate love of dragons. His house was decorated with dragon carvings, his clothes embroidered with dragon patterns, and he spoke of dragons constantly. Everyone knew of Lord Ye's devotion to dragons.
+
+The real Dragon King in Heaven heard about this mortal who loved dragons so much and decided to reward him with a personal visit. One day, as Lord Ye sat in his study admiring a dragon painting, the actual Dragon King descended - enormous, golden-scaled, with thunder in his breath and lightning in his eyes.
+
+Lord Ye took one look at the real dragon and screamed in terror. He ran out of his house, never to return. The Dragon King was deeply disappointed and flew back to Heaven.
+
+The story exposes those who claim to love or support something in theory but are actually afraid of it in reality. It warns against superficial admiration and hypocrisy." } },
+    { cn: "朝三暮四", py: "zhāo sān mù sì", en: "Three in the morning, four in the evening. / Changing one's mind frequently; being fickle.", cats: ["wisdom", "life"], story: { title: "The Monkey and the Chestnuts", content: "In the State of Song, there was a man who loved monkeys and kept many of them. When his household ran short of food, he decided to reduce the monkeys' rations.
+
+He gathered the monkeys and announced: 'From now on, I'll give you three chestnuts in the morning and four in the evening. Is that acceptable?'
+
+The monkeys were furious, screeching and jumping about in protest.
+
+The man quickly changed his proposal: 'Very well then, I'll give you four chestnuts in the morning and three in the evening. Will that do?'
+
+The monkeys were delighted, chattering happily among themselves at their apparent victory.
+
+In reality, the total number of chestnuts was exactly the same - seven per day. The man had simply rearranged the numbers to trick the monkeys into accepting what they had initially rejected.
+
+This story mocks those who are fooled by superficial changes when the substance remains the same, and also describes people who are fickle or change their minds capriciously." } },
 ];
 
 // Cantonese Proverbs (粤语谚语)
