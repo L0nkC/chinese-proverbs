@@ -1787,36 +1787,58 @@ function escapeRegExp(string) {
  * Setup filter buttons
  */
 function setupFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    console.log('[Filters] Found', filterButtons.length, 'filter buttons');
+    console.log('[AGGRESSIVE] setupFilters called');
     
-    if (filterButtons.length === 0) {
-        console.error('[Filters] NO FILTER BUTTONS FOUND!');
-        return;
-    }
-
-    filterButtons.forEach((btn, index) => {
-        console.log('[Filters] Attaching listener to button', index, ':', btn.dataset.filter);
+    // Wait for DOM to be fully ready
+    setTimeout(() => {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        console.log('[AGGRESSIVE] Found', filterButtons.length, 'filter buttons');
         
-        // Handle both click and touch events for mobile
-        const handleFilterClick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('[Filters] Button CLICKED:', btn.dataset.filter);
-            
-            // Update active state
-            filterButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        if (filterButtons.length === 0) {
+            console.error('[AGGRESSIVE] NO FILTER BUTTONS FOUND - RETRYING');
+            setTimeout(setupFilters, 500);
+            return;
+        }
 
-            // Apply filter
+        filterButtons.forEach((btn, index) => {
             const filter = btn.dataset.filter;
-            currentFilter = filter;
-            displayedCount = 24;
-            applyFilter(filter);
-        };
+            console.log('[AGGRESSIVE] Setting up button', index, ':', filter);
+            
+            // Remove any existing handlers
+            btn.onclick = null;
+            btn.removeEventListener('click', handleFilterClick);
+            
+            // Add new handler
+            btn.addEventListener('click', handleFilterClick);
+            
+            // Also add direct onclick as backup
+            btn.onclick = handleFilterClick;
+        });
         
-        btn.addEventListener('click', handleFilterClick);
-        btn.addEventListener('touchend', handleFilterClick);
+        console.log('[AGGRESSIVE] All buttons set up');
+    }, 100);
+}
+
+function handleFilterClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const btn = e.currentTarget;
+    const filter = btn.dataset.filter;
+    
+    console.log('[AGGRESSIVE] Button CLICKED:', filter);
+    
+    // Update active state
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Apply filter
+    currentFilter = filter;
+    displayedCount = 24;
+    applyFilter(filter);
+    
+    return false;
+}
     });
     
     console.log('[Filters] Event handlers attached to all buttons');
