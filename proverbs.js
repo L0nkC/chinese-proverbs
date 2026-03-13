@@ -457,10 +457,125 @@ var cantoneseProverbs = [
     { cn: "食塞米", py: "sihk choi máih", en: "Ate sticky rice. / Got into trouble; stuck in a mess.", cats: ["cantonese", "life", "wisdom"] },
 ];
 
+// ============================================
+// COLLECTIONS / THEMES
+// Curated sets of proverbs for specific audiences and situations
+// ============================================
+
+var collections = {
+    entrepreneurs: {
+        id: 'entrepreneurs',
+        name: 'For Entrepreneurs',
+        nameCn: '企业家之道',
+        icon: '🚀',
+        description: 'Wisdom for risk-takers, innovators, and business builders. These proverbs capture the essence of opportunity, perseverance, and strategic thinking needed to succeed in business.',
+        descriptionCn: '为冒险者、创新者和商业建设者提供的智慧。这些谚语抓住了机会、毅力和战略思维的精髓。',
+        featured: true,
+        proverbIds: [
+            "机不可失，时不再来",  // Opportunity knocks but once
+            "不入虎穴，焉得虎子",  // Take risks for great rewards
+            "三思而后行",          // Think before acting
+            "知己知彼，百战不殆",  // Know yourself and your competition
+            "百闻不如一见",        // See for yourself
+            "一言既出，驷马难追",  // Keep your word
+            "人无远虑，必有近忧",  // Plan for the future
+            "种瓜得瓜，种豆得豆",  // Reap what you sow
+            "一分耕耘，一分收获",  // No pain, no gain
+            "十年树木，百年树人",  // Long-term thinking
+            "万事起头难",          // Starting is hard
+            "好的开始是成功的一半", // Good start is half the battle
+            "失败是成功之母",      // Failure breeds success
+            "百折不挠",            // Never give up
+            "天道酬勤",            // Hard work pays off
+            "鹬蚌相争，渔翁得利",  // Find opportunity in others' conflicts
+            "十個茶壺九個蓋",      // Not enough to go around
+            "有咁大隻蛤乸隨街跳",  // No free lunch
+            "豬籠入水",            // Money flowing in
+            "走寶"                 // Don't miss opportunities
+        ]
+    },
+    students: {
+        id: 'students',
+        name: 'For Students',
+        nameCn: '学子箴言',
+        icon: '📚',
+        description: 'Timeless wisdom for learners of all ages. From the importance of diligence to the value of questioning, these proverbs will guide you on your educational journey.',
+        descriptionCn: '为各年龄段学习者的永恒智慧。从勤奋的重要性到质疑的价值，这些谚语将引导您的教育之旅。',
+        featured: true,
+        proverbIds: [
+            "活到老，学到老",      // Never too old to learn
+            "学而不思则罔",        // Learning without thinking
+            "温故而知新",          // Review the old, learn the new
+            "三人行，必有我师",    // Everyone can be your teacher
+            "敏而好学，不耻下问",  // Eager to learn, not ashamed to ask
+            "玉不琢，不成器",      // Jade needs carving
+            "书山有路勤为径",      // Diligence is the path
+            "学海无涯苦作舟",      // Hardship is the boat
+            "黑发不知勤学早",      // Study early while young
+            "白首方悔读书迟",      // Don't regret starting late
+            "师父领进门，修行在个人", // Teacher opens the door
+            "听君一席话，胜读十年书", // Wise words worth more than books
+            "纸上得来终觉浅",      // Book knowledge is superficial
+            "绝知此事要躬行",      // Practice to truly know
+            "知易行难",            // Knowing is easy, doing is hard
+            "知行合一",            // Unity of knowledge and action
+            "学而时习之，不亦说乎", // Joy in learning and practicing
+            "举一反三",            // Draw inferences
+            "触类旁通",            // Grasp by analogy
+            "笨鸟先飞"             // The slow bird starts early
+        ]
+    },
+    hardtimes: {
+        id: 'hardtimes',
+        name: 'For Hard Times',
+        nameCn: '逆境自强',
+        icon: '💪',
+        description: 'When life gets difficult, these proverbs offer perspective, resilience, and hope. Ancient wisdom to help you weather any storm and emerge stronger.',
+        descriptionCn: '当生活变得艰难时，这些谚语提供视角、韧性和希望。古老智慧帮助您度过任何风暴并变得更强大。',
+        featured: true,
+        proverbIds: [
+            "塞翁失马，焉知非福",  // Every cloud has a silver lining
+            "祸兮福之所倚，福兮祸之所伏", // Fortune and misfortune are intertwined
+            "否极泰来",            // Good follows bad
+            "物极必反",            // Things turn at extremes
+            "水滴石穿",            // Persistence wears down stone
+            "有志者事竟成",        // Where there's a will, there's a way
+            "世上无难事",          // Nothing is impossible
+            "只怕有心人",          // Determination matters
+            "吃得苦中苦",          // Endure the bitter
+            "方为人上人",          // To rise above
+            "宝剑锋从磨砺出",      // Sharp sword from grinding
+            "梅花香自苦寒来",      // Fragrance from bitter cold
+            "冰冻三尺，非一日之寒", // Ice forms slowly
+            "只要功夫深",          // With deep effort
+            "铁杵磨成针",          // Iron pestle to needle
+            "不怕慢，就怕站",      // Fear not slowness but stopping
+            "鹹魚翻生",            // Comeback from the impossible
+            "天道酬勤",            // Heaven rewards diligence
+            "勤能补拙",            // Diligence compensates
+            "留得青山在",          // While there's life, there's hope
+            "不怕货比货"           // Face challenges bravely
+        ]
+    }
+};
+
+// Helper function to get proverbs by collection
+function getProverbsByCollection(collectionId) {
+    const collection = collections[collectionId];
+    if (!collection) return [];
+    
+    return allProverbs.filter(p => collection.proverbIds.includes(p.cn));
+}
+
+// Helper function to get featured collections
+function getFeaturedCollections() {
+    return Object.values(collections).filter(c => c.featured);
+}
+
 // Combine all proverbs for display
 var allProverbs = [...proverbs, ...cantoneseProverbs];
 
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { proverbs, cantoneseProverbs, allProverbs };
+    module.exports = { proverbs, cantoneseProverbs, allProverbs, collections, getProverbsByCollection, getFeaturedCollections };
 }

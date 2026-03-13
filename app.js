@@ -1059,6 +1059,9 @@ async function initializeApp() {
     // Setup ripple effects for buttons
     setupRippleEffects();
 
+    // Setup featured collection on homepage
+    setupFeaturedCollection();
+
     // Show loading skeleton first
     showLoadingSkeletons();
     
@@ -1075,6 +1078,7 @@ async function initializeApp() {
     setupModal();
     setupLoadMore();
     setupChineseToggle();
+    setupFeaturedCollectionButton(); // Add this line
 
     // Apply saved preference
     ChineseConverter.applyToPage();
@@ -1747,12 +1751,152 @@ function setupFilters() {
     });
 }
 
+// ============================================
+// COLLECTIONS / THEMES FEATURE
+// ============================================
+
+/**
+ * Setup Featured Collection section on homepage
+ * Rotates through available collections
+ */
+function setupFeaturedCollection() {
+    const featuredSection = document.getElementById('featuredCollection');
+    if (!featuredSection) return;
+
+    // Get all featured collections
+    const featuredCollections = getFeaturedCollections ? getFeaturedCollections() : 
+        (typeof collections !== 'undefined' ? Object.values(collections).filter(c => c.featured) : []);
+    
+    if (featuredCollections.length === 0) {
+        featuredSection.style.display = 'none';
+        return;
+    }
+
+    // Select a random featured collection (or use the first one)
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem('featuredCollectionDate');
+    let collectionIndex = parseInt(localStorage.getItem('featuredCollectionIndex') || '0');
+    
+    if (savedDate !== today) {
+        // Rotate to next collection daily
+        collectionIndex = (collectionIndex + 1) % featuredCollections.length;
+        localStorage.setItem('featuredCollectionDate', today);
+        localStorage.setItem('featuredCollectionIndex', collectionIndex.toString());
+    }
+    
+    const collection = featuredCollections[collectionIndex % featuredCollections.length];
+    
+    // Update the featured section UI
+    updateFeaturedCollectionUI(collection);
+}
+
+/**
+ * Update Featured Collection section UI
+ */
+function updateFeaturedCollectionUI(collection) {
+    const titleEl = document.getElementById('featuredTitle');
+    const chineseEl = document.getElementById('featuredChinese');
+    const descEl = document.getElementById('featuredDescription');
+    const statsEl = document.getElementById('featuredStats');
+    const btn = document.getElementById('viewCollectionBtn');
+    
+    if (titleEl) titleEl.textContent = collection.name;
+    if (chineseEl) chineseEl.textContent = collection.nameCn;
+    if (descEl) descEl.textContent = collection.description;
+    if (statsEl) {
+        statsEl.innerHTML = `<span class="featured-stat"><span class="featured-stat-number">${collection.proverbIds.length}</span> proverbs</span>`;
+    }
+    if (btn) {
+        btn.dataset.collection = collection.id;
+        btn.innerHTML = `<span>${collection.icon} View Collection</span>`;
+    }
+}
+
+/**
+ * Apply collection filter
+ */
+function applyCollectionFilter(collectionId) {
+    // Clear search
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    
+    // Get proverbs for this collection
+    if (typeof getProverbsByCollection === 'function') {
+        currentProverbs = getProverbsByCollection(collectionId);
+    } else if (typeof collections !== 'undefined' && collections[collectionId]) {
+        const collection = collections[collectionId];
+        currentProverbs = allProverbs.filter(p => collection.proverbIds.includes(p.cn));
+    } else {
+        currentProverbs = [];
+    }
+    
+    // Show collection description as a banner
+    showCollectionBanner(collectionId);
+    
+    renderProverbs(currentProverbs.slice(0, displayedCount));
+}
+
+/**
+ * Show collection banner with description
+ */
+function showCollectionBanner(collectionId) {
+    const container = document.getElementById('proverbsContainer');
+    if (!container || typeof collections === 'undefined') return;
+    
+    const collection = collections[collectionId];
+    if (!collection) return;
+    
+    // Check if banner already exists
+    let banner = document.querySelector('.collection-banner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.className = 'collection-banner';
+        container.parentNode.insertBefore(banner, container);
+    }
+    
+    banner.innerHTML = `
+        <div class="collection-banner-content">
+            <span class="collection-banner-icon">${collection.icon}</span>
+            <div class="collection-banner-text">
+                <h3>${collection.name} <span class="collection-chinese">${collection.nameCn}</span></h3>
+                <p>${collection.description}</p>
+            </div>
+            <button class="collection-banner-close" onclick="closeCollectionBanner()">×</button>
+        </div>
+    `;
+    banner.style.display = 'block';
+}
+
+/**
+ * Close collection banner
+ */
+function closeCollectionBanner() {
+    const banner = document.querySelector('.collection-banner');
+    if (banner) {
+        banner.style.display = 'none';
+    }
+}
+
+// Expose to global scope
+window.closeCollectionBanner = closeCollectionBanner;
+
 /**
  * Apply category filter
  */
 function applyFilter(filter) {
     // Clear search
-    document.getElementById('searchInput').value = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+
+    // Close any collection banner
+    closeCollectionBanner();
+
+    // Handle collection filters
+    if (filter.startsWith('collection:')) {
+        const collectionId = filter.replace('collection:', '');
+        applyCollectionFilter(collectionId);
+        return;
+    }
 
     if (filter === 'all') {
         currentProverbs = [...allProverbs];
@@ -1868,6 +2012,9 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
         updateModalFavoriteButton(proverbId);
     }
 
+    // Load and display related proverbs
+    loadRelatedProverbs(proverb);
+
     // Show modal with animation
     modal.classList.remove('closing');
     modal.classList.add('active');
@@ -1917,6 +2064,283 @@ function toggleStory() {
         storyToggle.classList.add('expanded');
         toggleText.textContent = 'Hide Story';
     }
+}
+
+// ============================================
+// RELATED PROVERBS FEATURE
+// ============================================
+
+/**
+ * Find related proverbs based on shared categories, keywords, or themes
+ * Returns 3-5 related proverbs sorted by relevance
+ */
+function findRelatedProverbs(currentProverb, limit = 5) {
+    if (!currentProverb) return [];
+    
+    const currentId = getProverbId(currentProverb);
+    const currentCats = currentProverb.cats || [currentProverb.cat].filter(Boolean);
+    const currentChinese = currentProverb.cn || '';
+    const currentEnglish = currentProverb.en || '';
+    
+    // Extract keywords from Chinese text (individual characters that are meaningful)
+    const chineseKeywords = extractChineseKeywords(currentChinese);
+    
+    // Extract keywords from English translation
+    const englishKeywords = extractEnglishKeywords(currentEnglish);
+    
+    // Score all other proverbs
+    const scoredProverbs = allProverbs
+        .filter(p => getProverbId(p) !== currentId) // Exclude current proverb
+        .map(proverb => {
+            let score = 0;
+            const proverbCats = proverb.cats || [proverb.cat].filter(Boolean);
+            
+            // Category matching (highest weight)
+            const sharedCats = currentCats.filter(cat => proverbCats.includes(cat));
+            score += sharedCats.length * 10;
+            
+            // Chinese keyword matching
+            const proverbChinese = proverb.cn || '';
+            for (const keyword of chineseKeywords) {
+                if (proverbChinese.includes(keyword)) {
+                    score += 3;
+                }
+            }
+            
+            // English keyword/thematic matching
+            const proverbEnglish = (proverb.en || '').toLowerCase();
+            for (const keyword of englishKeywords) {
+                if (proverbEnglish.includes(keyword)) {
+                    score += 2;
+                }
+            }
+            
+            // Thematic matching based on common themes
+            const themes = extractThemes(currentEnglish);
+            const proverbThemes = extractThemes(proverbEnglish);
+            const sharedThemes = themes.filter(t => proverbThemes.includes(t));
+            score += sharedThemes.length * 4;
+            
+            return { proverb, score };
+        })
+        .filter(item => item.score > 0) // Only include proverbs with some relevance
+        .sort((a, b) => b.score - a.score) // Sort by score descending
+        .slice(0, limit); // Take top N
+    
+    return scoredProverbs.map(item => item.proverb);
+}
+
+/**
+ * Extract meaningful Chinese keywords (characters)
+ */
+function extractChineseKeywords(chinese) {
+    // Common stop words/characters to ignore
+    const stopChars = new Set(['的', '了', '在', '是', '我', '有', '和', '就', '不', '人', 
+                               '都', '一', '一个', '上', '也', '很', '到', '说', '要', '去',
+                               '你', '会', '着', '没有', '看', '好', '自己', '这', '那']);
+    
+    const keywords = [];
+    for (const char of chinese) {
+        // Only include Chinese characters (not punctuation, numbers, etc.)
+        if (/[\u4e00-\u9fa5]/.test(char) && !stopChars.has(char)) {
+            keywords.push(char);
+        }
+    }
+    return [...new Set(keywords)]; // Remove duplicates
+}
+
+/**
+ * Extract meaningful English keywords
+ */
+function extractEnglishKeywords(english) {
+    const stopWords = new Set(['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 
+                               'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 
+                               'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
+                               'will', 'would', 'could', 'should', 'may', 'might', 'must',
+                               'can', 'shall', 'you', 'your', 'i', 'me', 'my', 'he', 'she',
+                               'it', 'we', 'they', 'them', 'his', 'her', 'its', 'their',
+                               'this', 'that', 'these', 'those', 'not', 'no', 'if', 'when',
+                               'where', 'how', 'what', 'who', 'why', 'which', 'as', 'so',
+                               'than', 'too', 'very', 'just', 'now', 'then', 'here', 'there']);
+    
+    return english
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '') // Remove punctuation
+        .split(/\s+/)
+        .filter(word => word.length > 2 && !stopWords.has(word))
+        .slice(0, 10); // Limit keywords
+}
+
+/**
+ * Extract common themes from English text
+ */
+function extractThemes(english) {
+    const themes = [];
+    const text = english.toLowerCase();
+    
+    // Define theme keywords
+    const themeMap = {
+        'learning': ['learn', 'study', 'education', 'knowledge', 'wisdom', 'teach', 'student', 'read', 'book'],
+        'perseverance': ['persever', 'persist', 'never', 'always', 'effort', 'hard', 'work', 'try', 'continue', 'keep'],
+        'friendship': ['friend', 'friendship', 'together', 'help', 'companion', 'trust', 'loyal'],
+        'love': ['love', 'heart', 'romantic', 'couple', 'marriage', 'beloved', 'affection'],
+        'family': ['family', 'parent', 'child', 'father', 'mother', 'son', 'daughter', 'home'],
+        'success': ['success', 'achieve', 'goal', 'accomplish', 'victory', 'win', 'triumph'],
+        'wisdom': ['wisdom', 'wise', 'know', 'understand', 'truth', 'insight', 'clever'],
+        'time': ['time', 'moment', 'day', 'year', 'hour', 'minute', 'early', 'late', 'delay'],
+        'health': ['health', 'healthy', 'sick', 'ill', 'heal', 'medicine', 'doctor', 'body'],
+        'business': ['business', 'work', 'money', 'wealth', 'rich', 'poor', 'profit', 'trade'],
+        'life': ['life', 'live', 'death', 'die', 'born', 'grow', 'age', 'young', 'old'],
+        'nature': ['water', 'mountain', 'river', 'tree', 'flower', 'wind', 'rain', 'sun', 'moon']
+    };
+    
+    for (const [theme, keywords] of Object.entries(themeMap)) {
+        if (keywords.some(kw => text.includes(kw))) {
+            themes.push(theme);
+        }
+    }
+    
+    return themes;
+}
+
+/**
+ * Load and display related proverbs in the modal
+ */
+function loadRelatedProverbs(currentProverb) {
+    const relatedSection = document.getElementById('relatedProverbsSection');
+    const relatedGrid = document.getElementById('relatedProverbsGrid');
+    
+    if (!relatedSection || !relatedGrid) return;
+    
+    // Find related proverbs
+    const related = findRelatedProverbs(currentProverb, 5);
+    
+    if (related.length === 0) {
+        relatedSection.style.display = 'none';
+        return;
+    }
+    
+    relatedSection.style.display = 'block';
+    
+    // Generate HTML for related proverbs
+    relatedGrid.innerHTML = related.map((proverb, index) => {
+        const firstCat = proverb.cats ? proverb.cats[0] : (proverb.cat || 'wisdom');
+        const displayChinese = ChineseConverter.convert(proverb.cn);
+        const proverbId = getProverbId(proverb);
+        
+        return `
+            <div class="related-proverb-card" 
+                 data-id="${proverbId}"
+                 onclick="navigateToRelatedProverb('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}', '${firstCat}', '${proverbId}')"
+                 style="animation-delay: ${index * 0.1}s">
+                <span class="related-match-indicator"></span>
+                <span class="related-category">${firstCat}</span>
+                <p class="related-chinese">${displayChinese}</p>
+                <p class="related-pinyin">${proverb.py}</p>
+                <p class="related-english">${proverb.en}</p>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Navigate to a related proverb with smooth transition
+ */
+function navigateToRelatedProverb(chinese, pinyin, english, category, proverbId) {
+    const modalProverb = document.querySelector('.modal-proverb');
+    
+    // Add transition-out class
+    modalProverb.classList.add('transitioning-out');
+    
+    // Wait for transition out, then update content and transition in
+    setTimeout(() => {
+        // Update the modal content with new proverb
+        updateModalContent(chinese, pinyin, english, category, proverbId);
+        
+        // Remove transition-out and add transition-in
+        modalProverb.classList.remove('transitioning-out');
+        modalProverb.classList.add('transitioning-in');
+        
+        // Force reflow
+        modalProverb.offsetHeight;
+        
+        // Add active class to trigger transition in
+        modalProverb.classList.add('active');
+        
+        // Clean up after transition
+        setTimeout(() => {
+            modalProverb.classList.remove('transitioning-in', 'active');
+        }, 300);
+        
+        // Scroll to top of modal content
+        const modalContent = document.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, 300);
+}
+
+/**
+ * Update modal content without full re-render
+ */
+function updateModalContent(chinese, pinyin, english, category, proverbId) {
+    const categoryEl = document.getElementById('modalCategory');
+    const modalChinese = document.getElementById('modalChinese');
+    const cantoneseBtn = document.getElementById('playCantoneseBtn');
+    
+    // Reset audio state
+    AudioManager.stop();
+    updateAudioUI(false);
+
+    // Store original and apply conversion
+    modalChinese.dataset.original = chinese;
+    modalChinese.textContent = ChineseConverter.convert(chinese);
+
+    document.getElementById('modalPinyin').textContent = pinyin;
+    document.getElementById('modalEnglish').textContent = english;
+
+    categoryEl.textContent = category;
+    categoryEl.className = 'modal-category' + (category === 'cantonese' ? ' cantonese' : '');
+    
+    // Show/hide Cantonese button based on proverb type
+    if (cantoneseBtn) {
+        const isCantonese = category === 'cantonese' || 
+                           (proverbs.find(p => p.cn === chinese)?.cats?.includes('cantonese'));
+        cantoneseBtn.style.display = isCantonese ? 'inline-flex' : 'none';
+    }
+
+    // Handle story display
+    const storySection = document.getElementById('storySection');
+    const storyToggle = document.getElementById('storyToggle');
+    const storyContent = document.getElementById('storyContent');
+    const storyTitle = document.getElementById('storyTitle');
+    const storyText = document.getElementById('storyText');
+    
+    // Find the proverb to get story data
+    const proverb = allProverbs.find(p => p.cn === chinese);
+    
+    if (proverb && proverb.story) {
+        storySection.style.display = 'block';
+        storyTitle.textContent = proverb.story.title;
+        storyText.textContent = proverb.story.content;
+        
+        // Reset toggle state
+        storyToggle.classList.remove('expanded');
+        storyContent.classList.remove('expanded');
+        storyToggle.querySelector('.story-toggle-text').textContent = 'Origin Story';
+    } else {
+        storySection.style.display = 'none';
+    }
+
+    // Update favorite button state
+    const modalContent = document.getElementById('proverbModal').querySelector('.modal-content');
+    if (proverbId) {
+        modalContent.dataset.proverbId = proverbId;
+        updateModalFavoriteButton(proverbId);
+    }
+
+    // Load new related proverbs
+    loadRelatedProverbs(proverb);
 }
 
 /**
@@ -2371,3 +2795,476 @@ window.toggleFavorite = toggleFavorite;
 window.playAudio = playAudio;
 window.playCardAudio = playCardAudio;
 window.playDailyAudio = playDailyAudio;
+
+// ============================================
+// QUIZ MODE
+// ============================================
+
+const QuizMode = {
+    isActive: false,
+    currentQuestion: 0,
+    score: 0,
+    questions: [],
+    hasAnswered: false,
+    
+    // Configuration
+    QUESTIONS_PER_QUIZ: 10,
+    STORAGE_KEY: 'chinese_proverbs_quiz_stats',
+    
+    /**
+     * Initialize quiz mode
+     */
+    init() {
+        this.setupEventListeners();
+    },
+    
+    /**
+     * Setup event listeners for quiz mode
+     */
+    setupEventListeners() {
+        // Quiz button in filter bar
+        const quizBtn = document.getElementById('quizModeBtn');
+        if (quizBtn) {
+            quizBtn.addEventListener('click', () => {
+                this.enterQuizMode();
+            });
+        }
+        
+        // Start button
+        const startBtn = document.getElementById('quizStartBtn');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                this.startQuiz();
+            });
+        }
+        
+        // Next button
+        const nextBtn = document.getElementById('quizNextBtn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.nextQuestion();
+            });
+        }
+        
+        // Restart button
+        const restartBtn = document.getElementById('quizRestartBtn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                this.startQuiz();
+            });
+        }
+        
+        // Back button
+        const backBtn = document.getElementById('quizBackBtn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.exitQuizMode();
+            });
+        }
+    },
+    
+    /**
+     * Enter quiz mode (show start screen)
+     */
+    enterQuizMode() {
+        this.isActive = true;
+        
+        // Hide proverbs container and controls
+        document.getElementById('proverbsContainer').style.display = 'none';
+        document.getElementById('loadMoreSection').style.display = 'none';
+        document.querySelector('.stats-bar').style.display = 'none';
+        
+        // Show quiz container
+        const quizContainer = document.getElementById('quizModeContainer');
+        quizContainer.style.display = 'block';
+        
+        // Show start screen, hide others
+        document.getElementById('quizStart').style.display = 'block';
+        document.getElementById('quizQuestionCard').style.display = 'none';
+        document.getElementById('quizResults').style.display = 'none';
+        document.querySelector('.quiz-header').style.display = 'none';
+        
+        // Update active filter button
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('quizModeBtn').classList.add('active');
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    
+    /**
+     * Exit quiz mode and return to proverbs view
+     */
+    exitQuizMode() {
+        this.isActive = false;
+        
+        // Hide quiz container
+        document.getElementById('quizModeContainer').style.display = 'none';
+        
+        // Show proverbs container and controls
+        document.getElementById('proverbsContainer').style.display = 'grid';
+        document.querySelector('.stats-bar').style.display = 'flex';
+        
+        // Reset filter to 'all'
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('[data-filter="all"]').classList.add('active');
+        
+        // Reload proverbs
+        currentFilter = 'all';
+        displayedCount = 24;
+        applyFilter('all');
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    
+    /**
+     * Start a new quiz
+     */
+    startQuiz() {
+        this.currentQuestion = 0;
+        this.score = 0;
+        this.hasAnswered = false;
+        
+        // Generate random questions
+        this.questions = this.generateQuestions();
+        
+        // Show question card, hide start screen
+        document.getElementById('quizStart').style.display = 'none';
+        document.getElementById('quizQuestionCard').style.display = 'block';
+        document.querySelector('.quiz-header').style.display = 'flex';
+        
+        // Update progress display
+        this.updateProgress();
+        
+        // Load first question
+        this.loadQuestion();
+    },
+    
+    /**
+     * Generate random quiz questions
+     */
+    generateQuestions() {
+        // Shuffle all proverbs and take first N
+        const shuffled = [...allProverbs].sort(() => Math.random() - 0.5);
+        const selected = shuffled.slice(0, this.QUESTIONS_PER_QUIZ);
+        
+        return selected.map(proverb => {
+            // Generate 3 wrong answers from other proverbs
+            const wrongAnswers = this.generateWrongAnswers(proverb);
+            
+            // Combine and shuffle options
+            const options = [...wrongAnswers, proverb.en]
+                .sort(() => Math.random() - 0.5);
+            
+            return {
+                proverb,
+                options,
+                correctIndex: options.indexOf(proverb.en)
+            };
+        });
+    },
+    
+    /**
+     * Generate 3 wrong answers for a question
+     */
+    generateWrongAnswers(correctProverb) {
+        const wrongAnswers = [];
+        const candidates = allProverbs.filter(p => p.en !== correctProverb.en);
+        
+        // Shuffle candidates and pick 3
+        const shuffled = candidates.sort(() => Math.random() - 0.5);
+        
+        for (let i = 0; i < 3 && i < shuffled.length; i++) {
+            wrongAnswers.push(shuffled[i].en);
+        }
+        
+        return wrongAnswers;
+    },
+    
+    /**
+     * Load the current question
+     */
+    loadQuestion() {
+        const question = this.questions[this.currentQuestion];
+        this.hasAnswered = false;
+        
+        // Update progress
+        this.updateProgress();
+        
+        // Display proverb
+        document.getElementById('quizChinese').textContent = question.proverb.cn;
+        document.getElementById('quizPinyin').textContent = question.proverb.py;
+        
+        // Hide feedback
+        document.getElementById('quizFeedback').style.display = 'none';
+        
+        // Generate options
+        const optionsContainer = document.getElementById('quizOptions');
+        optionsContainer.innerHTML = '';
+        
+        const letters = ['A', 'B', 'C', 'D'];
+        
+        question.options.forEach((option, index) => {
+            const optionEl = document.createElement('button');
+            optionEl.className = 'quiz-option';
+            optionEl.innerHTML = `
+                <span class="quiz-option-letter">${letters[index]}</span>
+                <span class="quiz-option-text">${this.escapeHtml(option)}</span>
+            `;
+            optionEl.addEventListener('click', () => this.selectAnswer(index));
+            optionsContainer.appendChild(optionEl);
+        });
+    },
+    
+    /**
+     * Handle answer selection
+     */
+    selectAnswer(selectedIndex) {
+        if (this.hasAnswered) return;
+        
+        this.hasAnswered = true;
+        const question = this.questions[this.currentQuestion];
+        const isCorrect = selectedIndex === question.correctIndex;
+        
+        // Update score
+        if (isCorrect) {
+            this.score++;
+            this.updateScore();
+        }
+        
+        // Show option states
+        const options = document.querySelectorAll('.quiz-option');
+        options.forEach((option, index) => {
+            option.classList.add('disabled');
+            
+            if (index === question.correctIndex) {
+                option.classList.add('correct');
+            } else if (index === selectedIndex && !isCorrect) {
+                option.classList.add('incorrect');
+            }
+        });
+        
+        // Show feedback
+        this.showFeedback(isCorrect, question);
+        
+        // Save progress
+        this.saveProgress();
+    },
+    
+    /**
+     * Show feedback after answering
+     */
+    showFeedback(isCorrect, question) {
+        const feedback = document.getElementById('quizFeedback');
+        const feedbackText = document.getElementById('quizFeedbackText');
+        const explanation = document.getElementById('quizExplanation');
+        
+        feedback.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        feedbackText.textContent = isCorrect ? 'Correct!' : 'Not quite...';
+        
+        explanation.innerHTML = `
+            <strong>${this.escapeHtml(question.proverb.cn)}</strong> means:
+            <em>"${this.escapeHtml(question.proverb.en)}"</em>
+        `;
+        
+        feedback.style.display = 'block';
+        
+        // Update next button text for last question
+        const nextBtn = document.getElementById('quizNextBtn');
+        if (this.currentQuestion === this.questions.length - 1) {
+            nextBtn.textContent = 'See Results 🏆';
+        } else {
+            nextBtn.textContent = 'Next Question →';
+        }
+    },
+    
+    /**
+     * Go to next question or show results
+     */
+    nextQuestion() {
+        this.currentQuestion++;
+        
+        if (this.currentQuestion >= this.questions.length) {
+            this.showResults();
+        } else {
+            this.loadQuestion();
+        }
+    },
+    
+    /**
+     * Show quiz results
+     */
+    showResults() {
+        // Hide question card and header
+        document.getElementById('quizQuestionCard').style.display = 'none';
+        document.querySelector('.quiz-header').style.display = 'none';
+        
+        // Show results
+        const results = document.getElementById('quizResults');
+        results.style.display = 'block';
+        
+        // Calculate stats
+        const percentage = Math.round((this.score / this.questions.length) * 100);
+        
+        // Update results display
+        document.getElementById('quizFinalScore').textContent = this.score;
+        document.getElementById('quizTotalQuestions').textContent = this.questions.length;
+        document.getElementById('quizPercentage').textContent = percentage + '%';
+        
+        // Determine message based on score
+        let subtitle, message;
+        if (percentage === 100) {
+            subtitle = 'Perfect Score! 🌟';
+            message = 'Amazing! You are a true master of Chinese proverbs. Your knowledge is truly impressive!';
+        } else if (percentage >= 80) {
+            subtitle = 'Excellent! 🎉';
+            message = 'Great job! You have a strong understanding of Chinese proverbs. Keep up the good work!';
+        } else if (percentage >= 60) {
+            subtitle = 'Good Job! 👍';
+            message = 'Well done! You know quite a few proverbs. Keep practicing to improve even more!';
+        } else if (percentage >= 40) {
+            subtitle = 'Keep Trying! 💪';
+            message = 'Not bad! There\'s always room for improvement. Study the proverbs and try again!';
+        } else {
+            subtitle = 'Keep Learning! 📚';
+            message = 'Every expert was once a beginner. Take time to explore the proverbs and come back stronger!';
+        }
+        
+        document.getElementById('quizResultsSubtitle').textContent = subtitle;
+        document.getElementById('quizResultsMessage').textContent = message;
+        
+        // Save stats
+        this.saveStats(percentage);
+    },
+    
+    /**
+     * Update progress display
+     */
+    updateProgress() {
+        const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
+        document.getElementById('quizProgressFill').style.width = progress + '%';
+        document.getElementById('quizProgressText').textContent = 
+            `Question ${this.currentQuestion + 1} of ${this.questions.length}`;
+    },
+    
+    /**
+     * Update score display
+     */
+    updateScore() {
+        document.getElementById('quizScore').textContent = this.score;
+    },
+    
+    /**
+     * Save current progress to localStorage
+     */
+    saveProgress() {
+        try {
+            const progress = {
+                currentQuestion: this.currentQuestion,
+                score: this.score,
+                questions: this.questions,
+                hasAnswered: this.hasAnswered,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('chinese_proverbs_quiz_progress', JSON.stringify(progress));
+        } catch (e) {
+            console.error('Error saving quiz progress:', e);
+        }
+    },
+    
+    /**
+     * Save quiz stats to localStorage
+     */
+    saveStats(percentage) {
+        try {
+            let stats = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+            
+            if (!stats.totalQuizzes) {
+                stats.totalQuizzes = 0;
+                stats.totalCorrect = 0;
+                stats.totalQuestions = 0;
+                stats.bestScore = 0;
+                stats.averageScore = 0;
+            }
+            
+            stats.totalQuizzes++;
+            stats.totalCorrect += this.score;
+            stats.totalQuestions += this.questions.length;
+            stats.bestScore = Math.max(stats.bestScore, percentage);
+            stats.averageScore = Math.round((stats.totalCorrect / stats.totalQuestions) * 100);
+            stats.lastQuizDate = new Date().toISOString();
+            
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+        } catch (e) {
+            console.error('Error saving quiz stats:', e);
+        }
+    },
+    
+    /**
+     * Get quiz stats from localStorage
+     */
+    getStats() {
+        try {
+            return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}');
+        } catch (e) {
+            return {};
+        }
+    },
+    
+    /**
+     * Clear saved progress
+     */
+    clearProgress() {
+        try {
+            localStorage.removeItem('chinese_proverbs_quiz_progress');
+        } catch (e) {
+            console.error('Error clearing quiz progress:', e);
+        }
+    },
+    
+    /**
+     * Escape HTML to prevent XSS
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+};
+
+// Initialize quiz mode when app loads
+document.addEventListener('DOMContentLoaded', () => {
+    QuizMode.init();
+});
+window.closeCollectionBanner = closeCollectionBanner;
+
+/**
+ * Setup Featured Collection button click handler
+ */
+function setupFeaturedCollectionButton() {
+    const viewBtn = document.getElementById('viewCollectionBtn');
+    if (!viewBtn) return;
+    
+    viewBtn.addEventListener('click', () => {
+        const collectionId = viewBtn.dataset.collection;
+        if (collectionId) {
+            // Update filter buttons to show collection is active
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === `collection:${collectionId}`) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Apply collection filter
+            currentFilter = `collection:${collectionId}`;
+            displayedCount = 24;
+            applyCollectionFilter(collectionId);
+            
+            // Scroll to proverbs container
+            document.getElementById('proverbsContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+}
+window.navigateToRelatedProverb = navigateToRelatedProverb;
