@@ -88,30 +88,9 @@
 }
 
 /* ========================================
-   DARK MODE - Ink Night Theme
+   RESET & BASE
    ======================================== */
 
-body.dark-mode {
-    --bg-primary: var(--ink-night);
-    --bg-secondary: var(--ink-night-light);
-    --bg-tertiary: var(--ink-night-lighter);
-    --bg-tertiary-dark: var(--ink-night-border);
-    --text-primary: #F5F0E6;
-    --text-secondary: #E8E0D0;
-    --text-tertiary: #D4C9B0;
-    --text-muted: #9A9A9A;
-    --border-color: var(--ink-night-border);
-    --card-bg: var(--ink-night-light);
-    --modal-overlay: rgba(0, 0, 0, 0.9);
-    --shadow-color: rgba(0,0,0,0.4);
-    --shadow-strong-color: rgba(0,0,0,0.5);
-    --input-bg: var(--ink-night-lighter);
-    --lantern-opacity: 0.25;
-    --bamboo-opacity: 0.12;
-    --bg-pattern-opacity: 0.04;
-}
-
-/* Reset & Base */
 * {
     margin: 0;
     padding: 0;
@@ -1613,103 +1592,4 @@ body.offline-mode .scroll-container {
 
 .action-btn#favoriteModalBtn:hover {
     background: rgba(231, 76, 60, 0.15);
-}
-
-/* ========================================
-   DARK MODE TOGGLE
-   ======================================== */
-
-.dark-mode-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-}
-
-.dark-mode-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background: var(--card-bg);
-    border: 2px solid var(--imperial-gold);
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: var(--imperial-gold);
-    box-shadow: var(--shadow-medium);
-    transition: all 0.3s ease;
-}
-
-.dark-mode-btn:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-gold);
-    background: var(--imperial-gold);
-    color: white;
-}
-
-.dark-mode-btn .icon-sun,
-.dark-mode-btn .icon-moon {
-    position: absolute;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.dark-mode-btn .icon-sun {
-    opacity: 1;
-    transform: rotate(0deg);
-}
-
-.dark-mode-btn .icon-moon {
-    opacity: 0;
-    transform: rotate(-90deg);
-}
-
-body.dark-mode .dark-mode-btn .icon-sun {
-    opacity: 0;
-    transform: rotate(90deg);
-}
-
-body.dark-mode .dark-mode-btn .icon-moon {
-    opacity: 1;
-    transform: rotate(0deg);
-}
-
-/* Tooltip for dark mode toggle */
-.dark-mode-btn::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    right: 60px;
-    padding: 6px 12px;
-    background: var(--ink-night);
-    color: white;
-    font-size: 0.8rem;
-    border-radius: var(--radius-sm);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    font-family: var(--font-english);
-}
-
-.dark-mode-btn:hover::before {
-    opacity: 1;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .dark-mode-toggle {
-        top: 10px;
-        right: 10px;
-    }
-    
-    .dark-mode-btn {
-        width: 42px;
-        height: 42px;
-        font-size: 1.2rem;
-    }
-    
-    .dark-mode-btn::before {
-        display: none;
-    }
 }
