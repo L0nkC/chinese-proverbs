@@ -1304,13 +1304,43 @@ function renderProverbs(proverbsToRender, append = false) {
 }
 
 /**
- * Setup Load More functionality
+ * Setup Load More functionality with smooth loading animation
  */
 function setupLoadMore() {
-    document.getElementById('loadMoreBtn').addEventListener('click', () => {
-        const currentCount = document.querySelectorAll('.proverb-card').length;
-        const nextBatch = currentProverbs.slice(currentCount, currentCount + PROVERBS_PER_LOAD);
-        renderProverbs(nextBatch, true);
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (!loadMoreBtn) return;
+    
+    loadMoreBtn.addEventListener('click', () => {
+        // Add loading state
+        loadMoreBtn.classList.add('loading');
+        loadMoreBtn.innerHTML = `
+            <span class="loading-dots">Loading<span>.</span><span>.</span><span>.</span></span>
+            <span class="load-icon spinning">↻</span>
+        `;
+        loadMoreBtn.disabled = true;
+        
+        // Simulate brief delay for smooth animation
+        setTimeout(() => {
+            const currentCount = document.querySelectorAll('.proverb-card').length;
+            const nextBatch = currentProverbs.slice(currentCount, currentCount + PROVERBS_PER_LOAD);
+            renderProverbs(nextBatch, true);
+            
+            // Reset button state
+            loadMoreBtn.classList.remove('loading');
+            loadMoreBtn.innerHTML = `
+                <span>Load More</span>
+                <span class="load-icon">↓</span>
+            `;
+            loadMoreBtn.disabled = false;
+            
+            // Update displayed count
+            displayedCount = currentCount + nextBatch.length;
+            
+            // Hide button if no more proverbs
+            if (displayedCount >= currentProverbs.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        }, 400);
     });
 }
 

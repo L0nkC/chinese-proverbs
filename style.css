@@ -2665,6 +2665,45 @@ body.offline-mode .scroll-container {
     50% { transform: translateY(4px); }
 }
 
+/* Load more button loading state */
+.load-more-btn.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+    transform: scale(0.98);
+}
+
+.load-more-btn .loading-dots span {
+    animation: loading-dot 1.4s ease-in-out infinite both;
+    display: inline-block;
+}
+
+.load-more-btn .loading-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.load-more-btn .loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.load-more-btn .loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes loading-dot {
+    0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-3px); }
+}
+
+.load-more-btn .load-icon.spinning {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 /* Close button enhanced */
 .close-btn {
     transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
