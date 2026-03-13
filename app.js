@@ -729,27 +729,19 @@ function setupFilters() {
     console.log('[Filters] Found', filterButtons.length, 'filter buttons');
     
     if (filterButtons.length === 0) {
-        console.error('[Filters] NO FILTER BUTTONS FOUND! Retrying in 100ms...');
-        setTimeout(setupFilters, 100);
+        console.error('[Filters] NO FILTER BUTTONS FOUND!');
         return;
     }
 
     filterButtons.forEach((btn, index) => {
         console.log('[Filters] Attaching listener to button', index, ':', btn.dataset.filter);
-        // Remove any existing listener first
-        btn.replaceWith(btn.cloneNode(true));
-    });
-    
-    // Re-query after cloning
-    const freshButtons = document.querySelectorAll('.filter-btn');
-    freshButtons.forEach(btn => {
-        const clickHandler = (e) => {
-            console.log('[Filters] Button clicked/touched:', btn.dataset.filter);
-            e.preventDefault();
-            e.stopPropagation();
+        
+        // Simple click handler
+        btn.onclick = function(e) {
+            console.log('[Filters] Button CLICKED:', btn.dataset.filter);
             
             // Update active state
-            freshButtons.forEach(b => b.classList.remove('active'));
+            filterButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             // Apply filter
@@ -757,14 +749,12 @@ function setupFilters() {
             currentFilter = filter;
             displayedCount = 24;
             applyFilter(filter);
+            
+            return false; // Prevent default
         };
-        
-        btn.addEventListener('click', clickHandler);
-        btn.addEventListener('touchstart', clickHandler, {passive: false});
-        btn.addEventListener('touchend', (e) => e.preventDefault());
     });
     
-    console.log('[Filters] Listeners attached to all buttons');
+    console.log('[Filters] onclick handlers attached to all buttons');
 }
 
 /**
