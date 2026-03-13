@@ -465,6 +465,9 @@ function setupChineseToggle() {
  * Initialize the application
  */
 async function initializeApp() {
+    // Initialize dark mode first
+    initDarkMode();
+    
     // Initialize Chinese converter first
     await ChineseConverter.init();
 
@@ -542,8 +545,7 @@ function renderProverbs(proverbsToRender, append = false) {
     }
 
     const cardsHTML = proverbsToRender.map((proverb, index) => {
-        const isCantonese = proverb.cats && proverb.cats.includes('cantonese');
-        const firstCat = proverb.cats && proverb.cats[0] ? proverb.cats[0] : '';
+        const isCantonese = proverb.cat === 'cantonese';
         const proverbId = getProverbId(proverb);
         const proverbIdStr = String(proverbId).replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const favClass = isFavorite(proverbId) ? 'is-favorite' : '';
@@ -553,7 +555,7 @@ function renderProverbs(proverbsToRender, append = false) {
             <article class="proverb-card ${isCantonese ? 'cantonese' : ''}" data-id="${proverbIdStr}">
                 <div class="card-header">
                     <div class="card-header-left">
-                        <span class="category-tag ${isCantonese ? 'cantonese' : ''}">${firstCat}</span>
+                        <span class="category-tag ${isCantonese ? 'cantonese' : ''}">${proverb.cat}</span>
                     </div>
                     <button class="favorite-btn ${favClass}" data-id="${proverbIdStr}" onclick="toggleFavorite('${proverbIdStr}', event)" aria-label="Toggle favorite">
                         <span class="heart-icon">${heartIcon}</span>
@@ -565,7 +567,7 @@ function renderProverbs(proverbsToRender, append = false) {
                 <div class="proverb-actions-card">
                     <div class="proverb-actions-left">
                         <button class="card-btn" onclick="copyProverb('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}')">Copy</button>
-                        <button class="card-btn" onclick="showProverbInModal('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}', '${firstCat}', '${proverbIdStr}')">View</button>
+                        <button class="card-btn" onclick="showProverbInModal('${proverb.cn.replace(/'/g, "\\'")}', '${proverb.py.replace(/'/g, "\\'")}', '${proverb.en.replace(/'/g, "\\'")}', '${proverb.cat}', '${proverbIdStr}')">View</button>
                     </div>
                 </div>
             </article>
@@ -678,7 +680,7 @@ function performSearch(query) {
     } else if (currentFilter === 'favorites') {
         baseProverbs = getFavoriteProverbs();
     } else {
-        baseProverbs = allProverbs.filter(p => p.cats && p.cats.includes(currentFilter));
+        baseProverbs = allProverbs.filter(p => p.cat === currentFilter);
     }
 
     const filtered = baseProverbs.filter(p =>
@@ -724,7 +726,7 @@ function applyFilter(filter) {
     } else if (filter === 'favorites') {
         currentProverbs = getFavoriteProverbs();
     } else {
-        currentProverbs = allProverbs.filter(p => p.cats && p.cats.includes(filter));
+        currentProverbs = allProverbs.filter(p => p.cat === filter);
     }
 
     renderProverbs(currentProverbs.slice(0, displayedCount));
