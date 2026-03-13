@@ -179,9 +179,12 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ### 🚧 In Progress / Planned
 
+- [x] **User Accounts** - Firebase auth with Google/email sign-in, cloud-synced favorites
+- [x] **Community Submissions** - Users can submit new proverbs for review
+- [x] **Spaced Repetition Learning** - Flashcard-style learning with SM-2 algorithm
+- [x] **AI Explanations** - Deep cultural/philosophical analysis using OpenAI GPT
 - [ ] **Daily Email** - Subscribe to receive a daily proverb via email
 - [ ] **Bookmark/History** - Track recently viewed proverbs
-- [ ] **User Accounts** - Personal collections and cross-device favorites sync
 - [ ] **Progressive Web App** - Install as native app with offline support
 - [ ] **API Endpoints** - REST API for programmatic access to proverbs
 
