@@ -727,12 +727,29 @@ function performSearch(query) {
 function setupFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     console.log('[Filters] Found', filterButtons.length, 'filter buttons');
+    
+    if (filterButtons.length === 0) {
+        console.error('[Filters] NO FILTER BUTTONS FOUND! Retrying in 100ms...');
+        setTimeout(setupFilters, 100);
+        return;
+    }
 
-    filterButtons.forEach(btn => {
+    filterButtons.forEach((btn, index) => {
+        console.log('[Filters] Attaching listener to button', index, ':', btn.dataset.filter);
+        // Remove any existing listener first
+        btn.replaceWith(btn.cloneNode(true));
+    });
+    
+    // Re-query after cloning
+    const freshButtons = document.querySelectorAll('.filter-btn');
+    freshButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             console.log('[Filters] Button clicked:', btn.dataset.filter);
+            e.preventDefault();
+            e.stopPropagation();
+            
             // Update active state
-            filterButtons.forEach(b => b.classList.remove('active'));
+            freshButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             // Apply filter
@@ -742,6 +759,8 @@ function setupFilters() {
             applyFilter(filter);
         });
     });
+    
+    console.log('[Filters] Listeners attached to all buttons');
 }
 
 /**
