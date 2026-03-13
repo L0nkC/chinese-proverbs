@@ -548,7 +548,13 @@ function updateDailySpotlight(proverb) {
  * Render proverbs to the grid
  */
 function renderProverbs(proverbsToRender, append = false) {
+    console.log('[renderProverbs] Rendering', proverbsToRender.length, 'proverbs, append:', append);
     const container = document.getElementById('proverbsContainer');
+    
+    if (!container) {
+        console.error('[renderProverbs] Container not found!');
+        return;
+    }
 
     if (proverbsToRender.length === 0 && !append) {
         container.innerHTML = `
@@ -753,18 +759,34 @@ function setupFilters() {
  * Apply category filter
  */
 function applyFilter(filter) {
+    console.log('[applyFilter] Applying filter:', filter);
+    
     // Clear search
-    document.getElementById('searchInput').value = '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
 
     if (filter === 'all') {
+        console.log('[applyFilter] Showing all proverbs');
         currentProverbs = [...allProverbs];
     } else if (filter === 'favorites') {
+        console.log('[applyFilter] Showing favorites');
         currentProverbs = getFavoriteProverbs();
     } else {
-        currentProverbs = allProverbs.filter(p => p.cats ? p.cats.includes(filter) : p.cat === filter);
+        console.log('[applyFilter] Filtering by category:', filter);
+        console.log('[applyFilter] allProverbs length:', allProverbs.length);
+        currentProverbs = allProverbs.filter(p => {
+            const hasCats = p.cats && Array.isArray(p.cats);
+            const hasCat = p.cat !== undefined;
+            if (hasCats) return p.cats.includes(filter);
+            if (hasCat) return p.cat === filter;
+            return false;
+        });
+        console.log('[applyFilter] Filtered count:', currentProverbs.length);
     }
-
+    
+    console.log('[applyFilter] Rendering', currentProverbs.length, 'proverbs');
     renderProverbs(currentProverbs.slice(0, displayedCount));
+    updateShowingCount();
 }
 
 /**
