@@ -1,11 +1,3 @@
-/**
- * Chinese Proverbs - Application Logic
- * Enhanced with Pinyin, Cantonese support, and improved UI
- */
-
-// ============================================
-// CHINESE CHARACTER CONVERSION (Simplified <-> Traditional)
-// ============================================
 
 const ChineseConverter = {
     converter: null,
