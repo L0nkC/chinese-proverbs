@@ -55,7 +55,7 @@ The website embraces traditional Chinese aesthetics:
 
 ## 🚀 Live Demo
 
-Visit the website: [https://l0nkc.github.io/chinese-proverbs](https://l0nkc.github.io/chinese-proverbs)
+Visit the website: [https://l0nkc.github.io/chinese-proverbs/](https://l0nkc.github.io/chinese-proverbs/)
 
 ---
 
