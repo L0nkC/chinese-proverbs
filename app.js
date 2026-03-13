@@ -286,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Global variables
+let allProverbs = proverbs; // proverbs loaded from proverbs.js
 let currentProverbs = [...allProverbs];
 let currentFilter = 'all';
 let displayedCount = 24; // Initial number of proverbs to show
