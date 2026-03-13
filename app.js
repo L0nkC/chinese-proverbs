@@ -466,29 +466,58 @@ function setupChineseToggle() {
  * Initialize the application
  */
 async function initializeApp() {
-    // Initialize Chinese converter first
-    await ChineseConverter.init();
+    console.log('[App] Starting initialization...');
+    
+    try {
+        // Initialize Chinese converter first
+        console.log('[App] Initializing Chinese converter...');
+        await ChineseConverter.init();
+        console.log('[App] Chinese converter initialized');
 
-    // Store original Chinese text for conversion
-    storeOriginalText();
+        // Store original Chinese text for conversion
+        console.log('[App] Storing original text...');
+        storeOriginalText();
 
-    // Load favorites from localStorage
-    loadFavorites();
+        // Load favorites from localStorage
+        console.log('[App] Loading favorites...');
+        loadFavorites();
 
-    renderProverbs(currentProverbs.slice(0, displayedCount));
-    setupDailySpotlight();
-    setupEventListeners();
-    setupSearch();
-    setupFilters();
-    setupModal();
-    setupLoadMore();
-    setupChineseToggle();
+        console.log('[App] Rendering proverbs...');
+        renderProverbs(currentProverbs.slice(0, displayedCount));
+        
+        console.log('[App] Setting up daily spotlight...');
+        setupDailySpotlight();
+        
+        console.log('[App] Setting up event listeners...');
+        setupEventListeners();
+        
+        console.log('[App] Setting up search...');
+        setupSearch();
+        
+        console.log('[App] Setting up filters...');
+        setupFilters();
+        
+        console.log('[App] Setting up modal...');
+        setupModal();
+        
+        console.log('[App] Setting up load more...');
+        setupLoadMore();
+        
+        console.log('[App] Setting up Chinese toggle...');
+        setupChineseToggle();
 
-    // Apply saved preference
-    ChineseConverter.applyToPage();
+        // Apply saved preference
+        console.log('[App] Applying Chinese conversion...');
+        ChineseConverter.applyToPage();
 
-    // Setup offline detection
-    setupOfflineDetection();
+        // Setup offline detection
+        console.log('[App] Setting up offline detection...');
+        setupOfflineDetection();
+        
+        console.log('[App] Initialization complete!');
+    } catch (error) {
+        console.error('[App] Initialization failed:', error);
+    }
 }
 
 /**
