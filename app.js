@@ -726,9 +726,11 @@ function performSearch(query) {
  */
 function setupFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
+    console.log('[Filters] Found', filterButtons.length, 'filter buttons');
 
     filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            console.log('[Filters] Button clicked:', btn.dataset.filter);
             // Update active state
             filterButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
