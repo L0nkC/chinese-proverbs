@@ -26,6 +26,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Page Transition Overlay -->
+    <div class="page-transition-overlay" id="pageTransition"></div>
+    
     <!-- Decorative Background Elements -->
     <div class="bg-pattern"></div>
     <div class="bamboo-left"></div>
@@ -76,12 +79,37 @@
                     <span class="label-sub">Daily Wisdom</span>
                 </div>
                 <div class="spotlight-content">
-                    <p class="spotlight-chinese" id="dailyChinese"></p>
+                    <div class="spotlight-chinese-row">
+                        <p class="spotlight-chinese" id="dailyChinese"></p>
+                        <button class="spotlight-speaker-btn" id="dailySpeakerBtn" onclick="playDailyAudio()" aria-label="Play pronunciation">
+                            🔊
+                        </button>
+                    </div>
                     <p class="spotlight-pinyin" id="dailyPinyin"></p>
                     <p class="spotlight-english" id="dailyEnglish"></p>
                 </div>
                 <button class="spotlight-btn" onclick="showRandomProverb()">
                     <span>🎲 New Proverb</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Featured Collection Section -->
+        <section class="featured-collection" id="featuredCollection">
+            <div class="featured-collection-inner">
+                <div class="featured-collection-header">
+                    <span class="featured-label">✨ Featured Collection</span>
+                    <h2 class="featured-title" id="featuredTitle">For Entrepreneurs</h2>
+                    <p class="featured-chinese" id="featuredChinese">企业家之道</p>
+                </div>
+                <p class="featured-description" id="featuredDescription">
+                    Wisdom for risk-takers, innovators, and business builders. These proverbs capture the essence of opportunity, perseverance, and strategic thinking needed to succeed in business.
+                </p>
+                <div class="featured-stats" id="featuredStats">
+                    <span class="featured-stat"><span class="featured-stat-number">20</span> proverbs</span>
+                </div>
+                <button class="featured-btn" id="viewCollectionBtn" data-collection="entrepreneurs">
+                    <span>🚀 View Collection</span>
                 </button>
             </div>
         </section>
@@ -92,6 +120,14 @@
                 <input type="text" id="searchInput" placeholder="Search proverbs, pinyin, or meaning..." autocomplete="off">
                 <span class="search-icon">⌕</span>
                 <kbd class="search-kbd">Ctrl K</kbd>
+                <button class="search-clear" id="searchClear" aria-label="Clear search">×</button>
+                <div class="search-history" id="searchHistory">
+                    <div class="search-history-header">
+                        <span>Recent Searches</span>
+                        <button class="clear-history" id="clearHistory">Clear</button>
+                    </div>
+                    <div class="search-history-list" id="searchHistoryList"></div>
+                </div>
             </div>
             
             <div class="filter-section">
@@ -145,11 +181,28 @@
                         <span class="btn-icon">♥</span>
                         <span class="btn-text">Favorites</span>
                     </button>
+                    <button class="filter-btn quiz" data-filter="quiz" id="quizModeBtn">
+                        <span class="btn-icon">?</span>
+                        <span class="btn-text">Quiz</span>
+                    </button>
+                </div>
+            <div class="filter-section collections-section">
+                <span class="filter-label collections-label">Collections:</span>
+                <div class="filter-buttons collections-buttons">
+                    <button class="filter-btn collection-btn" data-filter="collection:entrepreneurs">
+                        <span class="btn-icon">🚀</span>
+                        <span class="btn-text">For Entrepreneurs</span>
+                    </button>
+                    <button class="filter-btn collection-btn" data-filter="collection:students">
+                        <span class="btn-icon">📚</span>
+                        <span class="btn-text">For Students</span>
+                    </button>
+                    <button class="filter-btn collection-btn" data-filter="collection:hardtimes">
+                        <span class="btn-icon">💪</span>
+                        <span class="btn-text">For Hard Times</span>
+                    </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Stats -->
         <div class="stats-bar">
             <div class="stat-item">
                 <span class="stat-number" id="totalCount">250+</span>
@@ -169,6 +222,102 @@
             <div class="stat-item">
                 <span class="stat-number" id="favoritesCount">0</span>
                 <span class="stat-label">Favorites</span>
+            </div>
+        </div>
+
+        <!-- Quiz Mode Container -->
+        <div id="quizModeContainer" class="quiz-mode-container" style="display: none;">
+            <!-- Quiz Progress Header -->
+            <div class="quiz-header">
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar">
+                        <div class="quiz-progress-fill" id="quizProgressFill"></div>
+                    </div>
+                    <span class="quiz-progress-text" id="quizProgressText">Question 1 of 10</span>
+                </div>
+                <div class="quiz-score">
+                    <span class="quiz-score-label">Score:</span>
+                    <span class="quiz-score-value" id="quizScore">0</span>
+                </div>
+            </div>
+
+            <!-- Quiz Question Card -->
+            <div class="quiz-question-card" id="quizQuestionCard">
+                <div class="quiz-question-label">What does this proverb mean?</div>
+                <div class="quiz-proverb-display">
+                    <p class="quiz-chinese" id="quizChinese"></p>
+                    <p class="quiz-pinyin" id="quizPinyin"></p>
+                </div>
+
+                <div class="quiz-options" id="quizOptions">
+                    <!-- Options will be generated dynamically -->
+                </div>
+
+                <div class="quiz-feedback" id="quizFeedback" style="display: none;">
+                    <div class="quiz-feedback-icon" id="quizFeedbackIcon"></div>
+                    <div class="quiz-feedback-text" id="quizFeedbackText"></div>
+                    <div class="quiz-explanation" id="quizExplanation"></div>
+                    <button class="quiz-next-btn" id="quizNextBtn">Next Question →</button>
+                </div>
+            </div>
+
+            <!-- Quiz Results Screen -->
+            <div class="quiz-results" id="quizResults" style="display: none;">
+                <div class="quiz-results-header">
+                    <div class="quiz-results-icon">🏆</div>
+                    <h2 class="quiz-results-title">Quiz Complete!</h2>
+                    <p class="quiz-results-subtitle" id="quizResultsSubtitle">Great job!</p>
+                </div>
+
+                <div class="quiz-results-stats">
+                    <div class="quiz-stat">
+                        <span class="quiz-stat-value" id="quizFinalScore">0</span>
+                        <span class="quiz-stat-label">Correct</span>
+                    </div>
+                    <div class="quiz-stat">
+                        <span class="quiz-stat-value" id="quizTotalQuestions">10</span>
+                        <span class="quiz-stat-label">Questions</span>
+                    </div>
+                    <div class="quiz-stat">
+                        <span class="quiz-stat-value" id="quizPercentage">0%</span>
+                        <span class="quiz-stat-label">Accuracy</span>
+                    </div>
+                </div>
+
+                <div class="quiz-results-message" id="quizResultsMessage">
+                    Keep practicing to improve your knowledge of Chinese proverbs!
+                </div>
+
+                <div class="quiz-results-actions">
+                    <button class="quiz-restart-btn" id="quizRestartBtn">🔄 Try Again</button>
+                    <button class="quiz-back-btn" id="quizBackBtn">← Back to Proverbs</button>
+                </div>
+            </div>
+
+            <!-- Quiz Start Screen -->
+            <div class="quiz-start" id="quizStart">
+                <div class="quiz-start-icon">🎯</div>
+                <h2 class="quiz-start-title">Test Your Knowledge!</h2>
+                <p class="quiz-start-description">
+                    Guess the meaning of Chinese proverbs. You'll be shown a proverb 
+                    with its pinyin, and you need to choose the correct English meaning 
+                    from 4 options.
+                </p>
+                <div class="quiz-start-features">
+                    <div class="quiz-feature">
+                        <span class="quiz-feature-icon">📝</span>
+                        <span class="quiz-feature-text">10 Questions</span>
+                    </div>
+                    <div class="quiz-feature">
+                        <span class="quiz-feature-icon">⏱️</span>
+                        <span class="quiz-feature-text">No Time Limit</span>
+                    </div>
+                    <div class="quiz-feature">
+                        <span class="quiz-feature-icon">💾</span>
+                        <span class="quiz-feature-text">Progress Saved</span>
+                    </div>
+                </div>
+                <button class="quiz-start-btn" id="quizStartBtn">Start Quiz 🚀</button>
             </div>
         </div>
 
@@ -196,6 +345,35 @@
                     <p class="proverb-pinyin" id="modalPinyin"></p>
                     <div class="modal-divider"></div>
                     <p class="proverb-english" id="modalEnglish"></p>
+                    
+                    <!-- Audio Controls -->
+                    <div class="audio-controls">
+                        <button id="playMandarinBtn" class="audio-btn" onclick="playAudio('mandarin')">
+                            <span class="audio-icon">🔊</span>
+                            <span class="audio-label">普通话</span>
+                        </button>
+                        <button id="playCantoneseBtn" class="audio-btn cantonese" onclick="playAudio('cantonese')">
+                            <span class="audio-icon">🔊</span>
+                            <span class="audio-label">粤语</span>
+                        </button>
+                    </div>
+                    <div class="audio-status" id="audioStatus"></div>
+                    
+                    <!-- Story Section (Expandable) -->
+                    <div class="story-section" id="storySection" style="display: none;">
+                        <div class="story-divider">
+                            <span class="story-divider-icon">📜</span>
+                        </div>
+                        <button class="story-toggle" id="storyToggle" onclick="toggleStory()">
+                            <span class="story-toggle-text">Origin Story</span>
+                            <span class="story-toggle-icon">▼</span>
+                        </button>
+                        <div class="story-content" id="storyContent">
+                            <h3 class="story-title" id="storyTitle"></h3>
+                            <p class="story-text" id="storyText"></p>
+                        </div>
+                    </div>
+                    
                     <div class="proverb-actions">
                         <button id="favoriteModalBtn" class="action-btn secondary">
                             <span class="heart-icon">♡</span> Favorite
@@ -203,12 +381,28 @@
                         <button id="copyBtn" class="action-btn secondary">
                             <span>📋</span> Copy
                         </button>
-                        <button id="shareBtn" class="action-btn primary">
-                            <span>↗</span> Share
+                        <button id="shareImageBtn" class="action-btn primary">
+                            <span>📷</span> Share
+                        </button>
+                        <button id="shareBtn" class="action-btn secondary">
+                            <span>↗</span> Send
                         </button>
                         <button id="newProverbBtn" class="action-btn secondary">
                             <span>🎲</span> Another
                         </button>
+                    </div>
+                    
+                    <!-- Related Proverbs Section -->
+                    <div class="related-proverbs-section" id="relatedProverbsSection">
+                        <div class="related-divider">
+                            <span class="related-divider-line"></span>
+                            <span class="related-divider-text">✦</span>
+                            <span class="related-divider-line"></span>
+                        </div>
+                        <h3 class="related-title">You might also like</h3>
+                        <div class="related-proverbs-grid" id="relatedProverbsGrid">
+                            <!-- Related proverbs will be loaded here by JavaScript -->
+                        </div>
                     </div>
                 </div>
                 <div class="modal-decoration bottom">◈</div>
@@ -235,6 +429,48 @@
     <div id="offlineIndicator" class="offline-indicator">
         <span class="offline-icon">📴</span>
         <span class="offline-text">You're offline. Using cached content.</span>
+    </div>
+
+    <!-- Hidden Share Card Container (for image generation) -->
+    <div id="shareCardContainer" class="share-card-container">
+        <div class="share-card" id="shareCard">
+            <div class="share-card-header">
+                <div class="share-card-seal">智慧</div>
+                <span class="share-card-label">中华谚语</span>
+            </div>
+            <div class="share-card-content">
+                <p class="share-card-chinese" id="shareCardChinese"></p>
+                <p class="share-card-pinyin" id="shareCardPinyin"></p>
+                <div class="share-card-divider"></div>
+                <p class="share-card-english" id="shareCardEnglish"></p>
+            </div>
+            <div class="share-card-footer">
+                <span class="share-card-site">chinese-proverbs.app</span>
+                <span class="share-card-icon">🏮</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Image Preview Modal -->
+    <div id="sharePreviewModal" class="modal">
+        <div class="modal-content share-preview-content">
+            <button class="close-btn" onclick="closeSharePreview()">&times;</button>
+            <div class="share-preview-header">
+                <h2>📷 Share This Wisdom</h2>
+                <p>Your image card is ready to share</p>
+            </div>
+            <div class="share-preview-image-container">
+                <img id="sharePreviewImage" src="" alt="Proverb card">
+            </div>
+            <div class="share-preview-actions">
+                <button id="downloadImageBtn" class="action-btn primary">
+                    <span>💾</span> Download Image
+                </button>
+                <button id="copyImageBtn" class="action-btn secondary">
+                    <span>📋</span> Copy to Clipboard
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Notification -->
@@ -273,6 +509,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="proverbs.js"></script>
     <script src="app.js"></script>
     

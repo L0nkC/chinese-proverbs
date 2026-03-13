@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chinese-proverbs-v1';
+const CACHE_NAME = 'chinese-proverbs-v2';
 
 // Get the base path for GitHub Pages subdirectory support
 const BASE_PATH = self.location.pathname.replace(/sw\.js$/, '');
