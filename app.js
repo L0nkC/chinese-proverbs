@@ -1009,6 +1009,9 @@ async function initializeApp() {
 
     // Setup offline detection
     setupOfflineDetection();
+    
+    // Initialize keyboard navigation
+    KeyboardNavigation.init();
 }
 
 /**
@@ -1064,20 +1067,24 @@ function renderProverbs(proverbsToRender, append = false) {
 
     const cardsHTML = proverbsToRender.map((proverb, index) => {
         const isCantonese = proverb.cats ? proverb.cats.includes('cantonese') : proverb.cat === 'cantonese';
-        const firstCat = proverb.cats ? proverb.cats[0] : (proverb.cat || '');
+        const firstCat = proverb.cats ? proverb.cats[0] : (proverb.cat || 'wisdom');
         const proverbId = getProverbId(proverb);
         const proverbIdStr = String(proverbId).replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const favClass = isFavorite(proverbId) ? 'is-favorite' : '';
         const heartIcon = isFavorite(proverbId) ? '♥' : '♡';
         const displayChinese = ChineseConverter.convert(proverb.cn);
         const safeChinese = proverb.cn.replace(/'/g, "\\'");
+        const hasStory = proverb.story ? true : false;
+        const storyBadge = hasStory ? '<span class="story-badge" title="Has origin story">📜</span>' : '';
+        const storyData = hasStory ? `data-story-title="${proverb.story.title.replace(/"/g, '&quot;')}" data-story-content="${proverb.story.content.replace(/"/g, '&quot;').replace(/\n/g, '\\n')}"` : '';
         return `
-            <article class="proverb-card ${isCantonese ? 'cantonese' : ''}" data-id="${proverbIdStr}">
+            <article class="proverb-card ${isCantonese ? 'cantonese' : ''}" data-id="${proverbIdStr}" ${storyData}>
                 <div class="card-header">
                     <div class="card-header-left">
                         <span class="category-tag ${isCantonese ? 'cantonese' : ''}">${firstCat}</span>
                     </div>
                     <div class="card-header-actions">
+                        ${storyBadge}
                         <button class="speaker-btn" onclick="playCardAudio('${safeChinese}', this)" aria-label="Play pronunciation">
                             🔊
                         </button>
@@ -1141,7 +1148,18 @@ function updateStats(count) {
 function setupEventListeners() {
     // Modal close buttons
     document.querySelectorAll('.close-btn').forEach(btn => {
-        btn.addEventListener('click', closeModal);
+        btn.addEventListener('click', () => {
+            closeModal();
+            closeAbout();
+            closeSharePreview();
+            
+            // Restore focus to the last focused card if using keyboard nav
+            if (KeyboardNavigation.focusedCardIndex >= 0 && KeyboardNavigation.cards[KeyboardNavigation.focusedCardIndex]) {
+                setTimeout(() => {
+                    KeyboardNavigation.cards[KeyboardNavigation.focusedCardIndex].focus();
+                }, 100);
+            }
+        });
     });
 
     // New proverb button in modal
@@ -1551,11 +1569,26 @@ function setupModal() {
         }
     });
 
-    // Close on Escape key
+    // Close on Escape key - enhanced to restore focus
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeModal();
-            closeAbout();
+            const modalActive = document.getElementById('proverbModal')?.classList.contains('active');
+            const aboutActive = document.getElementById('aboutModal')?.classList.contains('active');
+            const shareActive = document.getElementById('sharePreviewModal')?.classList.contains('active');
+            
+            if (modalActive || aboutActive || shareActive) {
+                e.preventDefault();
+                closeModal();
+                closeAbout();
+                closeSharePreview();
+                
+                // Restore focus to the last focused card if using keyboard nav
+                if (KeyboardNavigation.focusedCardIndex >= 0 && KeyboardNavigation.cards[KeyboardNavigation.focusedCardIndex]) {
+                    setTimeout(() => {
+                        KeyboardNavigation.cards[KeyboardNavigation.focusedCardIndex].focus();
+                    }, 100);
+                }
+            }
         }
     });
 }
@@ -1596,6 +1629,31 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
         cantoneseBtn.style.display = isCantonese ? 'inline-flex' : 'none';
     }
 
+    // Handle story display
+    const storySection = document.getElementById('storySection');
+    const storyToggle = document.getElementById('storyToggle');
+    const storyContent = document.getElementById('storyContent');
+    const storyTitle = document.getElementById('storyTitle');
+    const storyText = document.getElementById('storyText');
+    
+    // Find the proverb to get story data
+    const proverb = allProverbs.find(p => p.cn === chinese);
+    
+    if (proverb && proverb.story) {
+        // This proverb has a story
+        storySection.style.display = 'block';
+        storyTitle.textContent = proverb.story.title;
+        storyText.textContent = proverb.story.content;
+        
+        // Reset toggle state
+        storyToggle.classList.remove('expanded');
+        storyContent.classList.remove('expanded');
+        storyToggle.querySelector('.story-toggle-text').textContent = 'Origin Story';
+    } else {
+        // No story - hide the section
+        storySection.style.display = 'none';
+    }
+
     // Update favorite button state if ID is provided
     if (proverbId) {
         updateModalFavoriteButton(proverbId);
@@ -1603,6 +1661,27 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Toggle story expansion in modal
+ */
+function toggleStory() {
+    const storyToggle = document.getElementById('storyToggle');
+    const storyContent = document.getElementById('storyContent');
+    const toggleText = storyToggle.querySelector('.story-toggle-text');
+    
+    const isExpanded = storyContent.classList.contains('expanded');
+    
+    if (isExpanded) {
+        storyContent.classList.remove('expanded');
+        storyToggle.classList.remove('expanded');
+        toggleText.textContent = 'Origin Story';
+    } else {
+        storyContent.classList.add('expanded');
+        storyToggle.classList.add('expanded');
+        toggleText.textContent = 'Hide Story';
+    }
 }
 
 /**
@@ -1994,23 +2073,40 @@ function closeAbout() {
  * Show keyboard shortcuts
  */
 function showKeyboardShortcuts() {
-    showToast('Ctrl+K: Search | Ctrl+R: Random Proverb | Esc: Close');
+    showToast('↑↓←→ Navigate | Enter Open | 1-9 Categories | / Search | ? Help | Esc Close');
 }
 
 /**
  * Keyboard shortcuts
  */
 document.addEventListener('keydown', (e) => {
+    // Don't handle if typing in search or if modal is open
+    const searchInput = document.getElementById('searchInput');
+    const modal = document.getElementById('proverbModal');
+    const aboutModal = document.getElementById('aboutModal');
+    
+    if (document.activeElement === searchInput || 
+        modal?.classList.contains('active') || 
+        aboutModal?.classList.contains('active')) {
+        return;
+    }
+    
     // Ctrl/Cmd + K to focus search
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        document.getElementById('searchInput').focus();
+        searchInput?.focus();
     }
 
     // Ctrl/Cmd + R for random proverb
     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
         e.preventDefault();
         showRandomProverb();
+    }
+    
+    // / to focus search (vim-style)
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        searchInput?.focus();
     }
 });
 
