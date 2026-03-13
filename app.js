@@ -466,9 +466,6 @@ function setupChineseToggle() {
  * Initialize the application
  */
 async function initializeApp() {
-    // Initialize dark mode first
-    initDarkMode();
-    
     // Initialize Chinese converter first
     await ChineseConverter.init();
 
