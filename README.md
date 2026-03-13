@@ -183,6 +183,10 @@ This project is open source and available under the [MIT License](LICENSE).
 - [x] **Community Submissions** - Users can submit new proverbs for review
 - [x] **Spaced Repetition Learning** - Flashcard-style learning with SM-2 algorithm
 - [x] **AI Explanations** - Deep cultural/philosophical analysis using OpenAI GPT
+- [x] **Search Suggestions** - Autocomplete as you type with smart matching
+- [x] **Character Count Filter** - Filter by 4-char chengyu, short, or long proverbs
+- [x] **"Surprise Me" Button** - Random proverb with dice roll animation
+- [x] **Export Favorites** - Download as JSON or CSV
 - [ ] **Daily Email** - Subscribe to receive a daily proverb via email
 - [ ] **Bookmark/History** - Track recently viewed proverbs
 - [ ] **Progressive Web App** - Install as native app with offline support
