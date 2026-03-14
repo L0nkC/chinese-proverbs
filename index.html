@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="big-features.css">
     <link rel="stylesheet" href="big-features-quick-wins.css">
     <link rel="stylesheet" href="related-proverbs.css">
+    <link rel="stylesheet" href="new-features.css">
 </head>
 <body>
     <!-- Page Transition Overlay -->
@@ -86,6 +87,14 @@
                 <button class="action-btn" onclick="showExportModal()" title="Export Favorites">
                     <span class="action-btn-icon">📤</span>
                     <span class="action-btn-text">Export</span>
+                </button>
+                <button class="action-btn" onclick="ProverbComparison.showComparison()" title="Compare Proverbs">
+                    <span class="action-btn-icon">⚖️</span>
+                    <span class="action-btn-text">Compare</span>
+                </button>
+                <button class="action-btn" onclick="HistoryManager.showHistory()" title="History">
+                    <span class="action-btn-icon">📜</span>
+                    <span class="action-btn-text">History</span>
                 </button>
                 <button class="action-btn" onclick="CommunitySubmissions.showSubmissionForm()" title="Submit Proverb">
                     <span class="action-btn-icon">📝</span>
@@ -569,6 +578,11 @@
     <script src="community-submissions.js"></script>
     <script src="learning-mode.js"></script>
     <script src="ai-explainer.js"></script>
+    <script src="dark-mode.js"></script>
+    <script src="accessibility.js"></script>
+    <script src="pwa-install.js"></script>
+    <script src="proverb-comparison.js"></script>
+    <script src="history.js"></script>
     <script src="app.js"></script>
     
     <!-- Service Worker Registration -->
