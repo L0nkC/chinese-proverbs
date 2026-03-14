@@ -3559,15 +3559,20 @@ function surpriseMe() {
     const randomIndex = Math.floor(Math.random() * allProverbs.length);
     const proverb = allProverbs[randomIndex];
     
+    // Get correct property names (proverbs.js uses cn, py, en)
+    const chinese = proverb.cn || proverb.chinese || proverb.c || '';
+    const pinyin = proverb.py || proverb.pinyin || proverb.p || '';
+    const english = proverb.en || proverb.english || proverb.e || '';
+    
     // Create surprise animation overlay
     const overlay = document.createElement('div');
     overlay.className = 'surprise-overlay';
     overlay.innerHTML = `
         <div class="surprise-content">
             <div class="surprise-icon">🎲</div>
-            <div class="surprise-chinese">${proverb.chinese || proverb.c}</div>
-            <div class="surprise-pinyin">${proverb.pinyin || proverb.p}</div>
-            <div class="surprise-english">${proverb.english || proverb.e}</div>
+            <div class="surprise-chinese">${chinese}</div>
+            <div class="surprise-pinyin">${pinyin}</div>
+            <div class="surprise-english">${english}</div>
         </div>
     `;
     document.body.appendChild(overlay);
