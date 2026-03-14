@@ -2892,50 +2892,66 @@ body {
     .modal {
         padding: 0;
         align-items: flex-end;
+        background: rgba(0, 0, 0, 0.9) !important;
     }
     
     .modal-content {
-        max-width: 100%;
-        width: 100%;
-        max-height: 85vh;
-        margin: 0;
-        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-        padding: var(--space-6);
-        transform: translateY(100%);
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: 85vh !important;
+        margin: 0 !important;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+        padding: var(--space-6) !important;
+        transform: translateY(100%) !important;
+        background: #FAF7F0 !important;
+        border: 2px solid #C9A227 !important;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.3) !important;
+        opacity: 1 !important;
+        position: relative !important;
+        z-index: 1001 !important;
     }
     
     .modal.active .modal-content {
-        transform: translateY(0);
+        transform: translateY(0) !important;
     }
 }
 
 @media (max-width: 480px) {
     .modal-content {
-        padding: var(--space-5);
-        max-height: 90vh;
+        padding: var(--space-5) !important;
+        max-height: 90vh !important;
+        background: #FAF7F0 !important;
     }
     
     .modal-proverb .proverb-chinese {
-        font-size: var(--text-2xl);
+        font-size: var(--text-2xl) !important;
+        color: #1A1A1A !important;
     }
     
     .modal-proverb .proverb-pinyin {
-        font-size: var(--text-base);
+        font-size: var(--text-base) !important;
+        color: #6A6A6A !important;
     }
     
     .modal-proverb .proverb-english {
-        font-size: var(--text-lg);
+        font-size: var(--text-lg) !important;
+        color: #2D2D2D !important;
+    }
+    
+    .modal-category {
+        color: #C73E1D !important;
+        background: rgba(199, 62, 29, 0.1) !important;
     }
 }
 
 /* Fix for iOS Safari bottom bar */
 @supports (-webkit-touch-callout: none) {
     .modal {
-        padding-bottom: env(safe-area-inset-bottom);
+        padding-bottom: env(safe-area-inset-bottom) !important;
     }
     
     .modal-content {
-        max-height: calc(90vh - env(safe-area-inset-bottom));
+        max-height: calc(90vh - env(safe-area-inset-bottom)) !important;
     }
 }
 
