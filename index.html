@@ -27,8 +27,14 @@
     <link rel="stylesheet" href="big-features.css">
     <link rel="stylesheet" href="big-features-quick-wins.css">
     <link rel="stylesheet" href="related-proverbs.css">
+    <link rel="stylesheet" href="dark-mode.css">
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle" class="dark-mode-toggle" onclick="DarkModeManager.toggle()" title="Toggle Dark Mode">
+        🌙
+    </button>
+    
     <!-- Page Transition Overlay -->
     <div class="page-transition-overlay" id="pageTransition"></div>
     
@@ -569,6 +575,7 @@
     <script src="community-submissions.js"></script>
     <script src="learning-mode.js"></script>
     <script src="ai-explainer.js"></script>
+    <script src="dark-mode.js"></script>
     <script src="app.js"></script>
     
     <!-- Service Worker Registration -->
