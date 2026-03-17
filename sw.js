@@ -10,6 +10,15 @@ const ASSETS_TO_CACHE = [
   './style.css',
   './app.js',
   './proverbs.js',
+  './dark-mode.css',
+  './dark-mode.js',
+  './recent-proverbs.css',
+  './recent-proverbs.js',
+  './time-theme.css',
+  './time-theme.js',
+  './pwa-install.css',
+  './pwa-install.js',
+  './seo-enhancer.js',
   // Google Fonts - these will be cached when loaded
   'https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Zhi+Mang+Xing&display=swap'
 ];
