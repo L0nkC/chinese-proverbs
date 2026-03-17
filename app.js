@@ -2196,13 +2196,18 @@ function setupModal() {
         }
     });
 
-    // Close on Escape key - enhanced to restore focus
+    // Enhanced keyboard shortcuts for modal
     document.addEventListener('keydown', (e) => {
+        const modalActive = document.getElementById('proverbModal')?.classList.contains('active');
+        const aboutActive = document.getElementById('aboutModal')?.classList.contains('active');
+        const shareActive = document.getElementById('sharePreviewModal')?.classList.contains('active');
+        const shortcutsActive = document.getElementById('shortcutsModal')?.classList.contains('active');
+        
+        // Don't handle if shortcuts modal is open
+        if (shortcutsActive) return;
+        
+        // Escape to close any modal
         if (e.key === 'Escape') {
-            const modalActive = document.getElementById('proverbModal')?.classList.contains('active');
-            const aboutActive = document.getElementById('aboutModal')?.classList.contains('active');
-            const shareActive = document.getElementById('sharePreviewModal')?.classList.contains('active');
-            
             if (modalActive || aboutActive || shareActive) {
                 e.preventDefault();
                 closeModal();
@@ -2215,6 +2220,63 @@ function setupModal() {
                         KeyboardNavigation.cards[KeyboardNavigation.focusedCardIndex].focus();
                     }, 100);
                 }
+            }
+        }
+        
+        // Modal-specific shortcuts (only when modal is active)
+        if (modalActive) {
+            switch(e.key.toLowerCase()) {
+                case 'c':
+                    // Copy to clipboard
+                    e.preventDefault();
+                    const chineseC = document.getElementById('modalChinese').textContent;
+                    const pinyinC = document.getElementById('modalPinyin').textContent;
+                    const englishC = document.getElementById('modalEnglish').textContent;
+                    copyProverb(chineseC, pinyinC, englishC);
+                    break;
+                    
+                case 'f':
+                    // Toggle favorite
+                    e.preventDefault();
+                    const modalContent = modal.querySelector('.modal-content');
+                    const proverbId = modalContent.dataset.proverbId;
+                    if (proverbId) {
+                        toggleFavorite(proverbId);
+                        updateModalFavoriteButton(proverbId);
+                    }
+                    break;
+                    
+                case 's':
+                    // Share / Generate image
+                    e.preventDefault();
+                    if (typeof ShareCardGenerator !== 'undefined') {
+                        ShareCardGenerator.generateShareImage();
+                    }
+                    break;
+                    
+                case 'n':
+                    // New random proverb
+                    e.preventDefault();
+                    if (!allProverbs || allProverbs.length === 0) return;
+                    const random = allProverbs[Math.floor(Math.random() * allProverbs.length)];
+                    const cat = random.cats ? random.cats[0] : (random.cat || '');
+                    showProverbInModal(random.cn, random.py, random.en, cat, getProverbId(random));
+                    break;
+                    
+                case ' ':
+                    // Space to play/pause audio
+                    e.preventDefault();
+                    if (AudioManager.isPlaying) {
+                        AudioManager.stop();
+                        updateAudioUI(false);
+                    } else {
+                        const chineseText = document.getElementById('modalChinese').textContent;
+                        if (chineseText) {
+                            AudioManager.play(chineseText, 'mandarin');
+                            updateAudioUI(true, 'mandarin');
+                        }
+                    }
+                    break;
             }
         }
     });

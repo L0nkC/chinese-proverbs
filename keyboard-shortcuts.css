@@ -1,0 +1,548 @@
+/**
+ * Keyboard Shortcuts Modal Styles
+ * Premium styling for the shortcuts help modal
+ */
+
+/* Shortcuts Modal */
+.shortcuts-modal .modal-content {
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.shortcuts-header {
+    text-align: center;
+    padding: var(--space-8) var(--space-8) var(--space-6);
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(135deg, var(--imperial-gold-soft) 0%, transparent 100%);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.shortcuts-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-4);
+}
+
+.shortcuts-header h2 {
+    font-family: var(--font-chinese);
+    font-size: var(--text-2xl);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.shortcuts-header p {
+    color: var(--text-tertiary);
+    font-size: var(--text-base);
+}
+
+.shortcuts-sections {
+    padding: var(--space-6);
+    display: grid;
+    gap: var(--space-6);
+}
+
+.shortcuts-section {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    border: 1px solid var(--border-color);
+}
+
+.shortcuts-section h3 {
+    font-family: var(--font-chinese);
+    font-size: var(--text-lg);
+    color: var(--vermilion);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.shortcuts-section h3::before {
+    content: '◈';
+    color: var(--imperial-gold);
+}
+
+.shortcuts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    flex-wrap: wrap;
+}
+
+.shortcut-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.2rem;
+    padding: 0 var(--space-2);
+    background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    box-shadow: 0 2px 0 var(--border-color);
+    text-transform: uppercase;
+}
+
+.shortcut-key:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.shortcut-desc {
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    margin-left: auto;
+    text-align: right;
+}
+
+.shortcuts-footer {
+    padding: var(--space-6) var(--space-8);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    background: var(--bg-secondary);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.shortcuts-footer .action-btn {
+    min-width: 150px;
+}
+
+/* Print Styles - Add to main style.css */
+@media print {
+    /* Hide UI elements */
+    .dark-mode-toggle,
+    .header-actions,
+    .controls-section,
+    .load-more-section,
+    .main-footer,
+    .floating-lantern,
+    .bamboo-left,
+    .bamboo-right,
+    .bg-pattern,
+    .page-transition-overlay,
+    .offline-indicator,
+    .keyboard-hint,
+    .skip-link,
+    .audio-controls,
+    .proverb-actions,
+    .related-proverbs-section,
+    .story-section,
+    .card-header-actions,
+    .proverb-actions-card,
+    .search-kbd,
+    #pwaInstallBtn,
+    .recent-proverbs-section,
+    .time-greeting-section,
+    .featured-collection,
+    .filter-section,
+    .length-section,
+    .collections-section {
+        display: none !important;
+    }
+
+    /* Body styling */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    /* Container */
+    .scroll-container {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Header */
+    .main-header {
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+        border-bottom: 2pt solid #333;
+    }
+
+    .site-title {
+        font-size: 24pt;
+        color: black !important;
+    }
+
+    .title-english {
+        font-size: 14pt;
+    }
+
+    .site-subtitle,
+    .site-description {
+        color: #333 !important;
+    }
+
+    /* Chinese toggle */
+    .chinese-toggle-container {
+        display: none;
+    }
+
+    /* Proverb cards */
+    .proverbs-container {
+        display: block;
+        column-count: 2;
+        column-gap: 2rem;
+    }
+
+    .proverb-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 1pt solid #ccc;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    .proverb-card.cantonese {
+        border-left: 3pt solid #B83A2A;
+    }
+
+    .proverb-chinese {
+        font-size: 16pt;
+        color: black !important;
+    }
+
+    .proverb-pinyin {
+        font-size: 10pt;
+        color: #666 !important;
+    }
+
+    .proverb-english {
+        font-size: 11pt;
+        color: #333 !important;
+    }
+
+    .category-tag {
+        border: 1pt solid #999;
+        background: #f0f0f0 !important;
+        color: #333 !important;
+    }
+
+    /* Modal */
+    .modal {
+        position: static !important;
+        display: block !important;
+        background: white !important;
+    }
+
+    .modal-content {
+        box-shadow: none !important;
+        border: none !important;
+        background: white !important;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .close-btn {
+        display: none;
+    }
+
+    .modal-decoration {
+        display: none;
+    }
+
+    .modal-proverb {
+        padding: 0;
+    }
+
+    .proverb-chinese {
+        font-size: 20pt;
+    }
+
+    .modal-divider {
+        border-color: #ccc;
+    }
+
+    /* Print header */
+    .proverbs-container::before {
+        content: 'Chinese Proverbs - Printed from chinese-proverbs.app';
+        display: block;
+        font-size: 10pt;
+        color: #666;
+        border-bottom: 1pt solid #ccc;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        column-span: all;
+    }
+
+    /* Footer */
+    body::after {
+        content: attr(data-url);
+        display: block;
+        text-align: center;
+        font-size: 9pt;
+        color: #666;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1pt solid #ccc;
+    }
+
+    /* Ensure links are visible */
+    a {
+        text-decoration: none;
+        color: black !important;
+    }
+
+    /* Page breaks */
+    .proverb-card {
+        break-inside: avoid;
+    }
+
+    h1, h2, h3 {
+        break-after: avoid;
+    }
+}
+
+/* Print button styling */
+.print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    transition: all var(--transition-base);
+}
+
+.print-btn:hover {
+    background: var(--imperial-gold-soft);
+    border-color: var(--imperial-gold);
+    color: var(--text-primary);
+}
+
+/* Email Subscription Section */
+.email-subscription-section {
+    max-width: 600px;
+    margin: var(--space-12) auto;
+    padding: var(--space-8);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    border: 2px solid var(--imperial-gold);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.email-subscription-section::before {
+    content: '📧';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 8rem;
+    opacity: 0.05;
+    transform: rotate(-15deg);
+}
+
+.email-subscription-header {
+    margin-bottom: var(--space-6);
+}
+
+.email-subscription-header h3 {
+    font-family: var(--font-chinese);
+    font-size: var(--text-2xl);
+    color: var(--vermilion);
+    margin-bottom: var(--space-2);
+}
+
+.email-subscription-header p {
+    color: var(--text-tertiary);
+    font-size: var(--text-base);
+}
+
+.email-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.email-input-group {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.email-input {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-family: var(--font-english);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: var(--imperial-gold);
+    box-shadow: 0 0 0 3px var(--imperial-gold-soft);
+}
+
+.email-input::placeholder {
+    color: var(--ink-muted);
+}
+
+.email-submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: linear-gradient(135deg, var(--vermilion) 0%, var(--vermilion-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+}
+
+.email-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-vermilion);
+}
+
+.email-submit-btn:active {
+    transform: translateY(0);
+}
+
+.email-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.email-features {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-6);
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.email-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+}
+
+.email-feature-icon {
+    font-size: var(--text-lg);
+}
+
+.email-privacy-note {
+    margin-top: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+}
+
+.email-privacy-note a {
+    color: var(--vermilion);
+    text-decoration: underline;
+}
+
+/* Email success/error states */
+.email-message {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    display: none;
+}
+
+.email-message.success {
+    display: block;
+    background: rgba(45, 106, 79, 0.1);
+    border: 1px solid var(--jade-green);
+    color: var(--jade-green);
+}
+
+.email-message.error {
+    display: block;
+    background: var(--cinnabar-soft);
+    border: 1px solid var(--cinnabar);
+    color: var(--cinnabar);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .shortcuts-modal .modal-content {
+        max-height: 95vh;
+        margin: var(--space-4);
+    }
+
+    .shortcuts-sections {
+        padding: var(--space-4);
+    }
+
+    .shortcuts-section {
+        padding: var(--space-4);
+    }
+
+    .shortcut-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .shortcut-desc {
+        margin-left: 0;
+        text-align: left;
+    }
+
+    .email-subscription-section {
+        margin: var(--space-8) var(--space-4);
+        padding: var(--space-6);
+    }
+
+    .email-input-group {
+        flex-direction: column;
+    }
+
+    .email-features {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    @media print {
+        .proverbs-container {
+            column-count: 1;
+        }
+    }
+}
+
+/* Dark mode adjustments */
+@media print {
+    .dark-mode .proverb-card,
+    .dark-mode .modal-content {
+        background: white !important;
+        color: black !important;
+    }
+}

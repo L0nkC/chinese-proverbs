@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="recent-proverbs.css">
     <link rel="stylesheet" href="time-theme.css">
     <link rel="stylesheet" href="pwa-install.css">
+    <link rel="stylesheet" href="keyboard-shortcuts.css">
+    <link rel="stylesheet" href="email-subscription.css">
     
     <!-- Open Graph / Social Media Tags -->
     <meta property="og:type" content="website">
@@ -49,7 +51,7 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://l0nkc.github.io/chinese-proverbs/">
 </head>
-<body>
+<body data-url="chinese-proverbs.app">
     <!-- Dark Mode Toggle -->
     <button id="darkModeToggle" class="dark-mode-toggle" onclick="DarkModeManager.toggle()" title="Toggle Dark Mode">
         🌙
@@ -117,6 +119,10 @@
                 <button class="action-btn" onclick="showExportModal()" title="Export Favorites">
                     <span class="action-btn-icon">📤</span>
                     <span class="action-btn-text">Export</span>
+                </button>
+                <button class="action-btn" onclick="window.print()" title="Print Proverbs">
+                    <span class="action-btn-icon">🖨️</span>
+                    <span class="action-btn-text">Print</span>
                 </button>
                 <button class="action-btn" onclick="CommunitySubmissions.showSubmissionForm()" title="Submit Proverb">
                     <span class="action-btn-icon">📝</span>
@@ -622,6 +628,8 @@
     <script src="pwa-install.js"></script>
     <script src="seo-enhancer.js"></script>
     <script src="tests.js"></script>
+    <script src="keyboard-shortcuts.js"></script>
+    <script src="email-subscription.js"></script>
     <script src="app.js"></script>
     
     <!-- Service Worker Registration -->

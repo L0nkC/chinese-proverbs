@@ -1,0 +1,198 @@
+/**
+ * Email Subscription Styles
+ * Premium styling for the email subscription section
+ */
+
+.email-subscription-section {
+    max-width: 600px;
+    margin: var(--space-12) auto;
+    padding: var(--space-8);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    border: 2px solid var(--imperial-gold);
+    border-radius: var(--radius-xl);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.email-subscription-section::before {
+    content: '📧';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 8rem;
+    opacity: 0.05;
+    transform: rotate(-15deg);
+}
+
+.email-subscription-header {
+    margin-bottom: var(--space-6);
+}
+
+.email-subscription-header h3 {
+    font-family: var(--font-chinese);
+    font-size: var(--text-2xl);
+    color: var(--vermilion);
+    margin-bottom: var(--space-2);
+}
+
+.email-subscription-header p {
+    color: var(--text-tertiary);
+    font-size: var(--text-base);
+}
+
+.email-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.email-input-group {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.email-input {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-family: var(--font-english);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+}
+
+.email-input:focus {
+    outline: none;
+    border-color: var(--imperial-gold);
+    box-shadow: 0 0 0 3px var(--imperial-gold-soft);
+}
+
+.email-input::placeholder {
+    color: var(--ink-muted);
+}
+
+.email-submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: linear-gradient(135deg, var(--vermilion) 0%, var(--vermilion-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+}
+
+.email-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-vermilion);
+}
+
+.email-submit-btn:active {
+    transform: translateY(0);
+}
+
+.email-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.email-features {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-6);
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.email-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+}
+
+.email-feature-icon {
+    font-size: var(--text-lg);
+}
+
+.email-privacy-note {
+    margin-top: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--ink-muted);
+}
+
+.email-privacy-note a {
+    color: var(--vermilion);
+    text-decoration: underline;
+}
+
+/* Email success/error states */
+.email-message {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    display: none;
+}
+
+.email-message.success {
+    display: block;
+    background: rgba(45, 106, 79, 0.1);
+    border: 1px solid var(--jade-green);
+    color: var(--jade-green);
+}
+
+.email-message.error {
+    display: block;
+    background: var(--cinnabar-soft);
+    border: 1px solid var(--cinnabar);
+    color: var(--cinnabar);
+}
+
+/* Subscription success state */
+.subscription-success {
+    padding: var(--space-8);
+    text-align: center;
+}
+
+.subscription-success h4 {
+    font-family: var(--font-chinese);
+    font-size: var(--text-xl);
+    color: var(--vermilion);
+    margin-bottom: var(--space-3);
+}
+
+.subscription-success p {
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .email-subscription-section {
+        margin: var(--space-8) var(--space-4);
+        padding: var(--space-6);
+    }
+
+    .email-input-group {
+        flex-direction: column;
+    }
+
+    .email-features {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+}
