@@ -1,0 +1,223 @@
+/**
+ * Time-Based Theme Styles
+ */
+
+/* Time Greeting Section */
+.time-greeting-section {
+    margin: 20px 0;
+    padding: 25px;
+    background: linear-gradient(135deg, var(--time-secondary, #f5f0e6) 0%, var(--paper) 100%);
+    border-radius: 16px;
+    border: 2px solid var(--time-primary, #C73E1D);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-greeting-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--time-primary, #C73E1D);
+}
+
+.dark-mode .time-greeting-section {
+    background: linear-gradient(135deg, var(--time-accent, #2d3748) 0%, var(--ink-light) 100%);
+    border-color: var(--time-primary, #C9A227);
+}
+
+.time-greeting-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.dark-mode .time-greeting-content {
+    border-color: var(--border-color-dark);
+}
+
+.time-greeting-icon {
+    font-size: 3rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.time-greeting-text {
+    flex: 1;
+}
+
+.time-greeting-chinese {
+    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-size: 2rem;
+    color: var(--time-primary, #C73E1D);
+    margin-bottom: 5px;
+}
+
+.time-greeting-pinyin {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.dark-mode .time-greeting-pinyin {
+    color: var(--text-muted-dark);
+}
+
+/* Time Proverb */
+.time-proverb {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+}
+
+.dark-mode .time-proverb {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.time-proverb-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.dark-mode .time-proverb-label {
+    color: var(--text-muted-dark);
+}
+
+.time-proverb-cn {
+    font-family: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 5px;
+}
+
+.dark-mode .time-proverb-cn {
+    color: var(--paper);
+}
+
+.time-proverb-py {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.dark-mode .time-proverb-py {
+    color: var(--text-muted-dark);
+}
+
+.time-proverb-en {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.dark-mode .time-proverb-en {
+    color: var(--text-secondary-dark);
+}
+
+/* Time Period Specific Styles */
+.time-dawn .time-greeting-section {
+    --time-primary: #E8B86D;
+    --time-secondary: #F5DEB3;
+    --time-accent: #DEB887;
+}
+
+.time-morning .time-greeting-section {
+    --time-primary: #F4A460;
+    --time-secondary: #FFE4B5;
+    --time-accent: #DEB887;
+}
+
+.time-afternoon .time-greeting-section {
+    --time-primary: #5F9EA0;
+    --time-secondary: #E0F6FF;
+    --time-accent: #87CEEB;
+}
+
+.time-evening .time-greeting-section {
+    --time-primary: #CD5C5C;
+    --time-secondary: #FFE4E1;
+    --time-accent: #FF6B6B;
+}
+
+.time-night .time-greeting-section {
+    --time-primary: #718096;
+    --time-secondary: #2D3748;
+    --time-accent: #1A202C;
+}
+
+/* Dynamic Background based on time */
+.time-dawn .bg-pattern {
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(232, 184, 109, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(245, 222, 179, 0.1) 0%, transparent 50%);
+}
+
+.time-morning .bg-pattern {
+    background-image: 
+        radial-gradient(circle at 50% 20%, rgba(244, 164, 96, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 10% 80%, rgba(255, 228, 181, 0.1) 0%, transparent 50%);
+}
+
+.time-afternoon .bg-pattern {
+    background-image: 
+        radial-gradient(circle at 70% 30%, rgba(135, 206, 235, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 30% 70%, rgba(95, 158, 160, 0.1) 0%, transparent 50%);
+}
+
+.time-evening .bg-pattern {
+    background-image: 
+        radial-gradient(circle at 80% 20%, rgba(205, 92, 92, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
+}
+
+.time-night .bg-pattern {
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 640px) {
+    .time-greeting-section {
+        padding: 20px;
+        margin: 15px 0;
+    }
+
+    .time-greeting-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .time-greeting-icon {
+        font-size: 2.5rem;
+    }
+
+    .time-greeting-chinese {
+        font-size: 1.5rem;
+    }
+
+    .time-greeting-pinyin {
+        font-size: 0.9rem;
+    }
+
+    .time-proverb-cn {
+        font-size: 1.2rem;
+    }
+
+    .time-proverb-en {
+        font-size: 0.9rem;
+    }
+}

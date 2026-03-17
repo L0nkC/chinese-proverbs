@@ -2230,6 +2230,14 @@ function showProverbInModal(chinese, pinyin, english, category, proverbId) {
     const modalChinese = document.getElementById('modalChinese');
     const cantoneseBtn = document.getElementById('playCantoneseBtn');
     
+    // Track this proverb as recently viewed
+    const proverb = allProverbs.find(p => p.cn === chinese);
+    if (proverb && typeof RecentProverbs !== 'undefined') {
+        RecentProverbs.add(proverb);
+        RecentProverbs.render();
+        updateRecentCount();
+    }
+    
     // Reset audio state
     AudioManager.stop();
     updateAudioUI(false);
@@ -3740,3 +3748,28 @@ function showExportModal() {
     `;
     document.body.appendChild(modal);
 }
+
+/**
+ * Update the recent count badge
+ */
+function updateRecentCount() {
+    const countEl = document.getElementById('recentCount');
+    if (countEl && typeof RecentProverbs !== 'undefined') {
+        const count = RecentProverbs.getCount();
+        countEl.textContent = count;
+        countEl.style.display = count > 0 ? 'flex' : 'none';
+    }
+}
+
+/**
+ * Initialize recent proverbs on page load
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize recent count after a short delay to ensure RecentProverbs is loaded
+    setTimeout(() => {
+        updateRecentCount();
+        if (typeof RecentProverbs !== 'undefined') {
+            RecentProverbs.render();
+        }
+    }, 500);
+});

@@ -28,6 +28,25 @@
     <link rel="stylesheet" href="big-features-quick-wins.css">
     <link rel="stylesheet" href="related-proverbs.css">
     <link rel="stylesheet" href="dark-mode.css">
+    <link rel="stylesheet" href="recent-proverbs.css">
+    <link rel="stylesheet" href="time-theme.css">
+    
+    <!-- Open Graph / Social Media Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://l0nkc.github.io/chinese-proverbs/">
+    <meta property="og:title" content="中华谚语 | Chinese Proverbs - Ancient Wisdom">
+    <meta property="og:description" content="Discover over 250 timeless proverbs from Chinese culture, featuring Mandarin and Cantonese sayings with Pinyin pronunciation.">
+    <meta property="og:image" content="https://l0nkc.github.io/chinese-proverbs/icons/icon-512x512.png">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://l0nkc.github.io/chinese-proverbs/">
+    <meta name="twitter:title" content="中华谚语 | Chinese Proverbs - Ancient Wisdom">
+    <meta name="twitter:description" content="Discover over 250 timeless proverbs from Chinese culture, featuring Mandarin and Cantonese sayings with Pinyin pronunciation.">
+    <meta name="twitter:image" content="https://l0nkc.github.io/chinese-proverbs/icons/icon-512x512.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://l0nkc.github.io/chinese-proverbs/">
 </head>
 <body>
     <!-- Dark Mode Toggle -->
@@ -81,6 +100,11 @@
             
             <!-- Header Action Buttons -->
             <div class="header-actions">
+                <button class="action-btn recent-btn" onclick="RecentProverbs.showModal()" title="Recently Viewed">
+                    <span class="action-btn-icon">📜</span>
+                    <span class="action-btn-text">History</span>
+                    <span class="recent-count" id="recentCount" style="display: none;">0</span>
+                </button>
                 <button class="action-btn" onclick="surpriseMe()" title="Surprise Me!">
                     <span class="action-btn-icon">🎲</span>
                     <span class="action-btn-text">Surprise</span>
@@ -125,6 +149,11 @@
                     <span>🎲 New Proverb</span>
                 </button>
             </div>
+        </section>
+
+        <!-- Time-Based Greeting Section -->
+        <section class="time-greeting-section" id="timeGreeting" style="display: none;">
+            <!-- Content populated by time-theme.js -->
         </section>
 
         <!-- Featured Collection Section -->
@@ -275,6 +304,17 @@
             <div class="stat-item">
                 <span class="stat-number" id="favoritesCount">0</span>
                 <span class="stat-label">Favorites</span>
+            </div>
+        </div>
+
+        <!-- Recently Viewed Section -->
+        <div class="recent-proverbs-section" id="recentProverbsSection" style="display: none;">
+            <div class="recent-proverbs-header">
+                <h3 class="recent-proverbs-title">📜 Recently Viewed</h3>
+                <button class="recent-proverbs-clear" onclick="RecentProverbs.clear(); RecentProverbs.render(); updateRecentCount();">Clear</button>
+            </div>
+            <div class="recent-proverbs-list" id="recentProverbsList">
+                <!-- Populated by recent-proverbs.js -->
             </div>
         </div>
 
@@ -576,6 +616,10 @@
     <script src="learning-mode.js"></script>
     <script src="ai-explainer.js"></script>
     <script src="dark-mode.js"></script>
+    <script src="recent-proverbs.js"></script>
+    <script src="time-theme.js"></script>
+    <script src="seo-enhancer.js"></script>
+    <script src="tests.js"></script>
     <script src="app.js"></script>
     
     <!-- Service Worker Registration -->
