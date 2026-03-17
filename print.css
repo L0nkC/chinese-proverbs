@@ -1,0 +1,236 @@
+/**
+ * Print Stylesheet - Make proverbs print nicely
+ * Optimized for printing Chinese proverbs
+ */
+
+@media print {
+    /* Hide UI elements that aren't needed for print */
+    .dark-mode-toggle,
+    .header-actions,
+    .controls-section,
+    .load-more-section,
+    .main-footer,
+    .floating-lantern,
+    .bamboo-left,
+    .bamboo-right,
+    .bg-pattern,
+    .page-transition-overlay,
+    .offline-indicator,
+    .keyboard-hint,
+    .skip-link,
+    .audio-controls,
+    .proverb-actions,
+    .related-proverbs-section,
+    .story-section,
+    .card-header-actions,
+    .proverb-actions-card,
+    .search-kbd,
+    #pwaInstallBtn,
+    .recent-proverbs-section,
+    .time-greeting-section,
+    .featured-collection,
+    .filter-section,
+    .length-section,
+    .collections-section,
+    .email-subscription-section {
+        display: none !important;
+    }
+
+    /* Body styling */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    /* Container */
+    .scroll-container {
+        max-width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Remove decorative elements */
+    .scroll-container::before,
+    .scroll-container::after {
+        display: none;
+    }
+
+    /* Header */
+    .main-header {
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+        border-bottom: 2pt solid #333;
+    }
+
+    .site-title {
+        font-size: 24pt;
+        color: black !important;
+    }
+
+    .title-english {
+        font-size: 14pt;
+    }
+
+    .site-subtitle,
+    .site-description {
+        color: #333 !important;
+    }
+
+    /* Chinese toggle */
+    .chinese-toggle-container {
+        display: none;
+    }
+
+    /* Proverb cards - use multi-column layout */
+    .proverbs-container {
+        display: block;
+        column-count: 2;
+        column-gap: 2rem;
+    }
+
+    .proverb-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        border: 1pt solid #ccc;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: white !important;
+        box-shadow: none !important;
+        animation: none !important;
+    }
+
+    .proverb-card.cantonese {
+        border-left: 3pt solid #B83A2A;
+    }
+
+    .proverb-chinese {
+        font-size: 16pt;
+        color: black !important;
+    }
+
+    .proverb-pinyin {
+        font-size: 10pt;
+        color: #666 !important;
+    }
+
+    .proverb-english {
+        font-size: 11pt;
+        color: #333 !important;
+    }
+
+    .category-tag {
+        border: 1pt solid #999;
+        background: #f0f0f0 !important;
+        color: #333 !important;
+        font-size: 9pt;
+    }
+
+    /* Modal styles for print */
+    #proverbModal {
+        position: static !important;
+        display: block !important;
+        background: white !important;
+    }
+
+    #proverbModal .modal-content {
+        box-shadow: none !important;
+        border: none !important;
+        background: white !important;
+        max-width: 100%;
+        margin: 0;
+        padding: 1rem 0;
+    }
+
+    .close-btn,
+    .modal-decoration {
+        display: none;
+    }
+
+    .modal-proverb {
+        padding: 0;
+    }
+
+    #modalChinese {
+        font-size: 20pt;
+    }
+
+    .modal-divider {
+        border-color: #ccc;
+    }
+
+    /* Print header with URL */
+    .proverbs-container::before {
+        content: 'Chinese Proverbs - Printed from chinese-proverbs.app';
+        display: block;
+        font-size: 10pt;
+        color: #666;
+        border-bottom: 1pt solid #ccc;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        column-span: all;
+    }
+
+    /* Page footer with URL */
+    body::after {
+        content: attr(data-url);
+        display: block;
+        text-align: center;
+        font-size: 9pt;
+        color: #666;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1pt solid #ccc;
+    }
+
+    /* Ensure links are visible */
+    a {
+        text-decoration: none;
+        color: black !important;
+    }
+
+    /* Page breaks */
+    .proverb-card {
+        break-inside: avoid;
+    }
+
+    h1, h2, h3 {
+        break-after: avoid;
+    }
+
+    /* Dark mode override for print */
+    .dark-mode .proverb-card,
+    .dark-mode .modal-content,
+    .dark-mode body {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Print button styling - visible on screen only */
+.print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    transition: all var(--transition-base);
+}
+
+.print-btn:hover {
+    background: var(--imperial-gold-soft);
+    border-color: var(--imperial-gold);
+    color: var(--text-primary);
+}
+
+@media print {
+    .print-btn {
+        display: none !important;
+    }
+}
