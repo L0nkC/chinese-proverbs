@@ -101,10 +101,10 @@ const koreanProverbsData = [
 
 // Make available globally
 if (typeof window !== 'undefined') {
-    window.koreanProverbs = koreanProverbs;
+    window.koreanProverbsData = koreanProverbsData;
 }
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = koreanProverbs;
+    module.exports = koreanProverbsData;
 }

@@ -98,10 +98,10 @@ const japaneseProverbsData = [
 
 // Make available globally
 if (typeof window !== 'undefined') {
-    window.japaneseProverbs = japaneseProverbs;
+    window.japaneseProverbsData = japaneseProverbsData;
 }
 
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = japaneseProverbs;
+    module.exports = japaneseProverbsData;
 }
