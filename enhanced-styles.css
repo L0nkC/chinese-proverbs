@@ -1,0 +1,823 @@
+/* ========================================
+   EAST ASIAN WISDOM HUB - Enhanced Styles
+   3D Effects, Ink Trail Cursor, Animations
+   ======================================== */
+
+/* ========================================
+   3D CARD FLIP EFFECTS
+   ======================================== */
+
+.flip-card {
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner,
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--parchment-light) 100%);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+}
+
+/* 3D Transform Utilities */
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+/* ========================================
+   INK TRAIL CURSOR
+   ======================================== */
+
+.ink-cursor {
+    position: fixed;
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: multiply;
+    transition: transform 0.1s ease;
+}
+
+.ink-cursor::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, var(--vermilion) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0.6;
+    transform: scale(1);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.ink-cursor.hovering::before {
+    transform: scale(1.5);
+    opacity: 0.8;
+}
+
+.ink-trail {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    mix-blend-mode: multiply;
+    opacity: 0.3;
+    border-radius: 50%;
+    background: var(--vermilion);
+    animation: ink-fade 1s ease forwards;
+}
+
+@keyframes ink-fade {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Calligraphy Brush Cursor */
+.brush-cursor {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    z-index: 9999;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23C73E1D' d='M8 24c0-4 4-8 8-12 4-4 8-8 8-8s-4 4-8 8c-4 4-8 8-8 12z'/%3E%3C/svg%3E") no-repeat center;
+    background-size: contain;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease;
+}
+
+.brush-cursor.writing {
+    transform: translate(-50%, -50%) rotate(-15deg) scale(0.9);
+}
+
+/* ========================================
+   SMOOTH SCROLL ANIMATIONS
+   ======================================== */
+
+/* Scroll Reveal Animation */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-left.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-reveal-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-right.revealed {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal-scale.revealed {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Stagger delays for children */
+.stagger-children > *:nth-child(1) { transition-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { transition-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { transition-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { transition-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { transition-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { transition-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { transition-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { transition-delay: 0.4s; }
+.stagger-children > *:nth-child(9) { transition-delay: 0.45s; }
+.stagger-children > *:nth-child(10) { transition-delay: 0.5s; }
+.stagger-children > *:nth-child(11) { transition-delay: 0.55s; }
+.stagger-children > *:nth-child(12) { transition-delay: 0.6s; }
+
+/* ========================================
+   ENHANCED HOVER EFFECTS
+   ======================================== */
+
+/* Lift Effect */
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Glow Effect */
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 30px rgba(199, 62, 29, 0.3);
+}
+
+/* Scale Effect */
+.hover-scale {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Rotate Effect */
+.hover-rotate {
+    transition: transform 0.3s ease;
+}
+
+.hover-rotate:hover {
+    transform: rotate(3deg) scale(1.02);
+}
+
+/* Shine Effect */
+.hover-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s ease;
+}
+
+.hover-shine:hover::before {
+    left: 100%;
+}
+
+/* Border Animation */
+.hover-border {
+    position: relative;
+}
+
+.hover-border::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--vermilion);
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.hover-border:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+/* ========================================
+   PARALLAX EFFECTS
+   ======================================== */
+
+.parallax-container {
+    overflow: hidden;
+    position: relative;
+}
+
+.parallax-layer {
+    position: absolute;
+    will-change: transform;
+}
+
+.parallax-slow {
+    transform: translateZ(-1px) scale(2);
+}
+
+.parallax-medium {
+    transform: translateZ(-0.5px) scale(1.5);
+}
+
+.parallax-fast {
+    transform: translateZ(0);
+}
+
+/* ========================================
+   FLOATING ANIMATIONS
+   ======================================== */
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(2deg);
+    }
+}
+
+@keyframes float-delayed {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-15px) rotate(-2deg);
+    }
+}
+
+.float-animation {
+    animation: float 6s ease-in-out infinite;
+}
+
+.float-animation-delayed {
+    animation: float-delayed 5s ease-in-out infinite;
+    animation-delay: -2s;
+}
+
+/* ========================================
+   PULSE ANIMATIONS
+   ======================================== */
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(199, 62, 29, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px 10px rgba(199, 62, 29, 0);
+    }
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.pulse-ring {
+    position: relative;
+}
+
+.pulse-ring::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    border: 2px solid var(--vermilion);
+    animation: pulse-ring 1.5s ease-out infinite;
+}
+
+/* ========================================
+   SHIMMER EFFECT
+   ======================================== */
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(
+        90deg,
+        var(--bg-secondary) 0%,
+        rgba(201, 162, 39, 0.1) 50%,
+        var(--bg-secondary) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* ========================================
+   THEME SWITCHER STYLES
+   ======================================== */
+
+.theme-switcher {
+    position: fixed;
+    top: 20px;
+    right: 70px;
+    z-index: 1000;
+}
+
+.theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--imperial-gold);
+}
+
+.theme-current {
+    font-size: 20px;
+}
+
+.theme-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.theme-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 8px;
+    min-width: 180px;
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.theme-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.theme-option:hover {
+    background: var(--bg-tertiary);
+    transform: translateX(4px);
+}
+
+.theme-option.active {
+    background: var(--vermilion-soft);
+}
+
+.theme-flag {
+    font-size: 22px;
+}
+
+.theme-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.theme-native {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Theme-specific color adjustments */
+.theme-japanese {
+    --vermilion: #1B4B7A;
+    --vermilion-dark: #0F2D4A;
+    --imperial-gold: #E8D4C4;
+    --jade-green: #4A6741;
+}
+
+.theme-korean {
+    --vermilion: #C41E3A;
+    --vermilion-dark: #8B1428;
+    --imperial-gold: #0F4C81;
+    --jade-green: #2E8B57;
+}
+
+.theme-universal {
+    --vermilion: #6B4E71;
+    --vermilion-dark: #4A364E;
+    --imperial-gold: #D4A373;
+    --jade-green: #2D6A4F;
+}
+
+/* ========================================
+   WALLPAPER BUTTON
+   ======================================== */
+
+.wallpaper-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--jade-green) 0%, var(--jade-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(45, 106, 79, 0.3);
+}
+
+.wallpaper-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(45, 106, 79, 0.4);
+}
+
+.wallpaper-btn:active {
+    transform: translateY(0);
+}
+
+.wallpaper-btn-icon {
+    font-size: 18px;
+}
+
+/* ========================================
+   MULTI-LANGUAGE SEARCH
+   ======================================== */
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-top: 8px;
+    box-shadow: var(--shadow-xl);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.search-suggestion-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.suggestion-culture {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.suggestion-text {
+    flex: 1;
+}
+
+.suggestion-native {
+    font-family: var(--font-chinese);
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.suggestion-translation {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.suggestion-highlight {
+    background: var(--imperial-gold-soft);
+    color: var(--vermilion);
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* ========================================
+   CROSS-CULTURAL REFERENCES
+   ======================================== */
+
+.cross-cultural-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, var(--imperial-gold-soft) 0%, rgba(201, 162, 39, 0.1) 100%);
+    border: 1px solid var(--imperial-gold);
+    border-radius: 16px;
+    font-size: 12px;
+    color: var(--imperial-gold-dark);
+    font-weight: 500;
+}
+
+.cross-cultural-badge .cultures {
+    display: flex;
+    gap: 2px;
+}
+
+.related-proverbs-section {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px dashed var(--border-color);
+}
+
+.related-proverbs-title {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+    text-align: center;
+}
+
+.related-proverb-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.related-proverb-item:hover {
+    background: var(--bg-tertiary);
+    transform: translateX(4px);
+}
+
+.related-proverb-flag {
+    font-size: 20px;
+}
+
+.related-proverb-content {
+    flex: 1;
+}
+
+.related-proverb-native {
+    font-family: var(--font-chinese);
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.related-proverb-en {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ========================================
+   LOADING STATES
+   ======================================== */
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bg-tertiary);
+    border-top-color: var(--vermilion);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.loading-dots span {
+    width: 8px;
+    height: 8px;
+    background: var(--vermilion);
+    border-radius: 50%;
+    animation: loading-dot 1.4s ease-in-out infinite both;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes loading-dot {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   RESPONSIVE ENHANCEMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+    .theme-switcher {
+        top: 15px;
+        right: 60px;
+    }
+    
+    .theme-toggle-btn {
+        padding: 8px 12px;
+    }
+    
+    .theme-label {
+        display: none;
+    }
+    
+    .flip-card:hover .flip-card-inner {
+        transform: none;
+    }
+    
+    .ink-cursor,
+    .brush-cursor {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .hover-lift:hover {
+        transform: translateY(-4px);
+    }
+    
+    .scroll-reveal {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .scroll-reveal,
+    .scroll-reveal-left,
+    .scroll-reveal-right,
+    .scroll-reveal-scale {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    
+    .float-animation,
+    .float-animation-delayed,
+    .pulse-glow,
+    .shimmer {
+        animation: none;
+    }
+    
+    .hover-lift:hover,
+    .hover-scale:hover,
+    .hover-rotate:hover {
+        transform: none;
+    }
+}
