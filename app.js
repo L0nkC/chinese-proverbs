@@ -81,8 +81,7 @@ function initApp(hasChinese, hasJapanese, hasKorean) {
     
     currentProverbs = [...allProverbs];
     
-    // Setup event handlers
-    setupFilters();
+    // Setup event handlers (onclick handlers in HTML, so skip setupFilters)
     setupSearch();
     setupModal();
     
@@ -457,17 +456,25 @@ const UserAuth = {
 
 // Legacy onclick handlers for HTML compatibility
 function handleCultureFilterClick(btn) {
-    document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentCulture = btn.dataset.culture;
-    applyFilters();
+    try {
+        document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCulture = btn.dataset.culture;
+        applyFilters();
+    } catch(e) {
+        console.error('handleCultureFilterClick error:', e);
+    }
 }
 
 function handleFilterClick(btn) {
-    document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTopic = btn.dataset.filter;
-    applyFilters();
+    try {
+        document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTopic = btn.dataset.filter;
+        applyFilters();
+    } catch(e) {
+        console.error('handleFilterClick error:', e);
+    }
 }
 
 // Global exports for onclick handlers
@@ -484,3 +491,15 @@ window.speak = speak;
 window.copyText = copyText;
 window.handleCultureFilterClick = handleCultureFilterClick;
 window.handleFilterClick = handleFilterClick;
+window.applyFilters = applyFilters;
+window.renderProverbs = renderProverbs;
+window.updateStats = updateStats;
+
+// Debug exports
+window._state = {
+    get allProverbs() { return allProverbs; },
+    get currentProverbs() { return currentProverbs; },
+    get currentCulture() { return currentCulture; },
+    get currentTopic() { return currentTopic; },
+    get favoriteIds() { return favoriteIds; }
+};
