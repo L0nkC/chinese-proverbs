@@ -701,4 +701,381 @@ function initializeApp() {
     console.log('[East Asian Wisdom] Ready!');
 }
 
+// ============================================
+// HEADER ACTION BUTTONS - Surprise, Learn, Export, Submit
+// ============================================
+
+/**
+ * Surprise Me! - Show a random proverb in modal
+ */
+function surpriseMe() {
+    if (!allProverbs || allProverbs.length === 0) {
+        showToast('No proverbs available');
+        return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * allProverbs.length);
+    const proverb = allProverbs[randomIndex];
+    
+    const text = proverb.cn || '';
+    const pinyin = proverb.py || '';
+    const category = proverb.cats ? proverb.cats[0] : (proverb.cat || 'wisdom');
+    const id = getProverbId(proverb);
+    
+    showProverbInModal(text, pinyin, proverb.en, category, id);
+    showToast('🎲 Random proverb!');
+}
+
+/**
+ * Show Random Proverb (for Daily Spotlight refresh)
+ */
+function showRandomProverb() {
+    surpriseMe();
+}
+
+/**
+ * Play audio for daily spotlight
+ */
+function playDailyAudio() {
+    const dailyChinese = document.getElementById('dailyChinese');
+    if (!dailyChinese) return;
+    
+    const text = dailyChinese.textContent;
+    const btn = document.getElementById('dailySpeakerBtn');
+    
+    if (!('speechSynthesis' in window)) {
+        showToast('Audio not supported');
+        return;
+    }
+    
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.8;
+    
+    const voices = window.speechSynthesis.getVoices();
+    const voice = voices.find(v => v.lang.includes('zh')) || voices[0];
+    if (voice) utterance.voice = voice;
+    
+    utterance.onstart = () => btn?.classList.add('playing');
+    utterance.onend = () => btn?.classList.remove('playing');
+    
+    window.speechSynthesis.speak(utterance);
+}
+
+/**
+ * Export Favorites Modal
+ */
+function showExportModal() {
+    const favorites = [...favoriteIds].map(id => {
+        return allProverbs.find(p => String(getProverbId(p)) === id);
+    }).filter(Boolean);
+    
+    if (favorites.length === 0) {
+        showToast('No favorites to export!');
+        return;
+    }
+    
+    // Create export content
+    let exportText = '# My East Asian Wisdom Favorites\n\n';
+    exportText += `Exported: ${new Date().toLocaleString()}\n\n`;
+    exportText += `Total: ${favorites.length} proverbs\n\n`;
+    exportText += '---\n\n';
+    
+    favorites.forEach((p, i) => {
+        exportText += `## ${i + 1}. ${p.cultureFlag || '📜'} ${p.cultureLabel || 'Proverb'}\n\n`;
+        exportText += `**${p.cn || ''}**\n\n`;
+        exportText += `*${p.py || ''}*\n\n`;
+        exportText += `${p.en || ''}\n\n`;
+        exportText += `Category: ${p.cats ? p.cats.join(', ') : p.cat || 'wisdom'}\n\n`;
+        exportText += '---\n\n';
+    });
+    
+    // Create and show modal
+    let modal = document.getElementById('exportModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'exportModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 600px; max-height: 80vh; display: flex; flex-direction: column;">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--border-color);">
+                    <h2 style="margin: 0; color: var(--vermilion);">📤 Export Favorites</h2>
+                    <button class="close-btn" onclick="closeExportModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+                </div>
+                <div class="modal-body" style="padding: 20px; overflow-y: auto; flex: 1;">
+                    <textarea id="exportTextarea" style="width: 100%; height: 400px; font-family: monospace; font-size: 13px; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; resize: none; background: var(--input-bg); color: var(--text-primary);" readonly></textarea>
+                </div>
+                <div class="modal-footer" style="padding: 20px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="action-btn" onclick="copyExportToClipboard()" style="background: var(--vermilion); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                        📋 Copy to Clipboard
+                    </button>
+                    <button class="action-btn" onclick="downloadExport()" style="background: var(--jade-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+                        💾 Download
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    const textarea = document.getElementById('exportTextarea');
+    if (textarea) textarea.value = exportText;
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeExportModal() {
+    const modal = document.getElementById('exportModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function copyExportToClipboard() {
+    const textarea = document.getElementById('exportTextarea');
+    if (textarea) {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            showToast('Copied to clipboard!');
+        });
+    }
+}
+
+function downloadExport() {
+    const textarea = document.getElementById('exportTextarea');
+    if (!textarea) return;
+    
+    const blob = new Blob([textarea.value], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `east-asian-wisdom-favorites-${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('Downloaded!');
+    closeExportModal();
+}
+
+/**
+ * Community Submission Form (simplified version)
+ */
+const CommunitySubmissions = {
+    showSubmissionForm: function() {
+        let modal = document.getElementById('submissionModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'submissionModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--border-color);">
+                        <h2 style="margin: 0; color: var(--vermilion);">📝 Submit a Proverb</h2>
+                        <button class="close-btn" onclick="CommunitySubmissions.closeForm()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+                    </div>
+                    <div class="modal-body" style="padding: 20px;">
+                        <form id="submissionForm" onsubmit="CommunitySubmissions.handleSubmit(event)">
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; margin-bottom: 6px; font-weight: 600;">Language *</label>
+                                <select id="submitCulture" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary);">
+                                    <option value="">Select...</option>
+                                    <option value="chinese">🇨🇳 Chinese</option>
+                                    <option value="japanese">🇯🇵 Japanese</option>
+                                    <option value="korean">🇰🇷 Korean</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; margin-bottom: 6px; font-weight: 600;">Proverb (original text) *</label>
+                                <input type="text" id="submitText" required placeholder="Enter proverb..." style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary);">
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; margin-bottom: 6px; font-weight: 600;">Pronunciation (Pinyin/Romaji/Roman)</label>
+                                <input type="text" id="submitPinyin" placeholder="e.g., sān sī ér hòu xíng" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary);">
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; margin-bottom: 6px; font-weight: 600;">English Translation *</label>
+                                <textarea id="submitEnglish" required rows="3" placeholder="Enter English meaning..." style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary); resize: vertical;"></textarea>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 6px; font-weight: 600;">Category</label>
+                                <select id="submitCategory" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary);">
+                                    <option value="wisdom">Wisdom</option>
+                                    <option value="life">Life</option>
+                                    <option value="learning">Learning</option>
+                                    <option value="perseverance">Perseverance</option>
+                                    <option value="friendship">Friendship</option>
+                                    <option value="love">Love</option>
+                                    <option value="business">Business</option>
+                                    <option value="family">Family</option>
+                                </select>
+                            </div>
+                            <button type="submit" style="width: 100%; padding: 12px; background: var(--vermilion); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600;">
+                                Submit Proverb
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    },
+    
+    closeForm: function() {
+        const modal = document.getElementById('submissionModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    },
+    
+    handleSubmit: function(e) {
+        e.preventDefault();
+        
+        const culture = document.getElementById('submitCulture').value;
+        const text = document.getElementById('submitText').value;
+        const pinyin = document.getElementById('submitPinyin').value;
+        const english = document.getElementById('submitEnglish').value;
+        const category = document.getElementById('submitCategory').value;
+        
+        // In a real app, this would send to a server
+        // For now, just show success message
+        showToast('Thank you! Your submission has been received. 🙏');
+        
+        // Reset form and close
+        document.getElementById('submissionForm').reset();
+        this.closeForm();
+        
+        // Store in localStorage as pending (for demo purposes)
+        const submissions = JSON.parse(localStorage.getItem('pendingSubmissions') || '[]');
+        submissions.push({
+            culture,
+            text,
+            pinyin,
+            english,
+            category,
+            submittedAt: new Date().toISOString()
+        });
+        localStorage.setItem('pendingSubmissions', JSON.stringify(submissions));
+    }
+};
+
+/**
+ * Learning Mode (simplified version)
+ */
+const LearningMode = {
+    showProgress: function() {
+        const favorites = [...favoriteIds];
+        const total = allProverbs.length;
+        const learned = favorites.length;
+        const progress = total > 0 ? Math.round((learned / total) * 100) : 0;
+        
+        let modal = document.getElementById('learningModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'learningModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px; text-align: center;">
+                    <div class="modal-header" style="padding: 20px; border-bottom: 1px solid var(--border-color);">
+                        <h2 style="margin: 0; color: var(--vermilion);">📚 Learning Progress</h2>
+                        <button class="close-btn" onclick="LearningMode.close()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+                    </div>
+                    <div class="modal-body" style="padding: 40px 20px;">
+                        <div id="learningStats" style="margin-bottom: 30px;"></div>
+                        <div id="learningActions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                            <button class="action-btn" onclick="LearningMode.startQuiz()" style="background: var(--vermilion); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+                                🎯 Start Quiz
+                            </button>
+                            <button class="action-btn" onclick="LearningMode.showFavorites()" style="background: var(--jade-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+                                ♥ Review Favorites
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // Update stats
+        const statsEl = document.getElementById('learningStats');
+        if (statsEl) {
+            statsEl.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                <div style="font-size: 56px; font-weight: 700; color: var(--vermilion); margin-bottom: 8px;">${progress}%</div>
+                <div style="font-size: 16px; color: var(--ink-gray); margin-bottom: 20px;">Learning Progress</div>
+                <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 600; color: var(--vermilion);">${learned}</div>
+                        <div style="font-size: 12px; color: var(--ink-muted); text-transform: uppercase;">Learned</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 600; color: var(--ink-gray);">${total}</div>
+                        <div style="font-size: 12px; color: var(--ink-muted); text-transform: uppercase;">Total</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 28px; font-weight: 600; color: var(--jade-green);">${total - learned}</div>
+                        <div style="font-size: 12px; color: var(--ink-muted); text-transform: uppercase;">Remaining</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    },
+    
+    close: function() {
+        const modal = document.getElementById('learningModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    },
+    
+    startQuiz: function() {
+        this.close();
+        // Pick a random proverb for quiz
+        const randomProverb = allProverbs[Math.floor(Math.random() * allProverbs.length)];
+        showToast('🎯 Quiz mode: Look at the proverb and try to remember the meaning!');
+        
+        const text = randomProverb.cn || '';
+        const pinyin = randomProverb.py || '';
+        const category = randomProverb.cats ? randomProverb.cats[0] : (randomProverb.cat || 'wisdom');
+        const id = getProverbId(randomProverb);
+        
+        // Show with slight delay to let toast appear
+        setTimeout(() => {
+            showProverbInModal(text, pinyin, randomProverb.en, category, id);
+        }, 500);
+    },
+    
+    showFavorites: function() {
+        this.close();
+        // Switch to favorites filter
+        currentFilter = 'favorites';
+        currentCultureFilter = 'all';
+        updateTopicFilters();
+        applyCombinedFilter();
+        
+        // Scroll to proverbs
+        document.getElementById('proverbsContainer')?.scrollIntoView({ behavior: 'smooth' });
+        showToast('Showing your favorites! ♥');
+    }
+};
+
+/**
+ * User Auth (placeholder - no backend)
+ */
+const UserAuth = {
+    showAuthModal: function() {
+        showToast('👤 Sign in coming soon!');
+    }
+};
+
 document.addEventListener('DOMContentLoaded', initializeApp);

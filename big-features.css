@@ -1104,6 +1104,10 @@
     display: flex;
     gap: var(--space-3);
     align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--space-4);
+    padding: var(--space-4);
 }
 
 .action-btn {
