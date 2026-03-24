@@ -1,17 +1,14 @@
 /**
  * East Asian Wisdom - Application Logic
- * Enhanced with multi-cultural support (Chinese, Japanese, Korean)
+ * Hierarchical filtering: Language → Topic
  */
 
 // ============================================
 // MULTI-CULTURAL PROVERBS DATA
 // ============================================
-
-// Combine all proverbs from different cultures
 function initializeAllProverbs() {
     const combined = [];
     
-    // Add Chinese proverbs
     if (typeof chineseProverbs !== 'undefined') {
         chineseProverbs.forEach(p => {
             combined.push({
@@ -23,12 +20,11 @@ function initializeAllProverbs() {
         });
     }
     
-    // Add Japanese proverbs
     if (typeof japaneseProverbsData !== 'undefined') {
         japaneseProverbsData.forEach(p => {
             combined.push({
                 jp: p.jp,
-                cn: p.jp, // Use Japanese as display text
+                cn: p.jp,
                 py: p.romaji,
                 en: p.en,
                 cats: p.cats,
@@ -39,12 +35,11 @@ function initializeAllProverbs() {
         });
     }
     
-    // Add Korean proverbs
     if (typeof koreanProverbsData !== 'undefined') {
         koreanProverbsData.forEach(p => {
             combined.push({
                 kr: p.kr,
-                cn: p.kr, // Use Korean as display text
+                cn: p.kr,
                 py: p.roman,
                 en: p.en,
                 cats: p.cats,
@@ -58,68 +53,147 @@ function initializeAllProverbs() {
     return combined;
 }
 
-// Initialize all proverbs
 var allProverbs = initializeAllProverbs();
 let currentProverbs = [...allProverbs];
 let currentFilter = 'all';
-let currentCultureFilter = 'all'; // 'all', 'chinese', 'japanese', 'korean'
+let currentCultureFilter = 'all';
 let displayedCount = 24;
 const PROVERBS_PER_LOAD = 12;
 
 // ============================================
-// AGGRESSIVE GLOBAL BUTTON HANDLER
+// HIERARCHICAL FILTER SYSTEM
+// ============================================
+
+// Get topics available for selected culture with counts
+function getTopicsForCulture(culture) {
+    const proverbs = culture === 'all' ? allProverbs : allProverbs.filter(p => p.culture === culture);
+    const topicCounts = {};
+    
+    proverbs.forEach(p => {
+        const cats = p.cats || [p.cat].filter(Boolean);
+        cats.forEach(cat => {
+            if (cat && cat !== 'cantonese') { // Skip cantonese as it's a dialect not topic
+                topicCounts[cat] = (topicCounts[cat] || 0) + 1;
+            }
+        });
+    });
+    
+    return Object.entries(topicCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([topic, count]) => ({ topic, count }));
+}
+
+// Update topic filter buttons dynamically based on selected culture
+function updateTopicFilters() {
+    const container = document.getElementById('topicFilterButtons');
+    if (!container) return;
+    
+    const topics = getTopicsForCulture(currentCultureFilter);
+    const cultureName = currentCultureFilter === 'all' ? 'All' : 
+                        currentCultureFilter === 'chinese' ? 'Chinese' :
+                        currentCultureFilter === 'japanese' ? 'Japanese' : 'Korean';
+    
+    // Calculate total for current culture
+    const totalCount = currentCultureFilter === 'all' 
+        ? allProverbs.length 
+        : allProverbs.filter(p => p.culture === currentCultureFilter).length;
+    
+    // Update filter label
+    const labelEl = document.getElementById('topicFilterLabel');
+    if (labelEl) {
+        labelEl.textContent = cultureName + ' Topics:';
+    }
+    
+    let html = '';
+    
+    // All button with count
+    html += `
+        <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-filter="all" onclick="handleFilterClick(this)">
+            <span class="btn-text">All</span>
+            <span class="filter-count">${totalCount}</span>
+        </button>
+    `;
+    
+    // Topic buttons with counts
+    topics.forEach(({ topic, count }) => {
+        const isActive = currentFilter === topic;
+        const displayTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
+        html += `
+            <button class="filter-btn ${isActive ? 'active' : ''}" data-filter="${topic}" onclick="handleFilterClick(this)">
+                <span class="btn-text">${displayTopic}</span>
+                <span class="filter-count">${count}</span>
+            </button>
+        `;
+    });
+    
+    // Favorites button
+    const favCount = [...favoriteIds].filter(id => {
+        const p = allProverbs.find(prov => String(getProverbId(prov)) === id);
+        if (!p) return false;
+        return currentCultureFilter === 'all' || p.culture === currentCultureFilter;
+    }).length;
+    
+    html += `
+        <button class="filter-btn ${currentFilter === 'favorites' ? 'active' : ''}" data-filter="favorites" onclick="handleFilterClick(this)">
+            <span class="btn-icon">♥</span>
+            <span class="btn-text">Favorites</span>
+            <span class="filter-count">${favCount}</span>
+        </button>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// ============================================
+// FILTER HANDLERS
 // ============================================
 window.handleFilterClick = function(arg) {
     const btn = arg.currentTarget || arg;
     const filter = btn.dataset.filter;
     
-    console.log('[AGGRESSIVE] CLICK:', filter);
+    currentFilter = filter;
+    displayedCount = 24;
     
-    // Update active state
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    // Update UI
+    document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // Apply filter
-    if (typeof currentFilter !== 'undefined') currentFilter = filter;
-    if (typeof displayedCount !== 'undefined') displayedCount = 24;
     
     // Clear search
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = '';
     
-    applyFilter(filter);
-    
-    console.log('[AGGRESSIVE] Filter applied:', filter, 'Count:', currentProverbs ? currentProverbs.length : 0);
+    applyCombinedFilter();
     return false;
 };
 
-// Culture filter handler
 window.handleCultureFilterClick = function(arg) {
     const btn = arg.currentTarget || arg;
     const culture = btn.dataset.culture;
     
-    console.log('[CULTURE] CLICK:', culture);
+    currentCultureFilter = culture;
+    currentFilter = 'all'; // Reset topic when changing culture
+    displayedCount = 24;
     
-    // Update active state
+    // Update UI
     document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    currentCultureFilter = culture;
-    applyCombinedFilter();
+    // Update available topics for this culture
+    updateTopicFilters();
     
+    applyCombinedFilter();
     return false;
 };
 
-// Apply combined category + culture filter
 function applyCombinedFilter() {
     let filtered = [...allProverbs];
     
-    // Apply culture filter
+    // Apply culture filter first
     if (currentCultureFilter !== 'all') {
         filtered = filtered.filter(p => p.culture === currentCultureFilter);
     }
     
-    // Apply category filter
+    // Apply topic filter
     if (currentFilter === 'favorites') {
         filtered = filtered.filter(p => isFavorite(getProverbId(p)));
     } else if (currentFilter !== 'all') {
@@ -136,21 +210,26 @@ function applyCombinedFilter() {
 }
 
 // ============================================
-// RENDER PROVERBS WITH CULTURE BADGES
+// RENDER PROVERBS
 // ============================================
 function renderProverbs(proverbsToRender, append = false) {
     const container = document.getElementById('proverbsContainer');
     if (!container) return;
 
     if (proverbsToRender.length === 0 && !append) {
+        const cultureName = currentCultureFilter === 'all' ? '' : 
+                           currentCultureFilter === 'chinese' ? 'Chinese ' :
+                           currentCultureFilter === 'japanese' ? 'Japanese ' : 'Korean ';
+        const topicName = currentFilter === 'all' ? '' : currentFilter + ' ';
+        
         container.innerHTML = `
             <div class="no-results">
                 <div class="no-results-icon">📜</div>
-                <p class="no-results-title">未找到相关谚语</p>
-                <p class="no-results-text">No proverbs found matching your search.</p>
+                <p class="no-results-title">No ${cultureName}${topicName}proverbs found</p>
+                <p class="no-results-text">Try selecting a different topic or language.</p>
             </div>
         `;
-        updateStats(0);
+        document.getElementById('loadMoreSection').style.display = 'none';
         return;
     }
 
@@ -164,12 +243,11 @@ function renderProverbs(proverbsToRender, append = false) {
         const favClass = isFavorite(proverbId) ? 'is-favorite' : '';
         const heartIcon = isFavorite(proverbId) ? '♥' : '♡';
         
-        // Get display text based on culture
-        const displayText = proverb.cn || proverb.jp || proverb.kr || '';
-        const pronunciation = proverb.py || proverb.romaji || proverb.roman || '';
+        const displayText = proverb.cn || '';
+        const pronunciation = proverb.py || '';
         
-        // Culture badge
-        const cultureBadge = proverb.culture ? `<span class="culture-badge ${proverb.culture}">${proverb.cultureFlag} ${proverb.cultureLabel}</span>` : '';
+        const cultureBadge = proverb.culture ? 
+            `<span class="culture-badge ${proverb.culture}">${proverb.cultureFlag} ${proverb.cultureLabel}</span>` : '';
         
         const delay = Math.min((startIndex + index) * 0.03, 0.72);
         
@@ -207,117 +285,122 @@ function renderProverbs(proverbsToRender, append = false) {
     }
 
     updateStats(append ? container.querySelectorAll('.proverb-card').length : proverbsToRender.length);
+    
+    // Show/hide load more button
+    const loadMoreSection = document.getElementById('loadMoreSection');
+    if (loadMoreSection) {
+        const totalShowing = container.querySelectorAll('.proverb-card').length;
+        loadMoreSection.style.display = totalShowing < currentProverbs.length ? 'block' : 'none';
+    }
 }
 
 // ============================================
-// SETUP CULTURE FILTER BUTTONS
+// SETUP UI
 // ============================================
 function setupCultureFilters() {
     const container = document.querySelector('.controls-section');
     if (!container) return;
     
-    // Check if already exists
     if (document.querySelector('.culture-filter-section')) return;
     
+    // Create culture filter section
     const cultureSection = document.createElement('div');
     cultureSection.className = 'filter-section culture-filter-section';
     cultureSection.innerHTML = `
-        <span class="filter-label">Culture:</span>
+        <span class="filter-label">Language:</span>
         <div class="filter-buttons culture-filter-buttons">
             <button class="filter-btn culture-filter-btn active" data-culture="all" onclick="handleCultureFilterClick(this)">
                 <span class="btn-icon">🌏</span>
                 <span class="btn-text">All</span>
+                <span class="filter-count">${allProverbs.length}</span>
             </button>
             <button class="filter-btn culture-filter-btn" data-culture="chinese" onclick="handleCultureFilterClick(this)">
                 <span class="btn-icon">🇨🇳</span>
                 <span class="btn-text">Chinese</span>
+                <span class="filter-count">${allProverbs.filter(p => p.culture === 'chinese').length}</span>
             </button>
             <button class="filter-btn culture-filter-btn" data-culture="japanese" onclick="handleCultureFilterClick(this)">
                 <span class="btn-icon">🇯🇵</span>
                 <span class="btn-text">Japanese</span>
+                <span class="filter-count">${allProverbs.filter(p => p.culture === 'japanese').length}</span>
             </button>
             <button class="filter-btn culture-filter-btn" data-culture="korean" onclick="handleCultureFilterClick(this)">
                 <span class="btn-icon">🇰🇷</span>
                 <span class="btn-text">Korean</span>
+                <span class="filter-count">${allProverbs.filter(p => p.culture === 'korean').length}</span>
             </button>
         </div>
     `;
     
-    // Insert after the search box
+    // Create topic filter section
+    const topicSection = document.createElement('div');
+    topicSection.className = 'filter-section topic-filter-section';
+    topicSection.innerHTML = `
+        <span class="filter-label" id="topicFilterLabel">Topics:</span>
+        <div class="filter-buttons" id="topicFilterButtons"></div>
+    `;
+    
+    // Insert after search box
     const searchBox = container.querySelector('.search-box');
     if (searchBox) {
         searchBox.after(cultureSection);
+        cultureSection.after(topicSection);
     } else {
+        container.prepend(topicSection);
         container.prepend(cultureSection);
     }
 }
 
-// ============================================
-// CSS FOR CULTURE BADGES
-// ============================================
-const cultureCSS = `
-.culture-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-right: 8px;
+function setupSearch() {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    
+    let debounceTimer;
+    input.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => performSearch(e.target.value), 300);
+    });
 }
 
-.culture-badge.chinese {
-    background: rgba(199, 62, 29, 0.1);
-    color: #C73E1D;
+function performSearch(query) {
+    const q = query.toLowerCase().trim();
+    if (!q) {
+        applyCombinedFilter();
+        return;
+    }
+    
+    const filtered = allProverbs.filter(p => {
+        // Respect current culture filter
+        if (currentCultureFilter !== 'all' && p.culture !== currentCultureFilter) {
+            return false;
+        }
+        
+        const text = (p.cn || '').toLowerCase();
+        const en = (p.en || '').toLowerCase();
+        const pron = (p.py || '').toLowerCase();
+        return text.includes(q) || en.includes(q) || pron.includes(q);
+    });
+    
+    currentProverbs = filtered;
+    renderProverbs(filtered.slice(0, displayedCount));
+    updateStats(filtered.length);
 }
 
-.culture-badge.japanese {
-    background: rgba(27, 75, 122, 0.1);
-    color: #1B4B7A;
+function setupLoadMore() {
+    const btn = document.getElementById('loadMoreBtn');
+    if (!btn) return;
+    
+    btn.addEventListener('click', () => {
+        displayedCount += PROVERBS_PER_LOAD;
+        renderProverbs(currentProverbs.slice(0, displayedCount));
+    });
 }
-
-.culture-badge.korean {
-    background: rgba(196, 30, 58, 0.1);
-    color: #C41E3A;
-}
-
-.proverb-card.chinese {
-    border-left: 3px solid #C73E1D;
-}
-
-.proverb-card.japanese {
-    border-left: 3px solid #1B4B7A;
-}
-
-.proverb-card.korean {
-    border-left: 3px solid #C41E3A;
-}
-
-.culture-filter-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.culture-filter-btn .btn-icon {
-    font-size: 16px;
-}
-`;
-
-// Inject CSS
-const styleEl = document.createElement('style');
-styleEl.textContent = cultureCSS;
-document.head.appendChild(styleEl);
 
 // ============================================
-// EXISTING FUNCTIONS (preserved)
+// UTILITIES
 // ============================================
-
 function getProverbId(proverb) {
-    return proverb.id || proverb.cn || proverb.jp || proverb.kr;
+    return proverb.id || proverb.cn;
 }
 
 function updateStats(count) {
@@ -325,10 +408,12 @@ function updateStats(count) {
     if (el) el.textContent = count;
     
     const totalEl = document.getElementById('totalCount');
-    if (totalEl) totalEl.textContent = allProverbs.length + '+';
+    if (totalEl) totalEl.textContent = allProverbs.length;
 }
 
-// Favorites
+// ============================================
+// FAVORITES
+// ============================================
 let favoriteIds = new Set();
 const FAVORITES_STORAGE_KEY = 'east_asian_wisdom_favorites';
 
@@ -361,6 +446,9 @@ function toggleFavorite(proverbId, event) {
     
     saveFavorites();
     updateFavoriteButtonUI(idStr);
+    
+    // Update topic filters to refresh favorite count
+    updateTopicFilters();
 }
 
 function isFavorite(proverbId) {
@@ -371,38 +459,31 @@ function updateFavoriteButtonUI(proverbId) {
     document.querySelectorAll(`.favorite-btn[data-id="${proverbId}"]`).forEach(btn => {
         const isFav = isFavorite(proverbId);
         btn.classList.toggle('is-favorite', isFav);
-        btn.querySelector('.heart-icon').textContent = isFav ? '♥' : '♡';
+        const heartSpan = btn.querySelector('.heart-icon');
+        if (heartSpan) heartSpan.textContent = isFav ? '♥' : '♡';
     });
 }
 
-// Toast
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    if (!toast) return;
-    toast.querySelector('.toast-message').textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// Copy
-function copyProverb(chinese, pinyin, english) {
-    const text = `${chinese}\n${pinyin}\n${english}`;
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('Copied to clipboard!');
-    });
-}
-
-// Modal
+// ============================================
+// MODAL
+// ============================================
 function showProverbInModal(text, pinyin, english, category, id) {
     const modal = document.getElementById('proverbModal');
     if (!modal) return;
     
-    document.getElementById('modalChinese').textContent = text;
-    document.getElementById('modalPinyin').textContent = pinyin;
-    document.getElementById('modalEnglish').textContent = english;
-    document.getElementById('modalCategory').textContent = category;
+    const chineseEl = document.getElementById('modalChinese');
+    const pinyinEl = document.getElementById('modalPinyin');
+    const englishEl = document.getElementById('modalEnglish');
+    const categoryEl = document.getElementById('modalCategory');
     
-    modal.querySelector('.modal-content').dataset.proverbId = id;
+    if (chineseEl) chineseEl.textContent = text;
+    if (pinyinEl) pinyinEl.textContent = pinyin;
+    if (englishEl) englishEl.textContent = english;
+    if (categoryEl) categoryEl.textContent = category;
+    
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.dataset.proverbId = id;
+    
     updateModalFavoriteButton(id);
     
     modal.classList.add('active');
@@ -425,7 +506,9 @@ function closeModal() {
     }
 }
 
-// Audio
+// ============================================
+// AUDIO & COPY
+// ============================================
 function playCardAudio(text, btn) {
     if (!('speechSynthesis' in window)) {
         showToast('Audio not supported');
@@ -436,7 +519,6 @@ function playCardAudio(text, btn) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.8;
     
-    // Try to find appropriate voice
     const voices = window.speechSynthesis.getVoices();
     const voice = voices.find(v => v.lang.includes('zh')) || voices[0];
     if (voice) utterance.voice = voice;
@@ -447,75 +529,176 @@ function playCardAudio(text, btn) {
     window.speechSynthesis.speak(utterance);
 }
 
-// Filter
-function applyFilter(filter) {
-    currentFilter = filter;
-    applyCombinedFilter();
-}
-
-// Search
-function setupSearch() {
-    const input = document.getElementById('searchInput');
-    if (!input) return;
-    
-    let debounceTimer;
-    input.addEventListener('input', (e) => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => performSearch(e.target.value), 300);
+function copyProverb(text, pinyin, english) {
+    const fullText = `${text}\n${pinyin}\n${english}`;
+    navigator.clipboard.writeText(fullText).then(() => {
+        showToast('Copied to clipboard!');
     });
 }
 
-function performSearch(query) {
-    const q = query.toLowerCase().trim();
-    if (!q) {
-        applyCombinedFilter();
-        return;
+// ============================================
+// TOAST
+// ============================================
+function showToast(message) {
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'toast';
+        toast.innerHTML = '<span class="toast-message"></span>';
+        document.body.appendChild(toast);
     }
     
-    const filtered = allProverbs.filter(p => {
-        const text = (p.cn || p.jp || p.kr || '').toLowerCase();
-        const en = (p.en || '').toLowerCase();
-        const pron = (p.py || '').toLowerCase();
-        return text.includes(q) || en.includes(q) || pron.includes(q);
-    });
+    const msgEl = toast.querySelector('.toast-message');
+    if (msgEl) msgEl.textContent = message;
     
-    currentProverbs = filtered;
-    renderProverbs(filtered.slice(0, displayedCount));
-    updateStats(filtered.length);
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Initialize
+// ============================================
+// CSS INJECTION
+// ============================================
+const appCSS = `
+.culture-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 8px;
+}
+
+.culture-badge.chinese { background: rgba(199, 62, 29, 0.1); color: #C73E1D; }
+.culture-badge.japanese { background: rgba(27, 75, 122, 0.1); color: #1B4B7A; }
+.culture-badge.korean { background: rgba(196, 30, 58, 0.1); color: #C41E3A; }
+
+.proverb-card.chinese { border-left: 3px solid #C73E1D; }
+.proverb-card.japanese { border-left: 3px solid #1B4B7A; }
+.proverb-card.korean { border-left: 3px solid #C41E3A; }
+
+.filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    padding: 2px 6px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+.filter-btn.active .filter-count {
+    background: rgba(255,255,255,0.3);
+}
+
+.filter-section {
+    margin-bottom: 16px;
+}
+
+.filter-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.no-results-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.no-results-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+`;
+
+const styleEl = document.createElement('style');
+styleEl.textContent = appCSS;
+document.head.appendChild(styleEl);
+
+// ============================================
+// INITIALIZATION
+// ============================================
 function initializeApp() {
-    console.log('[App] Initializing East Asian Wisdom...');
+    console.log('[East Asian Wisdom] Initializing...');
+    console.log('[East Asian Wisdom] Total proverbs:', allProverbs.length);
+    console.log('[East Asian Wisdom] Chinese:', allProverbs.filter(p => p.culture === 'chinese').length);
+    console.log('[East Asian Wisdom] Japanese:', allProverbs.filter(p => p.culture === 'japanese').length);
+    console.log('[East Asian Wisdom] Korean:', allProverbs.filter(p => p.culture === 'korean').length);
     
     loadFavorites();
     setupCultureFilters();
+    updateTopicFilters();
     setupSearch();
+    setupLoadMore();
     
-    // Setup modal close
+    // Modal close handlers
     document.querySelectorAll('.close-btn').forEach(btn => {
         btn.addEventListener('click', closeModal);
     });
     
-    document.getElementById('proverbModal')?.addEventListener('click', (e) => {
-        if (e.target.id === 'proverbModal') closeModal();
-    });
+    const modal = document.getElementById('proverbModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
     
-    // Setup favorite button in modal
-    document.getElementById('favoriteModalBtn')?.addEventListener('click', () => {
-        const id = document.querySelector('#proverbModal .modal-content')?.dataset.proverbId;
-        if (id) {
-            toggleFavorite(id);
-            updateModalFavoriteButton(id);
-        }
-    });
+    const favBtn = document.getElementById('favoriteModalBtn');
+    if (favBtn) {
+        favBtn.addEventListener('click', () => {
+            const modalContent = document.querySelector('#proverbModal .modal-content');
+            const id = modalContent?.dataset.proverbId;
+            if (id) {
+                toggleFavorite(id);
+                updateModalFavoriteButton(id);
+            }
+        });
+    }
     
     // Initial render
     renderProverbs(currentProverbs.slice(0, displayedCount));
     updateStats(allProverbs.length);
     
-    console.log('[App] Loaded', allProverbs.length, 'proverbs');
+    console.log('[East Asian Wisdom] Ready!');
 }
 
-// Start
 document.addEventListener('DOMContentLoaded', initializeApp);
