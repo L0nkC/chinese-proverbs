@@ -3,7 +3,7 @@
  * 50+ Traditional Korean sayings with Romanization
  */
 
-const koreanProverbs = [
+const koreanProverbsData = [
     // WISDOM & LIFE (1-15)
     { id: "ko-001", kr: "가는 말이 고와야 오는 말이 곱다", roman: "Ganeun mari gowaya oneun mari gopda", en: "If the outgoing words are beautiful, the incoming words will be beautiful too. / Treat others as you wish to be treated.", cats: ["wisdom", "friendship", "life"], culture: "korean" },
     { id: "ko-002", kr: "소 잃고 외양간 고친다", roman: "So ilko woeyanggan gochinda", en: "After losing the cow, fix the barn. / Lock the barn door after the horse is stolen.", cats: ["wisdom", "life"], culture: "korean" },

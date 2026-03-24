@@ -3,7 +3,7 @@
  * 50+ Traditional Japanese sayings with Romaji
  */
 
-const japaneseProverbs = [
+const japaneseProverbsData = [
     // WISDOM & LIFE (1-20)
     { id: "ja-001", jp: "石の上にも三年", romaji: "Ishi no ue ni mo sannen", en: "Three years on a stone. / Perseverance brings success.", cats: ["perseverance", "wisdom", "life"], culture: "japanese" },
     { id: "ja-002", jp: "七転び八起き", romaji: "Nana korobi ya oki", en: "Fall seven times, stand up eight. / Never give up.", cats: ["perseverance", "wisdom", "life"], culture: "japanese" },

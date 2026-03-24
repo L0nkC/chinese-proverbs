@@ -445,3 +445,6 @@ var allProverbs = [...proverbs, ...cantoneseProverbs];
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { proverbs, cantoneseProverbs, allProverbs, collections, getProverbsByCollection, getFeaturedCollections };
 }
+
+// Alias for East Asian Wisdom app
+var chineseProverbs = proverbs;
