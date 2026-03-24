@@ -9,8 +9,18 @@
 function initializeAllProverbs() {
     const combined = [];
     
-    if (typeof chineseProverbs !== 'undefined') {
-        chineseProverbs.forEach(p => {
+    // Helper to get data from either direct variable or window object
+    const getData = (varName) => {
+        if (typeof window !== 'undefined' && window[varName]) return window[varName];
+        if (typeof globalThis !== 'undefined' && globalThis[varName]) return globalThis[varName];
+        return typeof eval(varName) !== 'undefined' ? eval(varName) : null;
+    };
+    
+    // Chinese proverbs
+    const cnData = typeof chineseProverbs !== 'undefined' ? chineseProverbs : 
+                   (typeof window !== 'undefined' && window.chineseProverbs) ? window.chineseProverbs : null;
+    if (cnData) {
+        cnData.forEach(p => {
             combined.push({
                 ...p,
                 culture: 'chinese',
@@ -20,8 +30,11 @@ function initializeAllProverbs() {
         });
     }
     
-    if (typeof japaneseProverbsData !== 'undefined') {
-        japaneseProverbsData.forEach(p => {
+    // Japanese proverbs
+    const jpData = typeof japaneseProverbsData !== 'undefined' ? japaneseProverbsData :
+                   (typeof window !== 'undefined' && window.japaneseProverbsData) ? window.japaneseProverbsData : null;
+    if (jpData) {
+        jpData.forEach(p => {
             combined.push({
                 jp: p.jp,
                 cn: p.jp,
@@ -35,8 +48,11 @@ function initializeAllProverbs() {
         });
     }
     
-    if (typeof koreanProverbsData !== 'undefined') {
-        koreanProverbsData.forEach(p => {
+    // Korean proverbs
+    const krData = typeof koreanProverbsData !== 'undefined' ? koreanProverbsData :
+                   (typeof window !== 'undefined' && window.koreanProverbsData) ? window.koreanProverbsData : null;
+    if (krData) {
+        krData.forEach(p => {
             combined.push({
                 kr: p.kr,
                 cn: p.kr,
