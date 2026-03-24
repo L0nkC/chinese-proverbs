@@ -163,7 +163,63 @@
                     <div class="search-history-list" id="searchHistoryList"></div>
                 </div>
             </div>
-            <!-- Language and Topic filters will be injected here by app.js -->
+            <!-- Language Filters -->
+            <div class="filter-section culture-filter-section">
+                <span class="filter-label">Language:</span>
+                <div class="filter-buttons culture-filter-buttons">
+                    <button class="filter-btn culture-filter-btn active" data-culture="all" onclick="handleCultureFilterClick(this)">
+                        <span class="btn-icon">🌏</span>
+                        <span class="btn-text">All</span>
+                    </button>
+                    <button class="filter-btn culture-filter-btn" data-culture="chinese" onclick="handleCultureFilterClick(this)">
+                        <span class="btn-icon">🇨🇳</span>
+                        <span class="btn-text">Chinese</span>
+                    </button>
+                    <button class="filter-btn culture-filter-btn" data-culture="japanese" onclick="handleCultureFilterClick(this)">
+                        <span class="btn-icon">🇯🇵</span>
+                        <span class="btn-text">Japanese</span>
+                    </button>
+                    <button class="filter-btn culture-filter-btn" data-culture="korean" onclick="handleCultureFilterClick(this)">
+                        <span class="btn-icon">🇰🇷</span>
+                        <span class="btn-text">Korean</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Topic Filters -->
+            <div class="filter-section topic-filter-section">
+                <span class="filter-label" id="topicFilterLabel">Topics:</span>
+                <div class="filter-buttons" id="topicFilterButtons">
+                    <button class="filter-btn active" data-filter="all" onclick="handleFilterClick(this)">
+                        <span class="btn-text">All</span>
+                    </button>
+                    <button class="filter-btn" data-filter="wisdom" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Wisdom</span>
+                    </button>
+                    <button class="filter-btn" data-filter="life" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Life</span>
+                    </button>
+                    <button class="filter-btn" data-filter="learning" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Learning</span>
+                    </button>
+                    <button class="filter-btn" data-filter="perseverance" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Perseverance</span>
+                    </button>
+                    <button class="filter-btn" data-filter="friendship" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Friendship</span>
+                    </button>
+                    <button class="filter-btn" data-filter="love" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Love</span>
+                    </button>
+                    <button class="filter-btn" data-filter="business" onclick="handleFilterClick(this)">
+                        <span class="btn-text">Business</span>
+                    </button>
+                    <button class="filter-btn favorites" data-filter="favorites" onclick="handleFilterClick(this)">
+                        <span class="btn-icon">♥</span>
+                        <span class="btn-text">Favorites</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="stats-bar">
