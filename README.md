@@ -37,6 +37,19 @@ The design draws inspiration from ancient Chinese aesthetics, featuring traditio
 | 📋 **Copy & Share** | One-click copy or native share on mobile |
 | 📱 **Responsive** | Beautiful on desktop, tablet, and mobile |
 | ⌨️ **Keyboard Shortcuts** | Quick navigation with keyboard commands |
+| 🎵 **Audio Pronunciation** | Web Speech API for Mandarin and Cantonese playback |
+| ⭐ **Favorites System** | Save favorites with cloud sync (when logged in) |
+| 🌙 **Dark Mode** | Ink-black night mode theme |
+| 🎮 **Quiz Mode** | Interactive multiple-choice game with scoring |
+| 📊 **Collections** | Curated sets: Entrepreneurs, Students, Hard Times |
+| 🎴 **Flashcards** | Spaced repetition learning with SM-2 algorithm |
+| 🤖 **AI Explanations** | Deep cultural analysis using OpenAI GPT |
+| 👤 **User Accounts** | Google/email sign-in with cloud-synced data |
+| 📝 **Community Submissions** | Submit new proverbs for review |
+| 📤 **Export Favorites** | Download as JSON or CSV |
+| 🕐 **Recently Viewed** | Track your browsing history |
+| 🎯 **PWA Support** | Install as native app, works offline |
+| ⏰ **Time Themes** | Greetings change based on time of day |
 
 ---
 
@@ -120,11 +133,32 @@ open index.html
 
 ```
 chinese-proverbs/
-├── index.html          # Main HTML structure
-├── style.css           # Ancient Chinese styling (28KB)
-├── proverbs.js         # 250+ proverbs with pinyin/jyutping (25KB)
-├── app.js              # Interactive features (12KB)
-└── README.md           # Documentation
+├── index.html                    # Main HTML structure
+├── style.css                     # Ancient Chinese styling
+├── proverbs.js                   # 250+ proverbs with pinyin/jyutping
+├── app.js                        # Interactive features
+├── firebase-auth.js              # User authentication & cloud sync
+├── community-submissions.js      # Submit new proverbs
+├── learning-mode.js              # Flashcards & spaced repetition
+├── ai-explainer.js               # GPT-powered explanations
+├── recent-proverbs.js            # Track recently viewed
+├── time-theme.js                 # Time-based greetings
+├── seo-enhancer.js               # Meta tags & structured data
+├── pwa-install.js                # PWA install prompt
+├── sw.js                         # Service worker for offline
+├── tests.js                      # Unit tests
+├── dark-mode.js                  # Dark mode toggle
+├── dark-mode.css                 # Dark theme styles
+├── big-features.css              # Major UI components
+├── related-proverbs.css          # Related suggestions styling
+├── recent-proverbs.css           # History section styles
+├── time-theme.css                # Time-based theme styles
+├── pwa-install.css               # PWA install banner
+├── email-subscription.css        # Email signup styles
+├── print.css                     # Print-friendly styles
+├── keyboard-shortcuts.css        # Keyboard help modal
+├── manifest.json                 # PWA manifest
+└── README.md                     # Documentation
 ```
 
 ---
@@ -187,10 +221,13 @@ This project is open source and available under the [MIT License](LICENSE).
 - [x] **Character Count Filter** - Filter by 4-char chengyu, short, or long proverbs
 - [x] **"Surprise Me" Button** - Random proverb with dice roll animation
 - [x] **Export Favorites** - Download as JSON or CSV
+- [x] **Bookmark/History** - Track recently viewed proverbs
+- [x] **Progressive Web App** - Install as native app with offline support
 - [ ] **Daily Email** - Subscribe to receive a daily proverb via email
-- [ ] **Bookmark/History** - Track recently viewed proverbs
-- [ ] **Progressive Web App** - Install as native app with offline support
 - [ ] **API Endpoints** - REST API for programmatic access to proverbs
+- [ ] **Calligraphy Practice Mode** - Trace characters with mouse/touch feedback
+- [ ] **Proverb Comparison Tool** - Side-by-side similar proverbs across cultures
+- [ ] **Mood-Based Recommendations** - AI suggests proverbs based on user's mood
 
 ### 📚 Content Expansion
 
@@ -201,6 +238,9 @@ This project is open source and available under the [MIT License](LICENSE).
 - [ ] Include regional variations of proverbs
 - [ ] Add audio recordings by native speakers (replace TTS)
 - [ ] Add "Proverb of the Day" with push notifications
+- [ ] Add Japanese/Korean proverb equivalents (东亚谚语对比)
+- [ ] Add "Proverb Stories" - Long-form articles about famous proverbs
+- [ ] Add "This Day in History" - Proverbs related to historical events
 
 ### ⚡ Technical Improvements
 
@@ -208,21 +248,25 @@ This project is open source and available under the [MIT License](LICENSE).
 - [x] Virtual scrolling for better performance
 - [x] Animations for card transitions
 - [x] Accessibility improvements (ARIA labels, keyboard navigation)
-- [ ] Add unit tests for JavaScript functions
-- [ ] SEO optimization with meta tags and structured data
+- [x] SEO optimization with meta tags and structured data
+- [x] Unit tests for JavaScript functions
 - [ ] Image optimization and lazy loading
 - [ ] Bundle and minify assets for production
+- [ ] Add TypeScript for type safety
+- [ ] Implement automated testing with Playwright
 
 ### 🎨 Design Enhancements
 
 - [x] Custom cursor inspired by calligraphy brush
 - [x] Ink wash painting backgrounds
 - [x] Animated seal stamp on interactions
+- [x] Dynamic background based on time of day
+- [x] Custom scrollbars with Chinese motif
 - [ ] Parallax scrolling effects on bamboo elements
 - [ ] Seasonal themes (Spring, Summer, Autumn, Winter)
-- [ ] Dynamic background based on time of day
-- [ ] Custom scrollbars with Chinese motif
 - [ ] Sound effects for interactions (optional)
+- [ ] 3D card flip animations for flashcards
+- [ ] Particle effects (falling leaves, cherry blossoms)
 
 ---
 
