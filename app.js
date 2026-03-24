@@ -454,3 +454,33 @@ const UserAuth = {
         showToast('Sign in coming soon!');
     }
 };
+
+// Legacy onclick handlers for HTML compatibility
+function handleCultureFilterClick(btn) {
+    document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCulture = btn.dataset.culture;
+    applyFilters();
+}
+
+function handleFilterClick(btn) {
+    document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTopic = btn.dataset.filter;
+    applyFilters();
+}
+
+// Global exports for onclick handlers
+window.surpriseMe = surpriseMe;
+window.showRandomProverb = showRandomProverb;
+window.playDailyAudio = playDailyAudio;
+window.showExportModal = showExportModal;
+window.closeExportModal = closeExportModal;
+window.downloadExport = downloadExport;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.toggleFav = toggleFav;
+window.speak = speak;
+window.copyText = copyText;
+window.handleCultureFilterClick = handleCultureFilterClick;
+window.handleFilterClick = handleFilterClick;
