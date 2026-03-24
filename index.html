@@ -29,6 +29,110 @@
     <link rel="stylesheet" href="related-proverbs.css">
     <link rel="stylesheet" href="dark-mode.css">
     <link rel="stylesheet" href="enhanced-styles.css">
+    <style>
+        /* East Asian Wisdom - Card Styles */
+        .proverb-card {
+            border-left: 4px solid #ccc;
+            padding: 20px;
+            margin: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .proverb-card:hover {
+            transform: translateY(-2px);
+        }
+        .proverb-card.chinese { border-left-color: #C73E1D; }
+        .proverb-card.japanese { border-left-color: #1B4B7A; }
+        .proverb-card.korean { border-left-color: #C41E3A; }
+
+        .culture-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #f0f0f0;
+            margin-right: 8px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        .speaker-btn, .favorite-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+
+        .favorite-btn.is-favorite { color: #e74c3c; }
+        .speaker-btn.playing { animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .proverb-chinese {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        .proverb-pinyin {
+            color: #666;
+            font-style: italic;
+            margin: 4px 0;
+        }
+
+        .proverb-english {
+            color: #333;
+            margin: 8px 0;
+        }
+
+        .card-footer {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .card-footer button {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .card-footer button:hover {
+            background: #f5f5f5;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Active button states */
+        .culture-filter-btn.active,
+        #topicFilterButtons .filter-btn.active {
+            background: var(--vermilion, #C73E1D);
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <!-- Dark Mode Toggle -->
