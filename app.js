@@ -1,164 +1,273 @@
 /**
- * East Asian Wisdom - Aggressive Fix Version
+ * East Asian Wisdom - Application Logic
+ * Based on working version pattern from 533d6ca
  */
 
-console.log('[EAW] Script starting...');
+// ============================================
+// AGGRESSIVE GLOBAL BUTTON HANDLERS
+// ============================================
 
-// Global state - EXPOSE EVERYTHING TO WINDOW IMMEDIATELY
-window.EAW = {
-    allProverbs: [],
-    currentProverbs: [],
-    favoriteIds: JSON.parse(localStorage.getItem('favorites') || '[]'),
-    currentCulture: 'all',
-    currentTopic: 'all',
-    initialized: false
-};
-
-console.log('[EAW] State initialized:', window.EAW);
-
-// Core functions defined immediately
-window.getId = function(p) {
-    return p.id || p.cn || p.jp || p.kr || 'unknown';
-};
-
-window.applyFilters = function() {
-    console.log('[EAW] applyFilters called:', window.EAW.currentCulture, window.EAW.currentTopic);
+// Culture filter handler
+window.handleCultureFilterClick = function(arg) {
+    const btn = arg.currentTarget || arg;
+    const culture = btn.dataset.culture;
     
-    let filtered = window.EAW.allProverbs;
-    console.log('[EAW] Starting with', filtered.length, 'proverbs');
+    console.log('[EAW] Culture click:', culture);
     
-    // Apply culture filter
-    if (window.EAW.currentCulture !== 'all') {
-        filtered = filtered.filter(p => p.culture === window.EAW.currentCulture);
-        console.log('[EAW] After culture filter:', filtered.length);
+    // Update active state
+    document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Update current filter
+    window.currentCultureFilter = culture;
+    window.displayedCount = 24;
+    
+    // Apply filter
+    if (culture === 'all') {
+        window.currentProverbs = [...window.allProverbs];
+    } else {
+        window.currentProverbs = window.allProverbs.filter(p => p.culture === culture);
     }
     
-    // Apply topic filter
-    if (window.EAW.currentTopic !== 'all') {
-        if (window.EAW.currentTopic === 'favorites') {
-            filtered = filtered.filter(p => window.EAW.favoriteIds.includes(window.getId(p)));
-        } else {
-            filtered = filtered.filter(p => {
-                const cats = p.cats || [];
-                return cats.includes(window.EAW.currentTopic);
-            });
+    // Render
+    if (typeof window.renderProverbs === 'function') {
+        window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
+    }
+    
+    console.log('[EAW] Culture filter applied:', culture, 'Count:', window.currentProverbs.length);
+    return false;
+};
+
+// Topic filter handler
+window.handleFilterClick = function(arg) {
+    const btn = arg.currentTarget || arg;
+    const filter = btn.dataset.filter;
+    
+    console.log('[EAW] Topic click:', filter);
+    
+    // Update active state
+    document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Update current filter
+    window.currentFilter = filter;
+    window.displayedCount = 24;
+    
+    // Apply filter
+    if (filter === 'all') {
+        window.currentProverbs = [...window.allProverbs];
+    } else if (filter === 'favorites') {
+        window.currentProverbs = window.allProverbs.filter(p => 
+            window.favoriteIds.has(window.getProverbId(p))
+        );
+    } else {
+        window.currentProverbs = window.allProverbs.filter(p => {
+            const cats = p.cats || [];
+            return cats.includes(filter);
+        });
+    }
+    
+    // Render
+    if (typeof window.renderProverbs === 'function') {
+        window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
+    }
+    
+    console.log('[EAW] Topic filter applied:', filter, 'Count:', window.currentProverbs.length);
+    return false;
+};
+
+// Helper to get proverb ID
+window.getProverbId = function(p) {
+    return p.id || p.cn || 'unknown';
+};
+
+// ============================================
+// STATE (Global variables for compatibility)
+// ============================================
+window.allProverbs = [];
+window.currentProverbs = [];
+window.currentFilter = 'all';
+window.currentCultureFilter = 'all';
+window.displayedCount = 24;
+window.favoriteIds = new Set();
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('[EAW] DOM loaded, initializing...');
+    
+    // Load favorites
+    try {
+        const saved = localStorage.getItem('east_asian_favorites');
+        if (saved) {
+            const arr = JSON.parse(saved);
+            arr.forEach(id => window.favoriteIds.add(id));
         }
-        console.log('[EAW] After topic filter:', filtered.length);
+    } catch(e) {
+        console.log('[EAW] No saved favorites');
     }
     
-    window.EAW.currentProverbs = filtered;
-    window.renderProverbs(filtered);
+    // Wait for data then init
+    waitForData();
+});
+
+function waitForData() {
+    let attempts = 0;
+    const interval = setInterval(function() {
+        attempts++;
+        
+        const hasChinese = typeof chineseProverbs !== 'undefined' && chineseProverbs.length > 0;
+        const hasJapanese = typeof japaneseProverbsData !== 'undefined' && japaneseProverbsData.length > 0;
+        const hasKorean = typeof koreanProverbsData !== 'undefined' && koreanProverbsData.length > 0;
+        
+        if (hasChinese || attempts > 50) {
+            clearInterval(interval);
+            initProverbs(hasChinese, hasJapanese, hasKorean);
+        }
+    }, 100);
+}
+
+function initProverbs(hasChinese, hasJapanese, hasKorean) {
+    console.log('[EAW] Loading data:', {hasChinese, hasJapanese, hasKorean});
+    
+    window.allProverbs = [];
+    
+    // Load Chinese
+    if (hasChinese) {
+        chineseProverbs.forEach(p => {
+            window.allProverbs.push({
+                ...p,
+                culture: 'chinese',
+                flag: '🇨🇳',
+                label: '中文'
+            });
+        });
+    }
+    
+    // Load Japanese
+    if (hasJapanese) {
+        japaneseProverbsData.forEach(p => {
+            window.allProverbs.push({
+                cn: p.jp,
+                py: p.romaji,
+                en: p.en,
+                cats: p.cats,
+                culture: 'japanese',
+                flag: '🇯🇵',
+                label: '日本語'
+            });
+        });
+    }
+    
+    // Load Korean
+    if (hasKorean) {
+        koreanProverbsData.forEach(p => {
+            window.allProverbs.push({
+                cn: p.kr,
+                py: p.roman,
+                en: p.en,
+                cats: p.cats,
+                culture: 'korean',
+                flag: '🇰🇷',
+                label: '한국어'
+            });
+        });
+    }
+    
+    console.log('[EAW] Total proverbs:', window.allProverbs.length);
+    
+    window.currentProverbs = [...window.allProverbs];
+    
+    // Initial render
+    window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
     window.updateStats();
-};
+    window.setupDailySpotlight();
+    window.setupSearch();
+    window.setupModal();
+}
+
+// ============================================
+// RENDERING
+// ============================================
 
 window.renderProverbs = function(proverbs) {
-    console.log('[EAW] Rendering', proverbs.length, 'proverbs');
     const container = document.getElementById('proverbsContainer');
     if (!container) {
-        console.error('[EAW] proverbsContainer not found!');
+        console.error('[EAW] Container not found');
         return;
     }
     
-    if (proverbs.length === 0) {
-        container.innerHTML = '<div class="no-results">No proverbs found. Try different filters.</div>';
+    if (!proverbs || proverbs.length === 0) {
+        container.innerHTML = '<div class="no-results">No proverbs found.</div>';
         return;
     }
     
     container.innerHTML = proverbs.map((p, i) => {
-        const id = window.getId(p);
-        const isFav = window.EAW.favoriteIds.includes(id);
+        const id = window.getProverbId(p);
+        const isFav = window.favoriteIds.has(id);
         const cat = (p.cats && p.cats[0]) || 'wisdom';
         
+        const safeCn = (p.cn || '').replace(/'/g, "\\'");
+        const safePy = (p.py || '').replace(/'/g, "\\'");
+        const safeEn = (p.en || '').replace(/'/g, "\\'");
+        const safeId = id.replace(/'/g, "\\'");
+        
         return `
-            <article class="proverb-card ${p.culture}" data-id="${id}" style="animation-delay: ${i * 0.03}s">
+            <article class="proverb-card ${p.culture}" data-id="${id}">
                 <div class="card-header">
                     <span class="culture-badge">${p.flag} ${p.label}</span>
                     <span class="category-tag">${cat}</span>
                     <div class="card-actions">
-                        <button class="speaker-btn" onclick="window.speak('${(p.cn || '').replace(/'/g, "\\'")}', this)">🔊</button>
-                        <button class="favorite-btn ${isFav ? 'is-favorite' : ''}" onclick="window.toggleFav('${id.replace(/'/g, "\\'")}', this)">
-                            ${isFav ? '♥' : '♡'}
-                        </button>
+                        <button class="speaker-btn" onclick="window.speak('${safeCn}', this)">🔊</button>
+                        <button class="favorite-btn ${isFav ? 'is-favorite' : ''}" onclick="window.toggleFavorite('${safeId}', this)">${isFav ? '♥' : '♡'}</button>
                     </div>
                 </div>
                 <p class="proverb-chinese">${p.cn}</p>
                 <p class="proverb-pinyin">${p.py}</p>
                 <p class="proverb-english">${p.en}</p>
                 <div class="card-footer">
-                    <button onclick="window.openModal('${id.replace(/'/g, "\\'")}')">View</button>
-                    <button onclick="window.copyText('${(p.cn || '').replace(/'/g, "\\'")}', '${(p.py || '').replace(/'/g, "\\'")}', '${(p.en || '').replace(/'/g, "\\'")}')">Copy</button>
+                    <button onclick="window.openModal('${safeId}')">View</button>
+                    <button onclick="window.copyText('${safeCn}', '${safePy}', '${safeEn}')">Copy</button>
                 </div>
             </article>
         `;
     }).join('');
-};
-
-window.updateStats = function() {
-    const totalEl = document.getElementById('totalCount');
-    const showingEl = document.getElementById('showingCount');
-    const favEl = document.getElementById('favoritesCount');
     
-    if (totalEl) totalEl.textContent = window.EAW.allProverbs.length;
-    if (showingEl) showingEl.textContent = window.EAW.currentProverbs.length;
-    if (favEl) favEl.textContent = window.EAW.favoriteIds.length;
-    
-    console.log('[EAW] Stats updated:', {
-        total: window.EAW.allProverbs.length,
-        showing: window.EAW.currentProverbs.length,
-        favorites: window.EAW.favoriteIds.length
-    });
+    window.updateStats();
 };
 
-// FILTER HANDLERS - EXPOSED TO WINDOW
-window.handleCultureFilterClick = function(btn) {
-    console.log('[EAW] Culture filter clicked:', btn.dataset.culture);
-    document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    window.EAW.currentCulture = btn.dataset.culture;
-    window.applyFilters();
-};
+// ============================================
+// ACTIONS
+// ============================================
 
-window.handleFilterClick = function(btn) {
-    console.log('[EAW] Topic filter clicked:', btn.dataset.filter);
-    document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    window.EAW.currentTopic = btn.dataset.filter;
-    window.applyFilters();
-};
-
-// OTHER HANDLERS
-window.toggleFav = function(id, btn) {
-    const idx = window.EAW.favoriteIds.indexOf(id);
-    if (idx > -1) {
-        window.EAW.favoriteIds.splice(idx, 1);
+window.toggleFavorite = function(id, btn) {
+    if (window.favoriteIds.has(id)) {
+        window.favoriteIds.delete(id);
         btn.textContent = '♡';
         btn.classList.remove('is-favorite');
-        window.showToast('Removed from favorites');
     } else {
-        window.EAW.favoriteIds.push(id);
+        window.favoriteIds.add(id);
         btn.textContent = '♥';
         btn.classList.add('is-favorite');
-        window.showToast('Added to favorites!');
     }
-    localStorage.setItem('favorites', JSON.stringify(window.EAW.favoriteIds));
+    localStorage.setItem('east_asian_favorites', JSON.stringify([...window.favoriteIds]));
     window.updateStats();
 };
 
 window.speak = function(text, btn) {
-    if (!window.speechSynthesis) {
-        window.showToast('Audio not supported');
-        return;
-    }
+    if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.rate = 0.8;
-    u.onstart = () => btn.classList.add('playing');
-    u.onend = () => btn.classList.remove('playing');
+    u.onstart = () => btn && btn.classList.add('playing');
+    u.onend = () => btn && btn.classList.remove('playing');
     window.speechSynthesis.speak(u);
 };
 
 window.openModal = function(id) {
-    const p = window.EAW.allProverbs.find(prov => window.getId(prov) === id);
+    const p = window.allProverbs.find(prov => window.getProverbId(prov) === id);
     if (!p) return;
     
     const mc = document.getElementById('modalChinese');
@@ -197,7 +306,7 @@ window.showToast = function(msg) {
     if (!toast) {
         toast = document.createElement('div');
         toast.id = 'toast';
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:white;padding:12px 24px;border-radius:8px;z-index:9999;transition:opacity 0.3s;';
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:white;padding:12px 24px;border-radius:8px;z-index:9999;';
         document.body.appendChild(toast);
     }
     toast.textContent = msg;
@@ -205,14 +314,89 @@ window.showToast = function(msg) {
     setTimeout(() => toast.style.opacity = '0', 3000);
 };
 
+// ============================================
+// OTHER FEATURES
+// ============================================
+
+window.updateStats = function() {
+    const tc = document.getElementById('totalCount');
+    const sc = document.getElementById('showingCount');
+    const fc = document.getElementById('favoritesCount');
+    
+    if (tc) tc.textContent = window.allProverbs.length;
+    if (sc) sc.textContent = window.currentProverbs.length;
+    if (fc) fc.textContent = window.favoriteIds.size;
+};
+
+window.setupDailySpotlight = function() {
+    if (window.allProverbs.length === 0) return;
+    
+    const today = new Date().toDateString();
+    const saved = localStorage.getItem('dailyDate');
+    
+    let idx;
+    if (saved === today) {
+        idx = parseInt(localStorage.getItem('dailyIndex') || '0');
+    } else {
+        idx = Math.floor(Math.random() * window.allProverbs.length);
+        localStorage.setItem('dailyDate', today);
+        localStorage.setItem('dailyIndex', idx.toString());
+    }
+    
+    const p = window.allProverbs[idx % window.allProverbs.length];
+    if (!p) return;
+    
+    const dc = document.getElementById('dailyChinese');
+    const dp = document.getElementById('dailyPinyin');
+    const de = document.getElementById('dailyEnglish');
+    
+    if (dc) dc.textContent = p.cn;
+    if (dp) dp.textContent = p.py;
+    if (de) de.textContent = p.en;
+};
+
+window.setupSearch = function() {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        if (!q) {
+            window.currentProverbs = [...window.allProverbs];
+        } else {
+            window.currentProverbs = window.allProverbs.filter(p => {
+                return (p.cn && p.cn.toLowerCase().includes(q)) ||
+                       (p.en && p.en.toLowerCase().includes(q)) ||
+                       (p.py && p.py.toLowerCase().includes(q));
+            });
+        }
+        window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
+    });
+};
+
+window.setupModal = function() {
+    const modal = document.getElementById('proverbModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) window.closeModal();
+        });
+    }
+    
+    document.querySelectorAll('.close-btn').forEach(btn => {
+        btn.addEventListener('click', window.closeModal);
+    });
+};
+
+// Header buttons
 window.surpriseMe = function() {
-    const p = window.EAW.allProverbs[Math.floor(Math.random() * window.EAW.allProverbs.length)];
-    window.openModal(window.getId(p));
+    if (window.allProverbs.length === 0) return;
+    const p = window.allProverbs[Math.floor(Math.random() * window.allProverbs.length)];
+    window.openModal(window.getProverbId(p));
 };
 
 window.showRandomProverb = function() {
     window.setupDailySpotlight();
-    window.showToast('New proverb selected!');
+    window.showToast('New proverb!');
 };
 
 window.playDailyAudio = function() {
@@ -222,9 +406,9 @@ window.playDailyAudio = function() {
 };
 
 window.showExportModal = function() {
-    const favs = window.EAW.allProverbs.filter(p => window.EAW.favoriteIds.includes(window.getId(p)));
+    const favs = window.allProverbs.filter(p => window.favoriteIds.has(window.getProverbId(p)));
     if (favs.length === 0) {
-        window.showToast('No favorites to export');
+        window.showToast('No favorites');
         return;
     }
     
@@ -240,22 +424,16 @@ window.showExportModal = function() {
         modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content" style="max-width:600px">
-                <div class="modal-header">
-                    <h2>Export Favorites</h2>
-                    <button onclick="window.closeExportModal()" class="close-btn">&times;</button>
-                </div>
-                <textarea id="exportText" style="width:100%;height:300px;font-family:monospace" readonly></textarea>
-                <div class="modal-footer">
-                    <button onclick="window.downloadExport()">Download</button>
-                    <button onclick="window.closeExportModal()">Close</button>
-                </div>
-            </div>
-        `;
+                <h2>Export</h2>
+                <button onclick="window.closeExportModal()" class="close-btn">×</button>
+                <textarea id="exportText" style="width:100%;height:300px" readonly>${md}</textarea>
+                <button onclick="window.downloadExport()">Download</button>
+            </div>`;
         document.body.appendChild(modal);
+    } else {
+        const ta = document.getElementById('exportText');
+        if (ta) ta.value = md;
     }
-    
-    const et = document.getElementById('exportText');
-    if (et) et.value = md;
     modal.classList.add('active');
 };
 
@@ -265,9 +443,9 @@ window.closeExportModal = function() {
 };
 
 window.downloadExport = function() {
-    const text = document.getElementById('exportText');
-    if (!text) return;
-    const blob = new Blob([text.value], {type: 'text/markdown'});
+    const ta = document.getElementById('exportText');
+    if (!ta) return;
+    const blob = new Blob([ta.value], {type: 'text/markdown'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -277,48 +455,18 @@ window.downloadExport = function() {
     window.closeExportModal();
 };
 
-window.setupDailySpotlight = function() {
-    const today = new Date().toDateString();
-    const saved = localStorage.getItem('dailyDate');
-    
-    let p;
-    if (saved === today && window.EAW.allProverbs.length > 0) {
-        const idx = parseInt(localStorage.getItem('dailyIndex') || '0');
-        p = window.EAW.allProverbs[idx % window.EAW.allProverbs.length];
-    } else if (window.EAW.allProverbs.length > 0) {
-        const idx = Math.floor(Math.random() * window.EAW.allProverbs.length);
-        p = window.EAW.allProverbs[idx];
-        localStorage.setItem('dailyDate', today);
-        localStorage.setItem('dailyIndex', idx.toString());
-    }
-    
-    if (p) {
-        const dc = document.getElementById('dailyChinese');
-        const dp = document.getElementById('dailyPinyin');
-        const de = document.getElementById('dailyEnglish');
-        if (dc) dc.textContent = p.cn;
-        if (dp) dp.textContent = p.py;
-        if (de) de.textContent = p.en;
-    }
-};
-
-// Community and Auth
 window.CommunitySubmissions = {
-    showSubmissionForm: function() {
-        window.showToast('Submit form coming soon!');
-    }
+    showSubmissionForm: () => window.showToast('Coming soon!')
 };
 
 window.UserAuth = {
-    showAuthModal: function() {
-        window.showToast('Sign in coming soon!');
-    }
+    showAuthModal: () => window.showToast('Coming soon!')
 };
 
 window.LearningMode = {
     showProgress: function() {
-        const total = window.EAW.allProverbs.length;
-        const learned = window.EAW.favoriteIds.length;
+        const total = window.allProverbs.length;
+        const learned = window.favoriteIds.size;
         const pct = total > 0 ? Math.round((learned/total)*100) : 0;
         
         let modal = document.getElementById('learningModal');
@@ -328,112 +476,24 @@ window.LearningMode = {
             modal.className = 'modal';
             modal.innerHTML = `
                 <div class="modal-content" style="max-width:400px;text-align:center">
-                    <h2>Learning Progress</h2>
-                    <div style="font-size:48px;margin:20px 0">📚</div>
-                    <div style="font-size:48px;font-weight:bold;color:var(--vermilion)">${pct}%</div>
+                    <h2>Progress: ${pct}%</h2>
                     <p>${learned} of ${total} proverbs</p>
-                    <button onclick="window.LearningMode.startQuiz()">Start Quiz</button>
                     <button onclick="document.getElementById('learningModal').classList.remove('active')">Close</button>
-                </div>
-            `;
+                </div>`;
             document.body.appendChild(modal);
         }
         modal.classList.add('active');
-    },
-    startQuiz: function() {
-        document.getElementById('learningModal').classList.remove('active');
-        window.surpriseMe();
-        window.showToast('Quiz: Guess the meaning!');
     }
 };
 
-// DARK MODE (minimal)
 window.DarkModeManager = {
-    isDark: localStorage.getItem('darkMode') === 'true',
     toggle: function() {
-        this.isDark = !this.isDark;
-        document.body.classList.toggle('dark-mode', this.isDark);
-        localStorage.setItem('darkMode', this.isDark);
-    },
-    init: function() {
-        document.body.classList.toggle('dark-mode', this.isDark);
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
     }
 };
 
-// INITIALIZATION
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('[EAW] DOM loaded, initializing...');
-    window.DarkModeManager.init();
-    
-    // Setup modal close
-    const modal = document.getElementById('proverbModal');
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) window.closeModal();
-        });
-    }
-    
-    // Setup search
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const q = this.value.toLowerCase();
-            if (!q) {
-                window.applyFilters();
-                return;
-            }
-            window.EAW.currentProverbs = window.EAW.allProverbs.filter(p => {
-                return (p.cn && p.cn.toLowerCase().includes(q)) ||
-                       (p.en && p.en.toLowerCase().includes(q)) ||
-                       (p.py && p.py.toLowerCase().includes(q));
-            });
-            window.renderProverbs(window.EAW.currentProverbs);
-            window.updateStats();
-        });
-    }
-    
-    // Poll for data
-    let attempts = 0;
-    const checkInterval = setInterval(function() {
-        attempts++;
-        console.log(`[EAW] Attempt ${attempts} checking for data...`);
-        
-        const hasChinese = typeof chineseProverbs !== 'undefined' && chineseProverbs.length > 0;
-        const hasJapanese = typeof japaneseProverbsData !== 'undefined' && japaneseProverbsData.length > 0;
-        const hasKorean = typeof koreanProverbsData !== 'undefined' && koreanProverbsData.length > 0;
-        
-        console.log(`[EAW] Data check: Chinese=${hasChinese}, Japanese=${hasJapanese}, Korean=${hasKorean}`);
-        
-        if (hasChinese || attempts > 50) {
-            clearInterval(checkInterval);
-            
-            // Load data
-            if (hasChinese) {
-                chineseProverbs.forEach(p => {
-                    window.EAW.allProverbs.push({...p, culture: 'chinese', flag: '🇨🇳', label: '中文'});
-                });
-            }
-            if (hasJapanese) {
-                japaneseProverbsData.forEach(p => {
-                    window.EAW.allProverbs.push({cn: p.jp, py: p.romaji, en: p.en, cats: p.cats, culture: 'japanese', flag: '🇯🇵', label: '日本語'});
-                });
-            }
-            if (hasKorean) {
-                koreanProverbsData.forEach(p => {
-                    window.EAW.allProverbs.push({cn: p.kr, py: p.roman, en: p.en, cats: p.cats, culture: 'korean', flag: '🇰🇷', label: '한국어'});
-                });
-            }
-            
-            console.log('[EAW] Total loaded:', window.EAW.allProverbs.length);
-            window.EAW.currentProverbs = [...window.EAW.allProverbs];
-            window.renderProverbs(window.EAW.currentProverbs);
-            window.updateStats();
-            window.setupDailySpotlight();
-            window.EAW.initialized = true;
-            
-            console.log('[EAW] Initialization complete!');
-        }
-    }, 100);
-});
-
-console.log('[EAW] Script loaded, waiting for DOM...');
+// Load dark mode on init
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+}

@@ -136,7 +136,7 @@
 </head>
 <body>
     <!-- Dark Mode Toggle -->
-    <button id="darkModeToggle" class="dark-mode-toggle" onclick="window.DarkModeManager.toggle()" title="Toggle Dark Mode">
+    <button id="darkModeToggle" class="dark-mode-toggle" onclick="DarkModeManager.toggle()" title="Toggle Dark Mode">
         🌙
     </button>
     
@@ -186,23 +186,23 @@
             
             <!-- Header Action Buttons -->
             <div class="header-actions">
-                <button class="action-btn" onclick="window.surpriseMe()" title="Surprise Me!">
+                <button class="action-btn" onclick="surpriseMe()" title="Surprise Me!">
                     <span class="action-btn-icon">🎲</span>
                     <span class="action-btn-text">Surprise</span>
                 </button>
-                <button class="action-btn" onclick="window.LearningMode.showProgress()" title="Learning Mode">
+                <button class="action-btn" onclick="LearningMode.showProgress()" title="Learning Mode">
                     <span class="action-btn-icon">📚</span>
                     <span class="action-btn-text">Learn</span>
                 </button>
-                <button class="action-btn" onclick="window.showExportModal()" title="Export Favorites">
+                <button class="action-btn" onclick="showExportModal()" title="Export Favorites">
                     <span class="action-btn-icon">📤</span>
                     <span class="action-btn-text">Export</span>
                 </button>
-                <button class="action-btn" onclick="window.CommunitySubmissions.showSubmissionForm()" title="Submit Proverb">
+                <button class="action-btn" onclick="CommunitySubmissions.showSubmissionForm()" title="Submit Proverb">
                     <span class="action-btn-icon">📝</span>
                     <span class="action-btn-text">Submit</span>
                 </button>
-                <button class="action-btn" id="authButton" onclick="window.UserAuth.showAuthModal()" title="Sign In">
+                <button class="action-btn" id="authButton" onclick="UserAuth.showAuthModal()" title="Sign In">
                     <span class="action-btn-icon">👤</span>
                 </button>
                 <div class="user-menu" id="userMenu"></div>
@@ -219,14 +219,14 @@
                 <div class="spotlight-content">
                     <div class="spotlight-chinese-row">
                         <p class="spotlight-chinese" id="dailyChinese"></p>
-                        <button class="spotlight-speaker-btn" id="dailySpeakerBtn" onclick="window.playDailyAudio()" aria-label="Play pronunciation">
+                        <button class="spotlight-speaker-btn" id="dailySpeakerBtn" onclick="playDailyAudio()" aria-label="Play pronunciation">
                             🔊
                         </button>
                     </div>
                     <p class="spotlight-pinyin" id="dailyPinyin"></p>
                     <p class="spotlight-english" id="dailyEnglish"></p>
                 </div>
-                <button class="spotlight-btn" onclick="window.showRandomProverb()">
+                <button class="spotlight-btn" onclick="showRandomProverb()">
                     <span>🎲 New Proverb</span>
                 </button>
             </div>
@@ -271,19 +271,19 @@
             <div class="filter-section culture-filter-section">
                 <span class="filter-label">Language:</span>
                 <div class="filter-buttons culture-filter-buttons">
-                    <button class="filter-btn culture-filter-btn active" data-culture="all" onclick="window.handleCultureFilterClick(this)">
+                    <button class="filter-btn culture-filter-btn active" data-culture="all" onclick="handleCultureFilterClick(this)">
                         <span class="btn-icon">🌏</span>
                         <span class="btn-text">All</span>
                     </button>
-                    <button class="filter-btn culture-filter-btn" data-culture="chinese" onclick="window.handleCultureFilterClick(this)">
+                    <button class="filter-btn culture-filter-btn" data-culture="chinese" onclick="handleCultureFilterClick(this)">
                         <span class="btn-icon">🇨🇳</span>
                         <span class="btn-text">Chinese</span>
                     </button>
-                    <button class="filter-btn culture-filter-btn" data-culture="japanese" onclick="window.handleCultureFilterClick(this)">
+                    <button class="filter-btn culture-filter-btn" data-culture="japanese" onclick="handleCultureFilterClick(this)">
                         <span class="btn-icon">🇯🇵</span>
                         <span class="btn-text">Japanese</span>
                     </button>
-                    <button class="filter-btn culture-filter-btn" data-culture="korean" onclick="window.handleCultureFilterClick(this)">
+                    <button class="filter-btn culture-filter-btn" data-culture="korean" onclick="handleCultureFilterClick(this)">
                         <span class="btn-icon">🇰🇷</span>
                         <span class="btn-text">Korean</span>
                     </button>
@@ -294,31 +294,31 @@
             <div class="filter-section topic-filter-section">
                 <span class="filter-label" id="topicFilterLabel">Topics:</span>
                 <div class="filter-buttons" id="topicFilterButtons">
-                    <button class="filter-btn active" data-filter="all" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn active" data-filter="all" onclick="handleFilterClick(this)">
                         <span class="btn-text">All</span>
                     </button>
-                    <button class="filter-btn" data-filter="wisdom" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="wisdom" onclick="handleFilterClick(this)">
                         <span class="btn-text">Wisdom</span>
                     </button>
-                    <button class="filter-btn" data-filter="life" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="life" onclick="handleFilterClick(this)">
                         <span class="btn-text">Life</span>
                     </button>
-                    <button class="filter-btn" data-filter="learning" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="learning" onclick="handleFilterClick(this)">
                         <span class="btn-text">Learning</span>
                     </button>
-                    <button class="filter-btn" data-filter="perseverance" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="perseverance" onclick="handleFilterClick(this)">
                         <span class="btn-text">Perseverance</span>
                     </button>
-                    <button class="filter-btn" data-filter="friendship" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="friendship" onclick="handleFilterClick(this)">
                         <span class="btn-text">Friendship</span>
                     </button>
-                    <button class="filter-btn" data-filter="love" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="love" onclick="handleFilterClick(this)">
                         <span class="btn-text">Love</span>
                     </button>
-                    <button class="filter-btn" data-filter="business" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn" data-filter="business" onclick="handleFilterClick(this)">
                         <span class="btn-text">Business</span>
                     </button>
-                    <button class="filter-btn favorites" data-filter="favorites" onclick="window.handleFilterClick(this)">
+                    <button class="filter-btn favorites" data-filter="favorites" onclick="handleFilterClick(this)">
                         <span class="btn-icon">♥</span>
                         <span class="btn-text">Favorites</span>
                     </button>
