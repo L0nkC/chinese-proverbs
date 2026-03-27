@@ -511,47 +511,188 @@ window.showExportModal = function() {
         return;
     }
     
-    let md = '# My Favorites\n\n';
+    // Create canvas for image generation
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Calculate dimensions based on number of proverbs
+    const padding = 40;
+    const headerHeight = 100;
+    const proverbHeight = 140;
+    const footerHeight = 60;
+    const width = 800;
+    const height = headerHeight + (favs.length * proverbHeight) + footerHeight + padding * 2;
+    
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Background - rice paper color
+    ctx.fillStyle = '#FAF7F0';
+    ctx.fillRect(0, 0, width, height);
+    
+    // Border
+    ctx.strokeStyle = '#C73E1D';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(10, 10, width - 20, height - 20);
+    
+    // Header
+    ctx.fillStyle = '#1A1A1A';
+    ctx.font = 'bold 36px "Noto Serif SC", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('東亞智慧', width / 2, 60);
+    
+    ctx.font = 'italic 20px Georgia, serif';
+    ctx.fillStyle = '#4A4A4A';
+    ctx.fillText('East Asian Wisdom - My Favorites', width / 2, 90);
+    
+    // Proverbs
+    let y = headerHeight + padding;
+    
     favs.forEach((p, i) => {
-        md += `## ${i+1}. ${p.cn}\n${p.py}\n${p.en}\n\n`;
+        // Divider line
+        if (i > 0) {
+            ctx.strokeStyle = '#E0D6C0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, y - 20);
+            ctx.lineTo(width - padding, y - 20);
+            ctx.stroke();
+        }
+        
+        // Number
+        ctx.fillStyle = '#C73E1D';
+        ctx.font = 'bold 24px Georgia, serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${i + 1}.`, padding, y + 30);
+        
+        // Chinese text
+        ctx.fillStyle = '#1A1A1A';
+        ctx.font = '32px "Noto Serif SC", serif';
+        ctx.fillText(p.cn, padding + 40, y + 35);
+        
+        // Pinyin
+        ctx.fillStyle = '#6B5300';
+        ctx.font = 'italic 18px Georgia, serif';
+        ctx.fillText(p.py, padding + 40, y + 60);
+        
+        // English
+        ctx.fillStyle = '#3D3D3D';
+        ctx.font = '18px Georgia, serif';
+        
+        // Wrap English text
+        const enText = p.en;
+        const maxWidth = width - padding * 2 - 40;
+        const words = enText.split(' ');
+        let line = '';
+        let lineY = y + 85;
+        
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && n > 0) {
+                ctx.fillText(line, padding + 40, lineY);
+                line = words[n] + ' ';
+                lineY += 22;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, padding + 40, lineY);
+        
+        // Culture flag
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#8A8A8A';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${p.flag} ${p.label}`, width - padding, y + 30);
+        
+        y += proverbHeight;
     });
     
+    // Footer
+    ctx.fillStyle = '#8A8A8A';
+    ctx.font = '14px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Generated from East Asian Wisdom • ${favs.length} proverbs`, width / 2, height - 30);
+    
+    // Convert to data URL
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    
+    // Create/update modal
     let modal = document.getElementById('exportModal');
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'exportModal';
         modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content" style="max-width:600px">
-                <h2>Export</h2>
-                <button onclick="window.closeExportModal()" class="close-btn">×</button>
-                <textarea id="exportText" style="width:100%;height:300px" readonly>${md}</textarea>
-                <button onclick="window.downloadExport()">Download</button>
-            </div>`;
         document.body.appendChild(modal);
-    } else {
-        const ta = document.getElementById('exportText');
-        if (ta) ta.value = md;
     }
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width:850px; text-align:center">
+            <h2>Export Favorites</h2>
+            <button onclick="window.closeExportModal()" class="close-btn">×</button>
+            <div style="margin:20px 0; background:#f5f5f5; padding:20px; border-radius:8px;">
+                <img id="exportImage" src="${dataUrl}" style="max-width:100%; max-height:500px; border:1px solid #ddd; box-shadow:0 4px 12px rgba(0,0,0,0.15);" alt="Favorites">
+            </div>
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button onclick="window.downloadExportImage()" style="background:#C73E1D; color:white; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-size:16px;">
+                    📥 Download JPG
+                </button>
+                <button onclick="window.copyExportImage()" style="background:#2D6A4F; color:white; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-size:16px;">
+                    📋 Copy Image
+                </button>
+                <button onclick="window.closeExportModal()" style="background:#6A6A6A; color:white; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-size:16px;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Store data URL for download
+    window._exportImageData = dataUrl;
+    
     modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 };
 
 window.closeExportModal = function() {
     const m = document.getElementById('exportModal');
-    if (m) m.classList.remove('active');
+    if (m) {
+        m.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    delete window._exportImageData;
 };
 
-window.downloadExport = function() {
-    const ta = document.getElementById('exportText');
-    if (!ta) return;
-    const blob = new Blob([ta.value], {type: 'text/markdown'});
-    const url = URL.createObjectURL(blob);
+window.downloadExportImage = function() {
+    if (!window._exportImageData) return;
+    
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'favorites.md';
+    a.href = window._exportImageData;
+    a.download = `east-asian-wisdom-favorites-${new Date().toISOString().split('T')[0]}.jpg`;
     a.click();
-    URL.revokeObjectURL(url);
-    window.closeExportModal();
+    
+    window.showToast('Image downloaded!');
+};
+
+window.copyExportImage = async function() {
+    if (!window._exportImageData) return;
+    
+    try {
+        const response = await fetch(window._exportImageData);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+            new ClipboardItem({ 'image/jpeg': blob })
+        ]);
+        window.showToast('Image copied to clipboard!');
+    } catch (err) {
+        console.error('Copy failed:', err);
+        window.showToast('Copy failed - try downloading instead');
+    }
+};
+
+// Legacy function for backwards compatibility
+window.downloadExport = function() {
+    window.downloadExportImage();
 };
 
 window.CommunitySubmissions = {
