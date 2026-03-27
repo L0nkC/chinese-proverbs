@@ -652,7 +652,7 @@ body {
     font-family: var(--font-chinese);
     font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 600;
-    color: var(--text-primary);
+    color: #000000;
     letter-spacing: 0.15em;
     line-height: 1.4;
 }
@@ -692,7 +692,8 @@ body {
 
 .spotlight-pinyin {
     font-size: var(--text-base);
-    color: var(--imperial-gold-dark);
+    color: #000000;
+    font-weight: 500;
     font-style: italic;
     margin-bottom: var(--space-5);
     letter-spacing: 0.05em;
@@ -700,7 +701,8 @@ body {
 
 .spotlight-english {
     font-size: var(--text-lg);
-    color: var(--text-secondary);
+    color: #000000;
+    font-weight: 500;
     font-style: italic;
     max-width: 560px;
     margin: 0 auto var(--space-6);
