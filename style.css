@@ -2905,18 +2905,19 @@ body {
 @media (max-width: 768px) {
     .modal {
         padding: 0;
-        align-items: flex-end;
+        align-items: flex-start;
+        padding-top: 10vh;
         background: rgba(0, 0, 0, 0.9) !important;
     }
 
     .modal-content {
         max-width: 100% !important;
         width: 100% !important;
-        max-height: 90vh !important;
+        max-height: 80vh !important;
         margin: 0 !important;
         border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
         padding: var(--space-6) !important;
-        padding-top: 50px !important;
+        padding-top: 60px !important;
         transform: translateY(100%) !important;
         background: #FAF7F0 !important;
         border: 2px solid #C9A227 !important;
