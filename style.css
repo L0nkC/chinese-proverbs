@@ -2906,18 +2906,17 @@ body {
     .modal {
         padding: 0;
         align-items: flex-start;
-        padding-top: 5vh;
         background: rgba(0, 0, 0, 0.9) !important;
     }
 
     .modal-content {
         max-width: 100% !important;
         width: 100% !important;
-        max-height: 90vh !important;
+        max-height: 95vh !important;
         margin: 0 !important;
         border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
-        padding: var(--space-6) !important;
-        padding-top: 120px !important;
+        padding: var(--space-4) !important;
+        padding-top: 20px !important;
         transform: translateY(100%) !important;
         background: #FAF7F0 !important;
         border: 2px solid #C9A227 !important;
@@ -2936,23 +2935,22 @@ body {
     /* Close button positioned at top right of modal */
     .modal .close-btn {
         position: absolute !important;
-        top: 15px !important;
-        right: 15px !important;
+        top: 10px !important;
+        right: 10px !important;
         float: none !important;
         margin: 0 !important;
         z-index: 10 !important;
         background: rgba(255,255,255,0.95) !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 1.2rem !important;
     }
 
     /* Ensure modal body is scrollable on mobile */
     .modal-proverb {
         overflow-y: visible !important;
-    }
-    
-    /* Push category down */
-    .modal-category {
-        margin-top: 20px !important;
+        padding-top: 0 !important;
     }
 }
 
