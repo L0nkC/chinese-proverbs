@@ -96,7 +96,7 @@ const koreanProverbsData = [
     { id: "ko-075", kr: "눈에는 눈, 이에는 이", roman: "Nunenun nun, ieneun i", en: "An eye for an eye, a tooth for a tooth.", cats: ["wisdom", "life", "friendship"], culture: "korean" },
     { id: "ko-076", kr: "까마귀 날자 배 떨어진다", roman: "Kkamagwi nalja bae tteoreojinda", en: "When the crow flies, the pear drops. / Coincidence.", cats: ["wisdom", "life"], culture: "korean" },
     { id: "ko-077", kr: "윗물이 맑아야 아랫물이 맑다", roman: "Witmuri malgaya araetmuri malda", en: "When the upper water is clear, the lower water is clear. / Leaders set the example.", cats: ["wisdom", "family", "business"], culture: "korean" },
-    { id: "ko-078", kr: "가족은 영원한 보물", roman: "Gajokeun yeongwonhan bomul", en: "Family is an eternal treasure.", cats: ["family", "wisdom", "love"], culture: "korean" }
+    { id: "ko-078", kr: "가족은 영원한 보물", roman: "Gajokeun yeongwonhan bomul", en: "Family is an eternal treasure.", cats: ["family", "wisdom", "love"], culture: "korean" },
 
     // ADDITIONAL PROVERBS (79-100)
     { id: "ko-079", kr: "첫사랑은 잊지 못한다", roman: "Cheotsarangeun ijji mothanda", en: "First love can never be forgotten.", cats: ["love", "life"], culture: "korean" },
@@ -122,3 +122,13 @@ const koreanProverbsData = [
     { id: "ko-099", kr: "큰 나무는 바람을 견딘다", roman: "Keun namuneun barameul gyeondinda", en: "Big trees endure the wind. / Greatness withstands challenges.", cats: ["perseverance", "success", "wisdom"], culture: "korean" },
     { id: "ko-100", kr: "꿈은 이루어진다", roman: "Kkumeun irueojinda", en: "Dreams come true.", cats: ["success", "perseverance", "wisdom"], culture: "korean" }
 ];
+
+// Make available globally
+if (typeof window !== 'undefined') {
+    window.koreanProverbsData = koreanProverbsData;
+}
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = koreanProverbsData;
+}
