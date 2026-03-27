@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="related-proverbs.css">
     <link rel="stylesheet" href="dark-mode.css">
     <link rel="stylesheet" href="enhanced-styles.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
     <style>
         /* East Asian Wisdom - Card Styles */
         .proverb-card {
@@ -144,11 +145,40 @@
     <div class="page-transition-overlay" id="pageTransition"></div>
     
     <!-- Decorative Background Elements -->
+    <!-- Animated Backgrounds -->
     <div class="bg-pattern"></div>
-    <div class="bamboo-left"></div>
-    <div class="bamboo-right"></div>
-    <div class="floating-lantern lantern-1">🏮</div>
-    <div class="floating-lantern lantern-2">🏮</div>
+    
+    <!-- Parallax Mountains and Clouds -->
+    <div class="parallax-layer parallax-mountains" id="parallaxMountains"></div>
+    <div class="parallax-layer parallax-clouds" id="parallaxClouds"></div>
+    
+    <!-- Cultural Landmarks Background -->
+    <div class="landmark-bg landmark-all active" id="landmarkBg" data-culture="all"></div>
+    
+    <!-- Falling Sakura Petals -->
+    <div class="sakura-container" id="sakuraContainer">
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal leaf"></div>
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal maple"></div>
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal leaf"></div>
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal maple"></div>
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal leaf"></div>
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal maple"></div>
+        <div class="sakura-petal"></div>
+        <div class="sakura-petal leaf"></div>
+        <div class="sakura-petal"></div>
+    </div>
+    
+    <!-- Parallax Trees -->
+    <div class="parallax-trees" id="parallaxTrees">
+        <div class="tree tree-left tree-all tree-1" id="treeLeft"></div>
+        <div class="tree tree-right tree-all tree-4" id="treeRight"></div>
+    </div>
     
     <!-- Main Container -->
     <div class="scroll-container">

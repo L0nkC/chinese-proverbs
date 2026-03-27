@@ -1,0 +1,333 @@
+/* ========================================
+   ANIMATED BACKGROUNDS - Sakura, Trees & Landmarks
+   ======================================== */
+
+/* ========================================
+   FALLING SAKURA PETALS
+   ======================================== */
+.sakura-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.sakura-petal {
+    position: absolute;
+    top: -50px;
+    font-size: 20px;
+    opacity: 0.8;
+    animation: fall linear infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.sakura-petal::before {
+    content: '🌸';
+}
+
+.sakura-petal.leaf::before {
+    content: '🍃';
+}
+
+.sakura-petal.maple::before {
+    content: '🍁';
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-50px) rotate(0deg) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(calc(100vh + 50px)) rotate(360deg) translateX(50px);
+        opacity: 0;
+    }
+}
+
+/* Different falling speeds and delays */
+.sakura-petal:nth-child(1) { left: 5%; animation-duration: 8s; animation-delay: 0s; font-size: 18px; }
+.sakura-petal:nth-child(2) { left: 15%; animation-duration: 10s; animation-delay: 1s; font-size: 24px; }
+.sakura-petal:nth-child(3) { left: 25%; animation-duration: 9s; animation-delay: 2s; font-size: 20px; }
+.sakura-petal:nth-child(4) { left: 35%; animation-duration: 11s; animation-delay: 0.5s; font-size: 22px; }
+.sakura-petal:nth-child(5) { left: 45%; animation-duration: 8.5s; animation-delay: 3s; font-size: 19px; }
+.sakura-petal:nth-child(6) { left: 55%; animation-duration: 10.5s; animation-delay: 1.5s; font-size: 21px; }
+.sakura-petal:nth-child(7) { left: 65%; animation-duration: 9.5s; animation-delay: 2.5s; font-size: 23px; }
+.sakura-petal:nth-child(8) { left: 75%; animation-duration: 8s; animation-delay: 4s; font-size: 17px; }
+.sakura-petal:nth-child(9) { left: 85%; animation-duration: 11s; animation-delay: 0.8s; font-size: 25px; }
+.sakura-petal:nth-child(10) { left: 95%; animation-duration: 9s; animation-delay: 3.5s; font-size: 20px; }
+
+/* ========================================
+   PARALLAX TREES
+   ======================================== */
+.parallax-trees {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+    transition: transform 0.1s ease-out;
+}
+
+.tree {
+    position: absolute;
+    bottom: 0;
+    font-size: 150px;
+    opacity: 0.3;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+}
+
+.tree-left {
+    left: -50px;
+}
+
+.tree-right {
+    right: -50px;
+}
+
+/* Chinese Ginkgo Tree */
+.tree-chinese::before {
+    content: '🌳';
+}
+
+/* Japanese Cherry Blossom Tree */
+.tree-japanese::before {
+    content: '🌸';
+}
+
+/* Korean Pine Tree */
+.tree-korean::before {
+    content: '🌲';
+}
+
+/* Generic tree for 'all' */
+.tree-all::before {
+    content: '🎋';
+}
+
+/* Tree variations */
+.tree-1 { font-size: 180px; left: -80px; }
+.tree-2 { font-size: 140px; left: 15%; }
+.tree-3 { font-size: 160px; right: 10%; }
+.tree-4 { font-size: 130px; right: -60px; }
+
+/* ========================================
+   CULTURAL LANDMARKS BACKGROUND
+   ======================================== */
+.landmark-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -3;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.landmark-bg.active {
+    opacity: 0.15;
+}
+
+/* Chinese Landmarks */
+.landmark-chinese {
+    background: 
+        radial-gradient(ellipse 30% 40% at 15% 80%, rgba(199, 62, 29, 0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 25% 35% at 85% 70%, rgba(201, 162, 39, 0.15) 0%, transparent 50%);
+}
+
+.landmark-chinese::before,
+.landmark-chinese::after {
+    content: '';
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.4;
+}
+
+/* Great Wall pattern */
+.landmark-chinese::before {
+    content: '🏯';
+    bottom: 20%;
+    left: 5%;
+    animation: float-gentle 6s ease-in-out infinite;
+}
+
+/* Temple */
+.landmark-chinese::after {
+    content: '⛩️';
+    bottom: 15%;
+    right: 10%;
+    animation: float-gentle 7s ease-in-out infinite reverse;
+}
+
+/* Japanese Landmarks */
+.landmark-japanese {
+    background: 
+        radial-gradient(ellipse 30% 40% at 20% 75%, rgba(255, 183, 197, 0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 25% 35% at 80% 80%, rgba(139, 90, 43, 0.15) 0%, transparent 50%);
+}
+
+.landmark-japanese::before,
+.landmark-japanese::after {
+    content: '';
+    position: absolute;
+    font-size: 180px;
+    opacity: 0.4;
+}
+
+/* Torii Gate */
+.landmark-japanese::before {
+    content: '⛩️';
+    bottom: 25%;
+    left: 8%;
+    animation: float-gentle 8s ease-in-out infinite;
+}
+
+/* Mount Fuji */
+.landmark-japanese::after {
+    content: '🗻';
+    bottom: 10%;
+    right: 5%;
+    font-size: 250px;
+    animation: float-gentle 10s ease-in-out infinite reverse;
+}
+
+/* Korean Landmarks */
+.landmark-korean {
+    background: 
+        radial-gradient(ellipse 30% 40% at 10% 78%, rgba(139, 90, 43, 0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 25% 35% at 90% 72%, rgba(199, 62, 29, 0.15) 0%, transparent 50%);
+}
+
+.landmark-korean::before,
+.landmark-korean::after {
+    content: '';
+    position: absolute;
+    font-size: 180px;
+    opacity: 0.4;
+}
+
+/* Gyeongbokgung Palace */
+.landmark-korean::before {
+    content: '🏛️';
+    bottom: 20%;
+    left: 3%;
+    animation: float-gentle 7s ease-in-out infinite;
+}
+
+/* Pagoda */
+.landmark-korean::after {
+    content: '🏯';
+    bottom: 18%;
+    right: 8%;
+    animation: float-gentle 9s ease-in-out infinite reverse;
+}
+
+/* All cultures - mixed landmarks */
+.landmark-all {
+    background: 
+        radial-gradient(ellipse 20% 30% at 15% 80%, rgba(199, 62, 29, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse 20% 30% at 50% 85%, rgba(255, 183, 197, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse 20% 30% at 85% 80%, rgba(139, 90, 43, 0.1) 0%, transparent 50%);
+}
+
+@keyframes float-gentle {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.02);
+    }
+}
+
+/* ========================================
+   SCROLL-BASED PARALLAX
+   ======================================== */
+.parallax-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    pointer-events: none;
+    z-index: -3;
+    transition: transform 0.3s ease-out;
+}
+
+/* Mountains layer - moves slowest */
+.parallax-mountains {
+    z-index: -4;
+    opacity: 0.1;
+}
+
+.parallax-mountains::before {
+    content: '⛰️⛰️⛰️';
+    position: absolute;
+    bottom: 10%;
+    left: -10%;
+    font-size: 300px;
+    letter-spacing: -100px;
+    white-space: nowrap;
+}
+
+/* Clouds layer */
+.parallax-clouds {
+    z-index: -5;
+    opacity: 0.08;
+}
+
+.parallax-clouds::before {
+    content: '☁️☁️☁️☁️☁️';
+    position: absolute;
+    top: 10%;
+    left: -20%;
+    font-size: 150px;
+    letter-spacing: 100px;
+    white-space: nowrap;
+    animation: drift 60s linear infinite;
+}
+
+@keyframes drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(100px); }
+}
+
+/* ========================================
+   MOBILE OPTIMIZATIONS
+   ======================================== */
+@media (max-width: 768px) {
+    .sakura-petal {
+        font-size: 16px;
+    }
+    
+    .tree {
+        font-size: 100px;
+    }
+    
+    .landmark-chinese::before,
+    .landmark-chinese::after,
+    .landmark-japanese::before,
+    .landmark-japanese::after,
+    .landmark-korean::before,
+    .landmark-korean::after {
+        font-size: 120px;
+        opacity: 0.25;
+    }
+    
+    .landmark-japanese::after {
+        font-size: 180px;
+    }
+}

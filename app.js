@@ -68,6 +68,9 @@ window.handleCultureFilterClick = function(arg) {
     window.currentCultureFilter = culture;
     window.applyFilters();
     
+    // Update background to match culture
+    window.updateBackground(culture);
+    
     return false;
 };
 
@@ -733,7 +736,116 @@ window.DarkModeManager = {
     }
 };
 
+// ============================================
+// ANIMATED BACKGROUNDS - Sakura, Trees & Landmarks
+// ============================================
+
+window.updateBackground = function(culture) {
+    const landmarkBg = document.getElementById('landmarkBg');
+    const treeLeft = document.getElementById('treeLeft');
+    const treeRight = document.getElementById('treeRight');
+    const sakuraContainer = document.getElementById('sakuraContainer');
+    
+    if (!landmarkBg || !treeLeft || !treeRight) return;
+    
+    // Remove all culture classes
+    landmarkBg.classList.remove('landmark-all', 'landmark-chinese', 'landmark-japanese', 'landmark-korean');
+    treeLeft.classList.remove('tree-all', 'tree-chinese', 'tree-japanese', 'tree-korean');
+    treeRight.classList.remove('tree-all', 'tree-chinese', 'tree-japanese', 'tree-korean');
+    
+    // Update sakura petals based on culture
+    if (sakuraContainer) {
+        const petals = sakuraContainer.querySelectorAll('.sakura-petal');
+        petals.forEach(petal => {
+            petal.classList.remove('leaf', 'maple');
+            if (culture === 'chinese') {
+                petal.classList.add('leaf');
+            } else if (culture === 'japanese') {
+                // Default sakura - no extra class
+            } else if (culture === 'korean') {
+                petal.classList.add('maple');
+            }
+        });
+    }
+    
+    // Add appropriate culture classes
+    switch(culture) {
+        case 'chinese':
+            landmarkBg.classList.add('landmark-chinese');
+            treeLeft.classList.add('tree-chinese');
+            treeRight.classList.add('tree-chinese');
+            break;
+        case 'japanese':
+            landmarkBg.classList.add('landmark-japanese');
+            treeLeft.classList.add('tree-japanese');
+            treeRight.classList.add('tree-japanese');
+            break;
+        case 'korean':
+            landmarkBg.classList.add('landmark-korean');
+            treeLeft.classList.add('tree-korean');
+            treeRight.classList.add('tree-korean');
+            break;
+        default:
+            landmarkBg.classList.add('landmark-all');
+            treeLeft.classList.add('tree-all');
+            treeRight.classList.add('tree-all');
+    }
+    
+    // Trigger fade animation
+    landmarkBg.style.opacity = '0';
+    setTimeout(() => {
+        landmarkBg.classList.add('active');
+        landmarkBg.style.opacity = '1';
+    }, 50);
+};
+
+// Parallax scroll effect
+window.initParallax = function() {
+    const mountains = document.getElementById('parallaxMountains');
+    const clouds = document.getElementById('parallaxClouds');
+    const trees = document.getElementById('parallaxTrees');
+    
+    if (!mountains && !clouds && !trees) return;
+    
+    let ticking = false;
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                const scrollY = window.scrollY;
+                
+                // Mountains move slowest
+                if (mountains) {
+                    mountains.style.transform = `translateY(${scrollY * 0.1}px)`;
+                }
+                
+                // Clouds move slightly faster
+                if (clouds) {
+                    clouds.style.transform = `translateY(${scrollY * 0.05}px)`;
+                }
+                
+                // Trees move with medium speed
+                if (trees) {
+                    trees.style.transform = `translateY(${scrollY * 0.2}px)`;
+                }
+                
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+};
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
 // Load dark mode on init
 if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark-mode');
 }
+
+// Initialize parallax on load
+document.addEventListener('DOMContentLoaded', function() {
+    window.initParallax();
+});
