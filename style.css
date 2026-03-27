@@ -2906,17 +2906,18 @@ body {
     .modal {
         padding: 0;
         align-items: flex-start;
-        background: rgba(0, 0, 0, 0.9) !important;
+        background: rgba(0, 0, 0, 0.85) !important;
+        padding-top: 0 !important;
     }
 
     .modal-content {
         max-width: 100% !important;
         width: 100% !important;
-        max-height: 95vh !important;
+        max-height: 98vh !important;
         margin: 0 !important;
-        border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
-        padding: var(--space-4) !important;
-        padding-top: 20px !important;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 10px 16px 16px 16px !important;
+        padding-top: 5px !important;
         transform: translateY(100%) !important;
         background: #FAF7F0 !important;
         border: 2px solid #C9A227 !important;
@@ -2926,30 +2927,51 @@ body {
         z-index: 1001 !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
+        margin-top: -50px !important;
     }
 
     .modal.active .modal-content {
         transform: translateY(0) !important;
     }
 
-    /* Close button positioned at top right of modal */
+    /* Close button - tiny and at very top */
     .modal .close-btn {
         position: absolute !important;
-        top: 10px !important;
-        right: 10px !important;
+        top: 5px !important;
+        right: 5px !important;
         float: none !important;
         margin: 0 !important;
         z-index: 10 !important;
-        background: rgba(255,255,255,0.95) !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 1.2rem !important;
+        background: rgba(255,255,255,0.9) !important;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.15) !important;
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 1rem !important;
+        padding: 0 !important;
     }
 
-    /* Ensure modal body is scrollable on mobile */
+    /* Modal decorations - minimal */
+    .modal-decoration {
+        display: none !important;
+    }
+
+    /* Push content to very top */
     .modal-proverb {
         overflow-y: visible !important;
+        padding-top: 0 !important;
+        margin-top: -15px !important;
+    }
+    
+    /* Category tag - minimal margin */
+    .modal-category {
+        margin-top: 0 !important;
+        margin-bottom: 5px !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Chinese text - start immediately */
+    .modal-proverb .proverb-chinese {
+        margin-top: 0 !important;
         padding-top: 0 !important;
     }
 }
