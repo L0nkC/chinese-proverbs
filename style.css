@@ -1326,15 +1326,16 @@ body {
 
 .proverb-pinyin {
     font-size: var(--text-sm);
-    color: var(--imperial-gold-dark);
+    color: #6B5300;
     font-style: italic;
     margin-bottom: var(--space-3);
     letter-spacing: 0.03em;
+    font-weight: 500;
 }
 
 .proverb-english {
     font-size: var(--text-sm);
-    color: var(--text-secondary);
+    color: #3D3D3D;
     font-style: italic;
     line-height: 1.7;
     flex-grow: 1;
