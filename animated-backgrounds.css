@@ -1,9 +1,10 @@
 /* ========================================
-   ANIMATED BACKGROUNDS - Sakura, Trees & Landmarks
+   REALISTIC ANIMATED BACKGROUNDS
+   SVG Graphics & CSS Art - No Emojis
    ======================================== */
 
 /* ========================================
-   FALLING SAKURA PETALS
+   FALLING PETALS / LEAVES
    ======================================== */
 .sakura-container {
     position: fixed;
@@ -18,63 +19,122 @@
 
 .sakura-petal {
     position: absolute;
-    top: -50px;
-    font-size: 20px;
-    opacity: 0.8;
-    animation: fall linear infinite;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    top: -60px;
+    width: 24px;
+    height: 24px;
+    opacity: 0.85;
+    animation: fall-sway linear infinite;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
 }
 
+/* Sakura Petal Shape */
 .sakura-petal::before {
-    content: '🌸';
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #FFB7C5 0%, #FF91A4 50%, #FFB7C5 100%);
+    border-radius: 50% 0 50% 50%;
+    transform: rotate(-45deg);
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.1);
 }
 
+/* Cherry blossom notch */
+.sakura-petal::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30%;
+    height: 30%;
+    background: linear-gradient(135deg, #FF6B9D 0%, #FF8FAB 100%);
+    border-radius: 0 50% 0 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Green Leaf Variant */
 .sakura-petal.leaf::before {
-    content: '🍃';
+    background: linear-gradient(135deg, #7CB342 0%, #558B2F 50%, #7CB342 100%);
+    border-radius: 0 80% 0 80%;
+    transform: rotate(-30deg);
 }
 
+.sakura-petal.leaf::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    width: 2px;
+    height: 70%;
+    background: #33691E;
+    border-radius: 1px;
+    transform: translateX(-50%) rotate(-30deg);
+}
+
+/* Maple Leaf Variant */
 .sakura-petal.maple::before {
-    content: '🍁';
+    background: linear-gradient(135deg, #D84315 0%, #BF360C 50%, #FF5722 100%);
+    border-radius: 50% 0 50% 50%;
+    clip-path: polygon(50% 0%, 80% 10%, 100% 35%, 85% 60%, 90% 85%, 50% 100%, 10% 85%, 15% 60%, 0% 35%, 20% 10%);
 }
 
-@keyframes fall {
+.sakura-petal.maple::after {
+    display: none;
+}
+
+@keyframes fall-sway {
     0% {
-        transform: translateY(-50px) rotate(0deg) translateX(0);
+        transform: translateY(-60px) translateX(0) rotate(0deg);
         opacity: 0;
     }
-    10% {
-        opacity: 0.8;
+    5% {
+        opacity: 0.85;
     }
-    90% {
-        opacity: 0.6;
+    25% {
+        transform: translateY(25vh) translateX(20px) rotate(90deg);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-10px) rotate(180deg);
+    }
+    75% {
+        transform: translateY(75vh) translateX(15px) rotate(270deg);
+        opacity: 0.7;
+    }
+    95% {
+        opacity: 0.4;
     }
     100% {
-        transform: translateY(calc(100vh + 50px)) rotate(360deg) translateX(50px);
+        transform: translateY(calc(100vh + 60px)) translateX(-5px) rotate(360deg);
         opacity: 0;
     }
 }
 
-/* Different falling speeds and delays */
-.sakura-petal:nth-child(1) { left: 5%; animation-duration: 8s; animation-delay: 0s; font-size: 18px; }
-.sakura-petal:nth-child(2) { left: 15%; animation-duration: 10s; animation-delay: 1s; font-size: 24px; }
-.sakura-petal:nth-child(3) { left: 25%; animation-duration: 9s; animation-delay: 2s; font-size: 20px; }
-.sakura-petal:nth-child(4) { left: 35%; animation-duration: 11s; animation-delay: 0.5s; font-size: 22px; }
-.sakura-petal:nth-child(5) { left: 45%; animation-duration: 8.5s; animation-delay: 3s; font-size: 19px; }
-.sakura-petal:nth-child(6) { left: 55%; animation-duration: 10.5s; animation-delay: 1.5s; font-size: 21px; }
-.sakura-petal:nth-child(7) { left: 65%; animation-duration: 9.5s; animation-delay: 2.5s; font-size: 23px; }
-.sakura-petal:nth-child(8) { left: 75%; animation-duration: 8s; animation-delay: 4s; font-size: 17px; }
-.sakura-petal:nth-child(9) { left: 85%; animation-duration: 11s; animation-delay: 0.8s; font-size: 25px; }
-.sakura-petal:nth-child(10) { left: 95%; animation-duration: 9s; animation-delay: 3.5s; font-size: 20px; }
+/* Individual petal timing */
+.sakura-petal:nth-child(1) { left: 3%; animation-duration: 9s; animation-delay: 0s; width: 20px; height: 20px; }
+.sakura-petal:nth-child(2) { left: 8%; animation-duration: 11s; animation-delay: 1.5s; width: 26px; height: 26px; }
+.sakura-petal:nth-child(3) { left: 15%; animation-duration: 10s; animation-delay: 0.8s; width: 22px; height: 22px; }
+.sakura-petal:nth-child(4) { left: 22%; animation-duration: 12s; animation-delay: 2.2s; width: 24px; height: 24px; }
+.sakura-petal:nth-child(5) { left: 28%; animation-duration: 9.5s; animation-delay: 3.1s; width: 18px; height: 18px; }
+.sakura-petal:nth-child(6) { left: 35%; animation-duration: 10.5s; animation-delay: 0.3s; width: 25px; height: 25px; }
+.sakura-petal:nth-child(7) { left: 42%; animation-duration: 11.5s; animation-delay: 4.2s; width: 21px; height: 21px; }
+.sakura-petal:nth-child(8) { left: 48%; animation-duration: 8.5s; animation-delay: 1.8s; width: 23px; height: 23px; }
+.sakura-petal:nth-child(9) { left: 55%; animation-duration: 10s; animation-delay: 2.8s; width: 19px; height: 19px; }
+.sakura-petal:nth-child(10) { left: 62%; animation-duration: 12.5s; animation-delay: 0.6s; width: 27px; height: 27px; }
+.sakura-petal:nth-child(11) { left: 68%; animation-duration: 9s; animation-delay: 3.8s; width: 22px; height: 22px; }
+.sakura-petal:nth-child(12) { left: 75%; animation-duration: 11s; animation-delay: 1.2s; width: 24px; height: 24px; }
+.sakura-petal:nth-child(13) { left: 82%; animation-duration: 10.5s; animation-delay: 4.5s; width: 20px; height: 20px; }
+.sakura-petal:nth-child(14) { left: 88%; animation-duration: 8.8s; animation-delay: 2.5s; width: 26px; height: 26px; }
+.sakura-petal:nth-child(15) { left: 95%; animation-duration: 11.2s; animation-delay: 0.9s; width: 23px; height: 23px; }
 
 /* ========================================
-   PARALLAX TREES
+   PARALLAX TREES - CSS Art
    ======================================== */
 .parallax-trees {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 200px;
+    height: 250px;
     pointer-events: none;
     z-index: -1;
     overflow: hidden;
@@ -84,47 +144,108 @@
 .tree {
     position: absolute;
     bottom: 0;
-    font-size: 150px;
-    opacity: 0.3;
+    opacity: 0.25;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
 }
 
-.tree-left {
-    left: -50px;
+/* Generic Tree Structure */
+.tree::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 40px;
+    height: 120px;
+    background: linear-gradient(90deg, #4A3728 0%, #6D4C41 50%, #5D4037 100%);
+    border-radius: 4px 4px 0 0;
 }
 
-.tree-right {
-    right: -50px;
+.tree::after {
+    content: '';
+    position: absolute;
+    bottom: 80px;
+    left: -80px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
 }
+
+.tree-left { left: -60px; }
+.tree-left::before { left: 60px; }
+.tree-left::after { left: -20px; }
+
+.tree-right { right: -60px; }
+.tree-right::before { right: 60px; left: auto; }
+.tree-right::after { right: -20px; left: auto; }
 
 /* Chinese Ginkgo Tree */
-.tree-chinese::before {
-    content: '🌳';
+.tree-chinese::after {
+    background: radial-gradient(circle at 30% 30%, #C5E1A5 0%, #9CCC65 40%, #7CB342 70%, transparent 70%);
+    box-shadow: 
+        -30px 40px 0 -40px #9CCC65,
+        40px 30px 0 -50px #8BC34A,
+        20px -20px 0 -60px #AED581;
 }
 
 /* Japanese Cherry Blossom Tree */
-.tree-japanese::before {
-    content: '🌸';
+.tree-japanese::after {
+    background: radial-gradient(circle at 50% 50%, #FCE4EC 0%, #F8BBD9 30%, #F48FB1 60%, transparent 70%);
+    box-shadow: 
+        -40px 20px 0 -50px #F8BBD0,
+        30px 40px 0 -45px #F48FB1,
+        40px -10px 0 -55px #FCE4EC,
+        -20px -30px 0 -50px #F8BBD0;
 }
 
 /* Korean Pine Tree */
 .tree-korean::before {
-    content: '🌲';
+    background: linear-gradient(90deg, #3E2723 0%, #5D4037 50%, #4E342E 100%);
+    width: 50px;
+    height: 140px;
 }
 
-/* Generic tree for 'all' */
+.tree-korean::after {
+    background: conic-gradient(from 180deg at 50% 100%, 
+        transparent 0deg, #2E7D32 30deg, #388E3C 60deg, 
+        #43A047 90deg, #388E3C 120deg, #2E7D32 150deg, transparent 180deg);
+    width: 0;
+    height: 0;
+    border-left: 120px solid transparent;
+    border-right: 120px solid transparent;
+    border-bottom: 200px solid #2E7D32;
+    border-radius: 0;
+    bottom: 100px;
+}
+
+/* All/Bamboo Tree */
 .tree-all::before {
-    content: '🎋';
+    background: linear-gradient(90deg, #558B2F 0%, #7CB342 50%, #689F38 100%);
+    width: 25px;
+    height: 200px;
+    background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 25px,
+        rgba(0,0,0,0.1) 25px,
+        rgba(0,0,0,0.1) 27px
+    );
 }
 
-/* Tree variations */
-.tree-1 { font-size: 180px; left: -80px; }
-.tree-2 { font-size: 140px; left: 15%; }
-.tree-3 { font-size: 160px; right: 10%; }
-.tree-4 { font-size: 130px; right: -60px; }
+.tree-all::after {
+    background: radial-gradient(circle at 50% 50%, #DCEDC8 0%, #C5E1A5 40%, transparent 70%);
+    width: 150px;
+    height: 100px;
+    bottom: 180px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+
+/* Tree Size Variations */
+.tree-1 { transform: scale(1.3); }
+.tree-2 { transform: scale(0.9); left: 12%; }
+.tree-3 { transform: scale(1.1); right: 8%; }
+.tree-4 { transform: scale(0.85); }
 
 /* ========================================
-   CULTURAL LANDMARKS BACKGROUND
+   CULTURAL LANDMARKS - SVG Backgrounds
    ======================================== */
 .landmark-bg {
     position: fixed;
@@ -136,125 +257,63 @@
     z-index: -3;
     opacity: 0;
     transition: opacity 1s ease;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .landmark-bg.active {
-    opacity: 0.15;
+    opacity: 0.12;
 }
 
-/* Chinese Landmarks */
+/* Chinese Landmarks - Great Wall Silhouette */
 .landmark-chinese {
-    background: 
-        radial-gradient(ellipse 30% 40% at 15% 80%, rgba(199, 62, 29, 0.2) 0%, transparent 60%),
-        radial-gradient(ellipse 25% 35% at 85% 70%, rgba(201, 162, 39, 0.15) 0%, transparent 50%);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Cpath fill='%23C73E1D' d='M50 300 L50 250 L80 230 L80 280 L110 260 L110 220 L140 200 L140 260 L170 240 L170 200 L200 180 L200 240 L230 220 L230 180 L260 160 L260 220 L290 200 L290 160 L320 140 L320 200 L350 180 L350 140 L380 120 L380 180 L410 160 L410 120 L440 100 L440 160 L470 140 L470 100 L500 80 L500 140 L530 120 L530 80 L560 60 L560 120 L590 100 L590 60 L620 40 L620 100 L650 80 L650 40 L680 20 L680 80 L710 60 L710 20 L740 0 L740 80 L770 60 L770 300 Z'/%3E%3C/svg%3E");
+    background-position: bottom left;
+    background-size: 60% auto;
 }
 
-.landmark-chinese::before,
-.landmark-chinese::after {
+.landmark-chinese::before {
     content: '';
     position: absolute;
-    font-size: 200px;
-    opacity: 0.4;
-}
-
-/* Great Wall pattern */
-.landmark-chinese::before {
-    content: '🏯';
-    bottom: 20%;
-    left: 5%;
-    animation: float-gentle 6s ease-in-out infinite;
-}
-
-/* Temple */
-.landmark-chinese::after {
-    content: '⛩️';
     bottom: 15%;
-    right: 10%;
-    animation: float-gentle 7s ease-in-out infinite reverse;
+    right: 5%;
+    width: 200px;
+    height: 250px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 250'%3E%3Crect x='80' y='100' width='40' height='150' fill='%235D4037'/%3E%3Crect x='70' y='80' width='60' height='20' fill='%23C73E1D'/%3E%3Crect x='60' y='60' width='80' height='20' fill='%23D84315'/%3E%3Crect x='50' y='40' width='100' height='20' fill='%23C73E1D'/%3E%3Cpath d='M40 40 Q100 10 160 40' stroke='%234A3728' stroke-width='8' fill='none'/%3E%3Crect x='85' y='120' width='12' height='20' fill='%23FFCC80'/%3E%3Crect x='105' y='120' width='12' height='20' fill='%23FFCC80'/%3E%3Crect x='85' y='160' width='12' height='20' fill='%23FFCC80'/%3E%3Crect x='105' y='160' width='12' height='20' fill='%23FFCC80'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: float-gentle 6s ease-in-out infinite;
 }
 
 /* Japanese Landmarks */
 .landmark-japanese {
-    background: 
-        radial-gradient(ellipse 30% 40% at 20% 75%, rgba(255, 183, 197, 0.2) 0%, transparent 60%),
-        radial-gradient(ellipse 25% 35% at 80% 80%, rgba(139, 90, 43, 0.15) 0%, transparent 50%);
-}
-
-.landmark-japanese::before,
-.landmark-japanese::after {
-    content: '';
-    position: absolute;
-    font-size: 180px;
-    opacity: 0.4;
-}
-
-/* Torii Gate */
-.landmark-japanese::before {
-    content: '⛩️';
-    bottom: 25%;
-    left: 8%;
-    animation: float-gentle 8s ease-in-out infinite;
-}
-
-/* Mount Fuji */
-.landmark-japanese::after {
-    content: '🗻';
-    bottom: 10%;
-    right: 5%;
-    font-size: 250px;
-    animation: float-gentle 10s ease-in-out infinite reverse;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Cpath fill='%23E91E63' d='M100 300 L100 200 L120 180 L120 300 M200 300 L200 200 L220 180 L220 300 M150 180 Q150 140 150 100 Q100 140 100 180 M150 180 Q150 140 150 100 Q200 140 200 180'/%3E%3Crect x='90' y='180' width='120' height='10' fill='%23AD1457'/%3E%3Crect x='80' y='200' width='140' height='10' fill='%23C2185B'/%3E%3Cpath d='M350 300 L350 100 L380 80 L380 300 M500 300 L500 100 L530 80 L530 300' stroke='%233E2723' stroke-width='15' fill='none'/%3E%3Cellipse cx='440' cy='150' rx='120' ry='100' fill='%235C6BC0'/%3E%3Cellipse cx='440' cy='150' rx='80' ry='70' fill='%237C4DFF'/%3E%3Cellipse cx='440' cy='150' rx='40' ry='35' fill='%23B39DDB'/%3E%3C/svg%3E");
+    background-position: bottom center;
+    background-size: 80% auto;
 }
 
 /* Korean Landmarks */
 .landmark-korean {
-    background: 
-        radial-gradient(ellipse 30% 40% at 10% 78%, rgba(139, 90, 43, 0.2) 0%, transparent 60%),
-        radial-gradient(ellipse 25% 35% at 90% 72%, rgba(199, 62, 29, 0.15) 0%, transparent 50%);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Crect x='100' y='200' width='120' height='100' fill='%238D6E63'/%3E%3Cpath d='M90 200 L160 150 L230 200' fill='%23D84315'/%3E%3Crect x='120' y='220' width='25' height='35' fill='%23FFCC80'/%3E%3Crect x='175' y='220' width='25' height='35' fill='%23FFCC80'/%3E%3Crect x='120' y='270' width='25' height='30' fill='%23FFCC80'/%3E%3Crect x='175' y='270' width='25' height='30' fill='%23FFCC80'/%3E%3Crect x='500' y='180' width='100' height='120' fill='%23A1887F'/%3E%3Cpath d='M490 180 L550 140 L610 180' fill='%235D4037'/%3E%3Cpath d='M480 180 Q550 160 620 180' stroke='%233E2723' stroke-width='5' fill='none'/%3E%3Crect x='530' y='200' width='40' height='60' fill='%238D6E63'/%3E%3Ccircle cx='550' cy='230' r='15' fill='%234E342E'/%3E%3C/svg%3E");
+    background-position: bottom center;
+    background-size: 70% auto;
 }
 
-.landmark-korean::before,
-.landmark-korean::after {
-    content: '';
-    position: absolute;
-    font-size: 180px;
-    opacity: 0.4;
-}
-
-/* Gyeongbokgung Palace */
-.landmark-korean::before {
-    content: '🏛️';
-    bottom: 20%;
-    left: 3%;
-    animation: float-gentle 7s ease-in-out infinite;
-}
-
-/* Pagoda */
-.landmark-korean::after {
-    content: '🏯';
-    bottom: 18%;
-    right: 8%;
-    animation: float-gentle 9s ease-in-out infinite reverse;
-}
-
-/* All cultures - mixed landmarks */
+/* All Cultures - Subtle blend */
 .landmark-all {
     background: 
-        radial-gradient(ellipse 20% 30% at 15% 80%, rgba(199, 62, 29, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse 20% 30% at 50% 85%, rgba(255, 183, 197, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse 20% 30% at 85% 80%, rgba(139, 90, 43, 0.1) 0%, transparent 50%);
+        radial-gradient(ellipse 25% 35% at 10% 85%, rgba(199, 62, 29, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 20% 30% at 50% 90%, rgba(233, 30, 99, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse 25% 35% at 90% 85%, rgba(141, 110, 99, 0.08) 0%, transparent 60%);
 }
 
 @keyframes float-gentle {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-10px) scale(1.02);
-    }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.01); }
 }
 
 /* ========================================
-   SCROLL-BASED PARALLAX
+   PARALLAX LAYERS - Mountains & Clouds
    ======================================== */
 .parallax-layer {
     position: fixed;
@@ -263,46 +322,42 @@
     width: 100%;
     height: 120%;
     pointer-events: none;
-    z-index: -3;
+    z-index: -4;
     transition: transform 0.3s ease-out;
 }
 
-/* Mountains layer - moves slowest */
+/* Mountains Layer */
 .parallax-mountains {
-    z-index: -4;
-    opacity: 0.1;
-}
-
-.parallax-mountains::before {
-    content: '⛰️⛰️⛰️';
-    position: absolute;
-    bottom: 10%;
-    left: -10%;
-    font-size: 300px;
-    letter-spacing: -100px;
-    white-space: nowrap;
-}
-
-/* Clouds layer */
-.parallax-clouds {
     z-index: -5;
     opacity: 0.08;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400'%3E%3Cpath fill='%234A5568' d='M0 400 L0 250 L150 100 L300 280 L450 150 L600 300 L750 120 L900 280 L1050 180 L1200 320 L1200 400 Z'/%3E%3Cpath fill='%23718096' d='M-100 400 L-100 300 L100 180 L250 320 L400 220 L550 340 L700 200 L850 330 L1000 250 L1150 350 L1300 400 Z'/%3E%3C/svg%3E");
+    background-position: bottom center;
+    background-size: 150% auto;
+    background-repeat: repeat-x;
+}
+
+/* Clouds Layer */
+.parallax-clouds {
+    z-index: -6;
+    opacity: 0.06;
 }
 
 .parallax-clouds::before {
-    content: '☁️☁️☁️☁️☁️';
+    content: '';
     position: absolute;
-    top: 10%;
+    top: 15%;
     left: -20%;
-    font-size: 150px;
-    letter-spacing: 100px;
-    white-space: nowrap;
-    animation: drift 60s linear infinite;
+    width: 150%;
+    height: 200px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 150'%3E%3Cellipse cx='100' cy='100' rx='80' ry='40' fill='%23fff'/%3E%3Cellipse cx='180' cy='90' rx='60' ry='35' fill='%23fff'/%3E%3Cellipse cx='250' cy='105' rx='70' ry='30' fill='%23fff'/%3E%3Cellipse cx='400' cy='95' rx='90' ry='45' fill='%23fff'/%3E%3Cellipse cx='500' cy='85' rx='50' ry='30' fill='%23fff'/%3E%3C/svg%3E");
+    background-size: 600px 150px;
+    background-repeat: repeat-x;
+    animation: cloud-drift 80s linear infinite;
 }
 
-@keyframes drift {
+@keyframes cloud-drift {
     0% { transform: translateX(0); }
-    100% { transform: translateX(100px); }
+    100% { transform: translateX(600px); }
 }
 
 /* ========================================
@@ -310,24 +365,40 @@
    ======================================== */
 @media (max-width: 768px) {
     .sakura-petal {
-        font-size: 16px;
+        width: 16px;
+        height: 16px;
     }
     
-    .tree {
-        font-size: 100px;
+    .parallax-trees {
+        height: 150px;
     }
     
-    .landmark-chinese::before,
-    .landmark-chinese::after,
-    .landmark-japanese::before,
-    .landmark-japanese::after,
-    .landmark-korean::before,
-    .landmark-korean::after {
-        font-size: 120px;
-        opacity: 0.25;
+    .tree::before {
+        width: 30px;
+        height: 80px;
     }
     
-    .landmark-japanese::after {
-        font-size: 180px;
+    .tree::after {
+        width: 120px;
+        height: 120px;
+        bottom: 60px;
+        left: -45px;
+    }
+    
+    .tree-right::after {
+        right: -45px;
+        left: auto;
+    }
+    
+    .landmark-chinese,
+    .landmark-japanese,
+    .landmark-korean {
+        background-size: 90% auto;
+        opacity: 0.08;
+    }
+    
+    .landmark-chinese::before {
+        width: 100px;
+        height: 125px;
     }
 }
