@@ -93,7 +93,34 @@ const japaneseProverbsData = [
     { id: "ja-072", jp: "亭主関白", romaji: "Teishu kanpaku", en: "The husband rules. / Traditional family structure.", cats: ["family", "wisdom"], culture: "japanese" },
     { id: "ja-073", jp: "家内安全", romaji: "Kanai anzen", en: "Safety in the household. / Peace in the home.", cats: ["family", "wisdom", "life"], culture: "japanese" },
     { id: "ja-074", jp: "家は最後の砦", romaji: "Ie wa saigo no toride", en: "Home is the last fortress.", cats: ["family", "wisdom", "life"], culture: "japanese" },
-    { id: "ja-075", jp: "親の光は七光", romaji: "Oya no hikari wa nanahikari", en: "Parents' light shines seven times. / Benefits of good parents.", cats: ["family", "wisdom", "learning"], culture: "japanese" }
+    { id: "ja-075", jp: "親の光は七光", romaji: "Oya no hikari wa nanahikari", en: "Parents' light shines seven times. / Benefits of good parents.", cats: ["family", "wisdom", "learning"], culture: "japanese" },
+    
+    // ADDITIONAL PROVERBS (76-100)
+    { id: "ja-076", jp: "恋は思案の外", romaji: "Koi wa shian no hoka", en: "Love is outside of deliberation. / Love is blind.", cats: ["love", "wisdom"], culture: "japanese" },
+    { id: "ja-077", jp: "会うは別れの始め", romaji: "Au wa wakare no hajime", en: "Meeting is the beginning of parting.", cats: ["love", "friendship", "life"], culture: "japanese" },
+    { id: "ja-078", jp: "惚れて通えば千里も一里", romaji: "Horete kayoeba senri mo ichi ri", en: "If you visit out of love, a thousand miles is one mile.", cats: ["love", "perseverance"], culture: "japanese" },
+    { id: "ja-079", jp: "袖振り合うも他生の縁", romaji: "Sode furi au mo tashō no en", en: "Even sleeves brushing is fate from a previous life.", cats: ["love", "friendship", "life"], culture: "japanese" },
+    { id: "ja-080", jp: "遠くの親類より近くの他人", romaji: "Tōku no shinrui yori chikaku no tanin", en: "A near stranger is better than a distant relative.", cats: ["friendship", "family", "life"], culture: "japanese" },
+    { id: "ja-081", jp: "友達は第二の自己", romaji: "Tomodachi wa dai-ni no jiko", en: "A friend is a second self.", cats: ["friendship", "wisdom"], culture: "japanese" },
+    { id: "ja-082", jp: "苦しい時の神頼み", romaji: "Kurushii toki no kamidanomi", en: "Praying to gods in times of suffering.", cats: ["life", "perseverance"], culture: "japanese" },
+    { id: "ja-083", jp: "笑う門には福来る", romaji: "Warau kado ni wa fuku kitaru", en: "Fortune comes to the gate of those who laugh.", cats: ["happiness", "life", "wisdom"], culture: "japanese" },
+    { id: "ja-084", jp: "健康は富に勝る", romaji: "Kenkō wa tomi ni masaru", en: "Health is better than wealth.", cats: ["health", "wisdom", "life"], culture: "japanese" },
+    { id: "ja-085", jp: "病は口から", romaji: "Yamai wa kuchi kara", en: "Illness comes from the mouth. / You are what you eat.", cats: ["health", "wisdom"], culture: "japanese" },
+    { id: "ja-086", jp: "歩くことは健康の源", romaji: "Aruku koto wa kenkō no minamoto", en: "Walking is the source of health.", cats: ["health", "life"], culture: "japanese" },
+    { id: "ja-087", jp: "時は金なり", romaji: "Toki wa kane nari", en: "Time is money.", cats: ["business", "wisdom", "time"], culture: "japanese" },
+    { id: "ja-088", jp: "歳月人を待たず", romaji: "Saigetsu hito wo matazu", en: "Time waits for no one.", cats: ["time", "wisdom", "life"], culture: "japanese" },
+    { id: "ja-089", jp: "光陰矢のごとし", romaji: "Kōin ya no gotoshi", en: "Time flies like an arrow.", cats: ["time", "wisdom", "life"], culture: "japanese" },
+    { id: "ja-090", jp: "後悔先に立たず", romaji: "Kōkai saki ni tatazu", en: "Regret doesn't come first. / Regret is too late.", cats: ["wisdom", "life", "time"], culture: "japanese" },
+    { id: "ja-091", jp: "渡る世間に鬼はない", romaji: "Wataru seken ni oni wa nai", en: "There are no demons in the world we live in. / People are fundamentally good.", cats: ["wisdom", "life", "friendship"], culture: "japanese" },
+    { id: "ja-092", jp: "人のふり見て我がふり直せ", romaji: "Hito no furi mite waga furi naose", en: "See others' behavior and correct your own.", cats: ["wisdom", "learning", "life"], culture: "japanese" },
+    { id: "ja-093", jp: "論より証拠", romaji: "Ron yori shōko", en: "Evidence over argument.", cats: ["wisdom", "business", "learning"], culture: "japanese" },
+    { id: "ja-094", jp: "百聞は一見に如かず", romaji: "Hyakubun wa ikken ni shikazu", en: "Seeing once is better than hearing a hundred times.", cats: ["learning", "wisdom", "experience"], culture: "japanese" },
+    { id: "ja-095", jp: "体で覚える", romaji: "Karada de oboeru", en: "Learn with the body. / Learn by doing.", cats: ["learning", "perseverance", "experience"], culture: "japanese" },
+    { id: "ja-096", jp: "失敗は成功の母", romaji: "Shippai wa seikō no haha", en: "Failure is the mother of success.", cats: ["perseverance", "learning", "wisdom"], culture: "japanese" },
+    { id: "ja-097", jp: "継続は力なり", romaji: "Keizoku wa chikara nari", en: "Continuation is power. / Persistence pays off.", cats: ["perseverance", "wisdom", "success"], culture: "japanese" },
+    { id: "ja-098", jp: "忍耐は苦いが、その実は甘い", romaji: "Nintai wa nigai ga, sono mi wa amai", en: "Patience is bitter, but its fruit is sweet.", cats: ["perseverance", "wisdom", "success"], culture: "japanese" },
+    { id: "ja-099", jp: "鉄は熱いうちに打て", romaji: "Tetsu wa atsui uchi ni ute", en: "Strike while the iron is hot.", cats: ["business", "wisdom", "time"], culture: "japanese" },
+    { id: "ja-100", jp: "始めるが勝ち", romaji: "Hajimeru ga kachi", en: "Starting is winning. / Beginning is half done.", cats: ["perseverance", "wisdom", "success"], culture: "japanese" }
 ];
 
 // Make available globally

@@ -97,28 +97,3 @@ const koreanProverbsData = [
     { id: "ko-076", kr: "까마귀 날자 배 떨어진다", roman: "Kkamagwi nalja bae tteoreojinda", en: "When the crow flies, the pear drops. / Coincidence.", cats: ["wisdom", "life"], culture: "korean" },
     { id: "ko-077", kr: "윗물이 맑아야 아랫물이 맑다", roman: "Witmuri malgaya araetmuri malda", en: "When the upper water is clear, the lower water is clear. / Leaders set the example.", cats: ["wisdom", "family", "business"], culture: "korean" },
     { id: "ko-078", kr: "가족은 영원한 보물", roman: "Gajokeun yeongwonhan bomul", en: "Family is an eternal treasure.", cats: ["family", "wisdom", "love"], culture: "korean" }
-
-    // ADDITIONAL PROVERBS (79-100)
-    { id: "ko-079", kr: "첫사랑은 잊지 못한다", roman: "Cheotsarangeun ijji mothanda", en: "First love can never be forgotten.", cats: ["love", "life"], culture: "korean" },
-    { id: "ko-080", kr: "정은 정으로 갚고 원은 원으로 갚는다", roman: "Jeongeun jeongeuro gapgo woneun woneuro gamneunda", en: "Repay kindness with kindness, revenge with revenge.", cats: ["wisdom", "life"], culture: "korean" },
-    { id: "ko-081", kr: "사랑은 눈이 멀다", roman: "Sarangeun nuni meolda", en: "Love is blind.", cats: ["love", "wisdom"], culture: "korean" },
-    { id: "ko-082", kr: "입술은 입술로 잊는다", roman: "Ipsureun ipsuro imneunda", en: "Lips are forgotten by lips. / New love heals old.", cats: ["love", "life"], culture: "korean" },
-    { id: "ko-083", kr: "친구는 곤란할 때 알 수 있다", roman: "Chinguneun gonranhal ttae al su itda", en: "You know a friend in times of trouble.", cats: ["friendship", "life", "wisdom"], culture: "korean" },
-    { id: "ko-084", kr: "벗이 멀면서 가깝고, 부모가 가까우면서 멀다", roman: "Beosi meoreoseo gakkago, bumoga gakkaumyeonseo meolda", en: "A friend is close though far, parents are far though near.", cats: ["friendship", "family", "wisdom"], culture: "korean" },
-    { id: "ko-085", kr: "웃는 얼굴에 침 못 뱉는다", roman: "Unneun eolgure chim mot baetneunda", en: "You can't spit on a smiling face. / Kindness disarms anger.", cats: ["friendship", "wisdom", "happiness"], culture: "korean" },
-    { id: "ko-086", kr: "행복은 건강 속에 있다", roman: "Haengbogeun geongang soge itda", en: "Happiness is in health.", cats: ["health", "happiness", "life"], culture: "korean" },
-    { id: "ko-087", kr: "먹는 것이 약이다", roman: "Meongneun geosi yakida", en: "Food is medicine.", cats: ["health", "wisdom"], culture: "korean" },
-    { id: "ko-088", kr: "배고픈 사람은 장가를 못 간다", roman: "Baegopeun sarameun jangnareul mot ganda", en: "A hungry man can't marry. / Health comes first.", cats: ["health", "life", "family"], culture: "korean" },
-    { id: "ko-089", kr: "시간은 금이다", roman: "Siganeun geumida", en: "Time is gold.", cats: ["time", "business", "wisdom"], culture: "korean" },
-    { id: "ko-090", kr: "내일 일은 내일 생각하자", roman: "Naeil ireun naeil saenggakhaja", en: "Think about tomorrow's work tomorrow.", cats: ["time", "wisdom", "life"], culture: "korean" },
-    { id: "ko-091", kr: "세월이 약이다", roman: "Sewori yakida", en: "Time is the medicine.", cats: ["time", "life", "perseverance"], culture: "korean" },
-    { id: "ko-092", kr: "공든 탑이 물에 가라앉지 않는다", roman: "Gongdeun tapi mul-e garaanjji anneunda", en: "A tower built with effort doesn't sink in water. / Hard work endures.", cats: ["perseverance", "wisdom", "success"], culture: "korean" },
-    { id: "ko-093", kr: "실패는 성공의 어머니", roman: "Silpaeneun seonggong-ui eomeoni", en: "Failure is the mother of success.", cats: ["perseverance", "learning", "success"], culture: "korean" },
-    { id: "ko-094", kr: "끈기가 있으면 이룬다", roman: "Kkeungiga isseumyeon irunda", en: "With persistence, you achieve.", cats: ["perseverance", "success", "wisdom"], culture: "korean" },
-    { id: "ko-095", kr: "열 번 찍어 안 넘어가는 나무 없다", roman: "Yeol beon jjikgeo an neomeoganeun namu eopda", en: "There's no tree that won't fall after ten chops.", cats: ["perseverance", "wisdom", "success"], culture: "korean" },
-    { id: "ko-096", kr: "배보다 배꼭이 크다", roman: "Baepoda baekkobi keuda", en: "The belly button is bigger than the stomach. / The accessory exceeds the main.", cats: ["wisdom", "business", "life"], culture: "korean" },
-    { id: "ko-097", kr: "돈은 왔다 갔다 한다", roman: "Doneun watda gatda handa", en: "Money comes and goes.", cats: ["business", "wisdom", "life"], culture: "korean" },
-    { id: "ko-098", kr: "일찍 일어나는 새가 벌레를 잡는다", roman: "Iljjik ireonaneun saega beolereul jamneunda", en: "The early bird catches the worm.", cats: ["business", "wisdom", "time"], culture: "korean" },
-    { id: "ko-099", kr: "큰 나무는 바람을 견딘다", roman: "Keun namuneun barameul gyeondinda", en: "Big trees endure the wind. / Greatness withstands challenges.", cats: ["perseverance", "success", "wisdom"], culture: "korean" },
-    { id: "ko-100", kr: "꿈은 이루어진다", roman: "Kkumeun irueojinda", en: "Dreams come true.", cats: ["success", "perseverance", "wisdom"], culture: "korean" }
-];

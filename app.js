@@ -1,11 +1,57 @@
 /**
  * East Asian Wisdom - Application Logic
- * Based on working version pattern from 533d6ca
+ * Fixed version with proper combined filtering and working buttons
  */
 
 // ============================================
-// AGGRESSIVE GLOBAL BUTTON HANDLERS
+// STATE (Global variables)
 // ============================================
+window.allProverbs = [];
+window.currentProverbs = [];
+window.currentFilter = 'all';      // Topic filter
+window.currentCultureFilter = 'all'; // Culture filter
+window.displayedCount = 24;
+window.favoriteIds = new Set();
+
+// ============================================
+// FILTERING LOGIC - Combined Culture + Topic
+// ============================================
+
+/**
+ * Apply both culture and topic filters
+ * This ensures when user selects "Korean" + "love", only Korean love proverbs show
+ */
+window.applyFilters = function() {
+    let filtered = [...window.allProverbs];
+    
+    // Step 1: Apply culture filter
+    if (window.currentCultureFilter !== 'all') {
+        filtered = filtered.filter(p => p.culture === window.currentCultureFilter);
+    }
+    
+    // Step 2: Apply topic filter
+    if (window.currentFilter === 'favorites') {
+        filtered = filtered.filter(p => window.favoriteIds.has(window.getProverbId(p)));
+    } else if (window.currentFilter !== 'all') {
+        filtered = filtered.filter(p => {
+            const cats = p.cats || [];
+            return cats.includes(window.currentFilter);
+        });
+    }
+    
+    window.currentProverbs = filtered;
+    window.displayedCount = 24; // Reset to initial count when filters change
+    
+    console.log('[EAW] Filters applied:', {
+        culture: window.currentCultureFilter,
+        topic: window.currentFilter,
+        count: filtered.length
+    });
+    
+    window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
+    window.updateStats();
+    window.updateLoadMoreButton();
+};
 
 // Culture filter handler
 window.handleCultureFilterClick = function(arg) {
@@ -18,23 +64,10 @@ window.handleCultureFilterClick = function(arg) {
     document.querySelectorAll('.culture-filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    // Update current filter
+    // Update filter and apply
     window.currentCultureFilter = culture;
-    window.displayedCount = 24;
+    window.applyFilters();
     
-    // Apply filter
-    if (culture === 'all') {
-        window.currentProverbs = [...window.allProverbs];
-    } else {
-        window.currentProverbs = window.allProverbs.filter(p => p.culture === culture);
-    }
-    
-    // Render
-    if (typeof window.renderProverbs === 'function') {
-        window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
-    }
-    
-    console.log('[EAW] Culture filter applied:', culture, 'Count:', window.currentProverbs.length);
     return false;
 };
 
@@ -49,47 +82,91 @@ window.handleFilterClick = function(arg) {
     document.querySelectorAll('#topicFilterButtons .filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     
-    // Update current filter
+    // Update filter and apply
     window.currentFilter = filter;
-    window.displayedCount = 24;
+    window.applyFilters();
     
-    // Apply filter
-    if (filter === 'all') {
-        window.currentProverbs = [...window.allProverbs];
-    } else if (filter === 'favorites') {
-        window.currentProverbs = window.allProverbs.filter(p => 
-            window.favoriteIds.has(window.getProverbId(p))
-        );
-    } else {
-        window.currentProverbs = window.allProverbs.filter(p => {
-            const cats = p.cats || [];
-            return cats.includes(filter);
-        });
-    }
-    
-    // Render
-    if (typeof window.renderProverbs === 'function') {
-        window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
-    }
-    
-    console.log('[EAW] Topic filter applied:', filter, 'Count:', window.currentProverbs.length);
     return false;
 };
 
-// Helper to get proverb ID
-window.getProverbId = function(p) {
-    return p.id || p.cn || 'unknown';
+// ============================================
+// LOAD MORE FUNCTIONALITY
+// ============================================
+
+window.loadMoreProverbs = function() {
+    console.log('[EAW] Loading more proverbs...');
+    
+    window.displayedCount += 24;
+    window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
+    window.updateLoadMoreButton();
+};
+
+window.updateLoadMoreButton = function() {
+    const btn = document.getElementById('loadMoreBtn');
+    const section = document.getElementById('loadMoreSection');
+    
+    if (!btn || !section) return;
+    
+    const hasMore = window.displayedCount < window.currentProverbs.length;
+    
+    if (hasMore) {
+        section.style.display = 'block';
+        btn.innerHTML = `<span>Load More</span><span class="load-icon">↓</span> <small>(${window.currentProverbs.length - window.displayedCount} remaining)</small>`;
+    } else {
+        section.style.display = 'none';
+    }
 };
 
 // ============================================
-// STATE (Global variables for compatibility)
+// NEW PROVERB BUTTON
 // ============================================
-window.allProverbs = [];
-window.currentProverbs = [];
-window.currentFilter = 'all';
-window.currentCultureFilter = 'all';
-window.displayedCount = 24;
-window.favoriteIds = new Set();
+
+window.showNewProverb = function() {
+    console.log('[EAW] Showing new proverb...');
+    
+    // Pick a random proverb different from current daily
+    const currentDaily = document.getElementById('dailyChinese').textContent;
+    let newProverb;
+    let attempts = 0;
+    
+    do {
+        newProverb = window.allProverbs[Math.floor(Math.random() * window.allProverbs.length)];
+        attempts++;
+    } while (newProverb.cn === currentDaily && attempts < 10);
+    
+    // Update the daily spotlight with animation
+    const dc = document.getElementById('dailyChinese');
+    const dp = document.getElementById('dailyPinyin');
+    const de = document.getElementById('dailyEnglish');
+    
+    if (dc && dp && de && newProverb) {
+        // Fade out
+        dc.style.opacity = '0';
+        dp.style.opacity = '0';
+        de.style.opacity = '0';
+        
+        setTimeout(() => {
+            dc.textContent = newProverb.cn;
+            dp.textContent = newProverb.py;
+            de.textContent = newProverb.en;
+            
+            // Fade in
+            dc.style.opacity = '1';
+            dp.style.opacity = '1';
+            de.style.opacity = '1';
+        }, 200);
+    }
+    
+    window.showToast('New proverb!');
+};
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+window.getProverbId = function(p) {
+    return p.id || p.cn || 'unknown';
+};
 
 // ============================================
 // INITIALIZATION
@@ -109,9 +186,28 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('[EAW] No saved favorites');
     }
     
+    // Setup button handlers
+    setupButtonHandlers();
+    
     // Wait for data then init
     waitForData();
 });
+
+function setupButtonHandlers() {
+    // Load More button
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', window.loadMoreProverbs);
+        console.log('[EAW] Load More button handler attached');
+    }
+    
+    // New Proverb button (in daily spotlight)
+    const newProverbBtn = document.getElementById('newProverbBtn');
+    if (newProverbBtn) {
+        newProverbBtn.addEventListener('click', window.showNewProverb);
+        console.log('[EAW] New Proverb button handler attached');
+    }
+}
 
 function waitForData() {
     let attempts = 0;
@@ -178,11 +274,13 @@ function initProverbs(hasChinese, hasJapanese, hasKorean) {
     
     console.log('[EAW] Total proverbs:', window.allProverbs.length);
     
+    // Initialize with all proverbs
     window.currentProverbs = [...window.allProverbs];
     
     // Initial render
     window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
     window.updateStats();
+    window.updateLoadMoreButton();
     window.setupDailySpotlight();
     window.setupSearch();
     window.setupModal();
@@ -306,7 +404,7 @@ window.showToast = function(msg) {
     if (!toast) {
         toast = document.createElement('div');
         toast.id = 'toast';
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:white;padding:12px 24px;border-radius:8px;z-index:9999;';
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:white;padding:12px 24px;border-radius:8px;z-index:9999;transition:opacity 0.3s;';
         document.body.appendChild(toast);
     }
     toast.textContent = msg;
@@ -362,15 +460,17 @@ window.setupSearch = function() {
     input.addEventListener('input', function() {
         const q = this.value.toLowerCase();
         if (!q) {
-            window.currentProverbs = [...window.allProverbs];
+            window.applyFilters(); // Restore filtered view
         } else {
             window.currentProverbs = window.allProverbs.filter(p => {
                 return (p.cn && p.cn.toLowerCase().includes(q)) ||
                        (p.en && p.en.toLowerCase().includes(q)) ||
                        (p.py && p.py.toLowerCase().includes(q));
             });
+            window.displayedCount = 24;
+            window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
+            window.updateLoadMoreButton();
         }
-        window.renderProverbs(window.currentProverbs.slice(0, window.displayedCount));
     });
 };
 
@@ -395,8 +495,7 @@ window.surpriseMe = function() {
 };
 
 window.showRandomProverb = function() {
-    window.setupDailySpotlight();
-    window.showToast('New proverb!');
+    window.showNewProverb();
 };
 
 window.playDailyAudio = function() {
